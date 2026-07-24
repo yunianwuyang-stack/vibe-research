@@ -1,0 +1,30 @@
+{
+  "evidence": [
+    "harness/evidence/G0/g0-p1-red-characterization-20260718T0811Z.json",
+    "harness/evidence/G0/g0-p1-patch-prepost-manifest-20260718T0815Z.json",
+    "harness/evidence/G0/g0-p1-focused-verify-20260718T0818Z.json",
+    "harness/evidence/G0/g0-p1-test-harness-20260718T0820Z.json",
+    "harness/decisions/ADR-G0-009-fail-closed-prior-automation-ownership.md"
+  ],
+  "external_validation": "pending",
+  "finding_id": "G0-F-004",
+  "local_remediation": [
+    "Legacy workspace ownership ledger is audit-only and returns no ownership records.",
+    "Broad harness and test-path auto-attribution was removed.",
+    "Ownership and aggregate gate verdicts preserve BLOCKED when protected external provenance is absent."
+  ],
+  "phase": "G0",
+  "release_qualification": "pending",
+  "required_remediation": "Provide a protected externally signed Day-0 ownership attestation and separately protected issuer trust configuration; then independently verify it against the baseline and root contract.",
+  "schema_version": "1.0",
+  "severity": "P1",
+  "source_review": "harness/adjudications/G0-IR-20260718T0747Z-independent-code-review.json",
+  "status": "remediation_implemented_external_pending",
+  "title": "Unanchored prior-automation ownership",
+  "unblock_conditions": [
+    "Attestation is outside the mutable candidate workspace and signed by an issuer authorized for ownership provenance.",
+    "Attestation binds baseline-manifest hash, root-contract hash, exact path/hash entries, issuer, validity, and revocation state.",
+    "A fresh independent review and G0 rerun confirm the protected trust path."
+  ],
+  "updated_utc": "2026-07-18T08:20:14.867656Z"
+}

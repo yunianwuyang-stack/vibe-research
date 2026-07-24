@@ -1,0 +1,1 @@
+const fs=require('fs');const s=fs.readFileSync('main.js','utf8');if(!s.includes("path.join(process.resourcesPath, 'runtime')"))throw Error('packaged runtime must be under resources');console.log('packaged runtime path OK');

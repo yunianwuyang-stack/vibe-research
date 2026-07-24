@@ -1,0 +1,1 @@
+﻿const fs=require('fs');const src=fs.readFileSync('updater.js','utf8');if(/const http\s*=\s*require\('http'\)/.test(src))throw new Error('HTTP transport enabled');if(!src.includes('HTTPS is required for updater requests'))throw new Error('HTTPS guard absent');console.log('updater HTTPS guard OK');

@@ -1,0 +1,49 @@
+{
+  "adjudication": {
+    "other_prior_concerns": "Not suppressed: the independently reproduced alias/preflight concerns are retained and addressed separately by ADR-G0-017 through ADR-G0-020 and follow-on evidence.",
+    "reason": "The exact paths decode correctly, exist, and pass the locked strict receipt validator. The earlier encoding-path observation was not reproducible under a codepoint-safe method.",
+    "unicode_specific_assertion": "INVALID"
+  },
+  "kind": "reviewer-assertion-reconciliation",
+  "method_correction": {
+    "changed_method": "Construct the expected Unicode string from explicit code points, encode UTF-8, and compare raw bytes; then decode JSON and check exact paths on disk.",
+    "corrected_result": "raw byte needle present; five decoded exact paths exist; strict validation passes 5/5.",
+    "initial_failed_probe": "A MSYS Python stdin source literal for the Chinese needle was transport-corrupted before comparison, yielding a false raw-byte absence and exit 2; no workspace write followed."
+  },
+  "prior_assertion": "The lane receipt paths were mojibake or unreachable.",
+  "prior_reviewer_identity": "Pauli (local no-write model reviewer; original response was not persisted as a source artifact)",
+  "recheck": {
+    "decoded_path_exists": {
+      "contract": true,
+      "desktop": true,
+      "integration": true,
+      "release": true,
+      "unit": true
+    },
+    "decoded_paths": {
+      "contract": "D:\\科研软件制作\\Vibe-research源码\\harness\\evidence\\G0\\lane-contract.xml",
+      "desktop": "D:\\科研软件制作\\Vibe-research源码\\harness\\evidence\\G0\\lane-desktop.xml",
+      "integration": "D:\\科研软件制作\\Vibe-research源码\\harness\\evidence\\G0\\lane-integration.xml",
+      "release": "D:\\科研软件制作\\Vibe-research源码\\harness\\evidence\\G0\\lane-release.xml",
+      "unit": "D:\\科研软件制作\\Vibe-research源码\\harness\\evidence\\G0\\lane-unit.xml"
+    },
+    "lane_summary": "harness/evidence/G0/lane-summary.json",
+    "lane_summary_sha256": "dfd66856bea3f22ba5a1f8163f6d299714a2c7f7ce4ca914faa897690106c67f",
+    "raw_contains_expected_utf8": true,
+    "strict_receipt_validation": {
+      "denominator": 5,
+      "numerator": 5,
+      "strata": [
+        "contract",
+        "desktop",
+        "integration",
+        "release",
+        "unit"
+      ],
+      "verdict": "PASS"
+    },
+    "utf8_needle_hex": "e7a791e7a094e8bdafe4bbb6e588b6e4bd9c"
+  },
+  "schema_version": "1.0",
+  "subject": "Unicode path representation in lane-summary.json"
+}

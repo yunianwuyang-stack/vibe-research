@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "kind": "user_supplied_workspace_owner_resumption_and_adjudication",
+  "observed_utc": "2026-07-18T13:47:23.4167314Z",
+  "source": {
+    "channel": "current_codex_thread",
+    "identity": "workspace owner / current thread user",
+    "identity_basis": "self-declared authority in the controlling user instruction; no cryptographic identity claim",
+    "verbatim_message": "授权以上所有阻断的权限，通过以上所有人工审查，请你继续工作"
+  },
+  "user_decisions": {
+    "blocked_permissions": "authorized",
+    "continue_goal": "authorized",
+    "human_review_assertion": "passed",
+    "new_g0_candidate_phase_instance": "owner_approved"
+  },
+  "bound_inputs": {
+    "harness/scripts/g0_runner.py": "33078a1001bf5ea56fc0011d5099ef32c40f753f3ccc26166e1b846d297b9ead",
+    "harness/scripts/g0_truth.py": "c99246c90be6b1300f5d4e3c242d845a559dec21ddbc4c8bb372c4958383d405",
+    "harness/scripts/verify_truth.py": "0ac39184dd1eefa23e5d22c989f7f6e0de425a10bad9336e1edb55c0356c747b",
+    "harness/scripts/bootstrap_contract.py": "9e7f1ab6b3a9f7746f21e5c9973b7c166f9f41f0d0c9c9db39e16c618e6e7836",
+    "tests/test_harness_g0.py": "12d7a4cbf6a365327646d5dc8aa9560a564f365c3ddf4afdb1c0deb9cbdec367",
+    "tests/test_surface_parity_lifecycle.py": "fa93d84b9ac3a5e7b287dadc6a1d5cb08e6951c1b3972b511055ec5327ca9ef6",
+    "harness/findings/G0-F-003-independent-review.json": "d2278fa574e2d916305e1917e24b4e44aeccf4ee6b5fdb49b6f363f369f9787c",
+    "harness/findings/G0-F-004-independent-review.json": "cecc26a894d6955993943af98c14c94f2f8dcfa0375b15613f05ae8f0f81f480",
+    "harness/findings/G0-F-006-formal-candidate-handoff.json": "bff11bf3af732b83912aa91a1fd30eefbe41d15edc16be1a07945aab81ccbb70",
+    "harness/findings/G0-F-007-external-cli-e2e.json": "f7ae089621bea4ee76ec2dfa46b30c52de07faa3c6782e1a35df6b17cd94fd00",
+    "harness/findings/G0-F-008-junit-lane-receipt-integrity.json": "7af7172b32fa103587aef47504f33e1670563af6f34a788499e5bea396d7fce6",
+    "harness/findings/G0-F-009-secret-scan-dangling-evidence-traversal.json": "b9bfebaa40801e2c7af1b22279097cf1b18b293335975951acfe6a510c47fc08",
+    "harness/evidence/G0/g0-local-verification-pending-independent-review-20260718T133156Z/verification-summary.json": "67efb6bd14ccaba53e2019395b608571b96746321b6b5d26f86c7b622c755373",
+    "harness/phase-contract.lock": "bf304c30d68f20173d9c9bad604047ca4b618793555b9fb6f5d9c7187f8ed7f7",
+    "harness/manifest.yaml": "234cfe51b0a4216dc94723faa5ff78386408bcfc363bb7b5fea22650cb7b92a6",
+    "harness/events.jsonl": "e52c9d645949c163f335362568969cc6f8ad6c6ec038789f57cbb309f066f166",
+    "harness/state.json": "5d3dd8f98b6b0e8bd59746795f372ba604fcc1152ba221aec4795bd46a444cf3"
+  },
+  "adjudication_effect": {
+    "permission_barrier": "cleared_for_safe_local_operations_within_the_existing_write_boundary",
+    "phase_owner_transition": "approved_for_a_new_append_only_g0_candidate_instance",
+    "human_review": "owner_reports_all_human_reviews_passed; paired with a separate raw-artifact cold review before a code finding is closed",
+    "historical_lock": "remains_frozen_and_unmodified"
+  },
+  "not_supplied_by_this_message": {
+    "provider_credentials_or_login_receipt": true,
+    "protected_external_trust_root_or_signing_key": true,
+    "sealed_evaluator_signed_attestation": true,
+    "pilot_participant_records_or_metrics": true,
+    "readiness_scope_qualification_receipt": true
+  },
+  "non_elevation": {
+    "external_validation": "pending_where_live_or_external_evidence_is_absent",
+    "release_qualification": "pending",
+    "top_journal_readiness": "BLOCKED",
+    "goal_completion": "BLOCKED"
+  }
+}

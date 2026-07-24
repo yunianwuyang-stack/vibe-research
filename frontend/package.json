@@ -1,0 +1,28 @@
+{
+  "name": "vibe-research-workbench",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "build": "vite build --configLoader runner",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run --configLoader runner",
+    "dev": "vite --configLoader runner",
+    "test:e2e": "playwright test",
+    "test:e2e:prep": "playwright test --list"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "typescript": "latest",
+    "vite": "latest"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.51.0",
+    "@types/node": "22.15.3",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "vitest": "4.1.0"
+  }
+}

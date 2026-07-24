@@ -1,0 +1,18 @@
+{
+  "acceptance_limit": "local verification only; no G0 phase acceptance or external validation granted",
+  "finding_id": "G0-F-001",
+  "phase": "G0",
+  "red_evidence": [
+    "harness/evidence/G0/g0-runner-full-post-isolation-ownership-20260718T0649Z",
+    "harness/evidence/G0/g0-reparse-point-focused-verify-20260718T0720Z.json"
+  ],
+  "repair_evidence": [
+    "harness/evidence/G0/g0-reparse-point-junction-command-repair-20260718T0726Z.json",
+    "harness/evidence/G0/g0-reparse-point-focused-reverify-20260718T0728Z.json",
+    "harness/evidence/G0/unit-lane-post-reparse-repair-20260718T0731Z.json"
+  ],
+  "schema_version": "1.0",
+  "scope": "test-owned tmp_path only; no production verifier or gate threshold change",
+  "status": "resolved_local_verification",
+  "title": "Windows reparse-point root-scope test no longer skips"
+}

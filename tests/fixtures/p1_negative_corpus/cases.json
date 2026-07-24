@@ -1,0 +1,47 @@
+{
+  "format_version": "p1-negative-corpus/v1",
+  "cases": [
+    {
+      "id": "compile_nonzero_with_existing_pdf",
+      "input": {"returncode": 1, "pdf_bytes": 25000},
+      "expected": {"success": false, "source_mutated": false}
+    },
+    {
+      "id": "empty_corpus_is_blocked",
+      "input": {"claims": ["A sufficiently detailed novelty claim"], "corpus": []},
+      "expected": {"status": "blocked", "assurance_status": "blocked"}
+    },
+    {
+      "id": "unexecuted_experiment_fields_are_unverified",
+      "input": {
+        "requested_seeds": [11, 12, 13],
+        "executed_seeds": [],
+        "baseline_executed": false,
+        "ablation_executed": false
+      },
+      "expected": {"assurance_status": "blocked", "artifact_status": "unverified"}
+    },
+    {
+      "id": "agent_env_is_task_provider_allowlisted",
+      "input": {
+        "selected_provider": "openai",
+        "host_environment": {
+          "OPENAI_API_KEY": "selected-secret",
+          "ANTHROPIC_API_KEY": "unrelated-secret",
+          "AWS_SECRET_ACCESS_KEY": "unrelated-secret"
+        }
+      },
+      "expected": {
+        "present": ["OPENAI_API_KEY"],
+        "absent": ["ANTHROPIC_API_KEY", "AWS_SECRET_ACCESS_KEY"]
+      }
+    },
+    {
+      "id": "zip_quota_and_boundary_rejected",
+      "input": {
+        "members": ["../escape.txt", "huge.bin", "ratio-bomb.txt"]
+      },
+      "expected": {"accepted": false}
+    }
+  ]
+}

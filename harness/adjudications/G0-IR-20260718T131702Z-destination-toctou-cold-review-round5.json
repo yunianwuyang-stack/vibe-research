@@ -1,0 +1,45 @@
+{
+  "confirmed_defect": {
+    "id": "F008-destination-hardlink-swap-toctou",
+    "limitations": [
+      "Snapshot review only; no filesystem or commands.",
+      "Requires a concurrent writer with evidence directory access.",
+      "Not human/external/sealed validation."
+    ],
+    "mechanism": "A destination leaf can be replaced with a hardlink to outside data after precheck and before shutil.copyfile opens it. The copy writes through that hardlink. Recreating a regular nlink=1 leaf before the postcheck permits successful return despite outside overwrite.",
+    "minimum_reproduction": [
+      "normal staging source and evidence destination",
+      "between destination precheck and copy, replace destination with an NTFS hardlink to outside file",
+      "copy writes source bytes through destination link to outside file",
+      "replace destination with normal nlink=1 leaf before final target check"
+    ],
+    "required_repair": "Use a bound-evidence temporary file plus atomic destination replacement; add a controlled destination-swap regression that verifies outside bytes remain unchanged.",
+    "severity": "P1"
+  },
+  "finding_id": "G0-F-008",
+  "input_hashes": {
+    "bootstrap_os": "a843e10612a602e8226cfc89f5976811e4e0094b41dfa5f60f65dfd5db51cdf8",
+    "g0_runner": "eab8bc79a8ad1ac1219c904bb6961accf72d9856d23ce9da29af3e31f1d0001c",
+    "test_harness_g0": "edd1eb5c37b25a78c20bfcd30bb44e7bbf0ae2c2bf308e91357d87a017151687",
+    "test_surface_parity": "fa93d84b9ac3a5e7b287dadc6a1d5cb08e6951c1b3972b511055ec5327ca9ef6"
+  },
+  "prior_unresponsive_review_attempt": {
+    "agent_id": "019f7554-5418-7090-b89f-a5613eec55bd",
+    "nickname": "Rawls",
+    "result": "no usable verdict; agent was shutdown after transport nonresponse; not counted as review."
+  },
+  "review_id": "G0-IR-20260718T131702Z-destination-toctou-cold-review-round5",
+  "reviewer": {
+    "agent_id": "019f755b-217b-7822-aded-f07bb5874d7f",
+    "mode": "separate no-write snapshot-only model review",
+    "nickname": "Faraday",
+    "permissions": {
+      "commands": false,
+      "filesystem": false,
+      "network": false,
+      "writes": false
+    }
+  },
+  "schema_version": "1.0",
+  "verdict": "NEEDS_REPAIR"
+}

@@ -1,0 +1,16 @@
+{
+  "acceptance_limit": "No gate acceptance is inferred; a fresh trusted runner remains required.",
+  "current_conclusion": "The target and full desktop lane passed under current inputs; root cause remains unproven, so the finding remains monitoring and must not be treated as a resolved product defect.",
+  "failure_evidence": "harness/evidence/G0/g0-runner-full-post-isolation-ownership-20260718T0649Z",
+  "finding_id": "G0-F-002",
+  "observed_failure": "POST confirmatory experiment returned HTTP 500 and HTTP error body read timed out",
+  "phase": "G0",
+  "schema_version": "1.0",
+  "status": "monitoring",
+  "subsequent_characterization": [
+    "harness/evidence/G0/confirmatory-experiment-server-diagnostic-20260718T0709Z.json",
+    "harness/evidence/G0/desktop-assurance-experiment-targeted-characterization-20260718T0733Z.json",
+    "harness/evidence/G0/desktop-lane-post-reparse-repair-20260718T0735Z.json"
+  ],
+  "title": "Prior desktop confirmatory-experiment HTTP 500 was not reproduced"
+}

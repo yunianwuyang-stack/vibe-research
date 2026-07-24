@@ -1,0 +1,8321 @@
+{
+  "bomFormat": "CycloneDX",
+  "specVersion": "1.5",
+  "serialNumber": "urn:uuid:39246598-09b8-979a-9830-a8f9c91c61d9",
+  "version": 1,
+  "metadata": {
+    "timestamp": "2026-07-13T06:26:32+08:00",
+    "component": {
+      "type": "application",
+      "name": "Vibe Research",
+      "version": "1.2.2",
+      "bom-ref": "urn:vibe:component:408"
+    },
+    "properties": [
+      {
+        "name": "vibe:commit",
+        "value": "005338072fbdec4bbb2f24f47a51fdad01f33fe2"
+      },
+      {
+        "name": "vibe:runtime-layout",
+        "value": "portable-windows-x64"
+      },
+      {
+        "name": "vibe:external-adapter:claude",
+        "value": "{\"bundled\":false,\"discovery\":[\"CLAUDE_BIN\",\"PATH\",\"saved_setting\"],\"install_mode\":\"external_user_managed\",\"redistribution_status\":\"not_bundled_external_optional\",\"required\":false}"
+      }
+    ]
+  },
+  "components": [
+    {
+      "type": "library",
+      "name": "@develar/schema-utils",
+      "version": "2.6.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:1"
+    },
+    {
+      "type": "library",
+      "name": "@electron/asar",
+      "version": "3.4.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:2"
+    },
+    {
+      "type": "library",
+      "name": "balanced-match",
+      "version": "1.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:3"
+    },
+    {
+      "type": "library",
+      "name": "brace-expansion",
+      "version": "1.1.16",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:4"
+    },
+    {
+      "type": "library",
+      "name": "minimatch",
+      "version": "3.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:5"
+    },
+    {
+      "type": "library",
+      "name": "@electron/fuses",
+      "version": "1.8.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:6"
+    },
+    {
+      "type": "library",
+      "name": "fs-extra",
+      "version": "9.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:7"
+    },
+    {
+      "type": "library",
+      "name": "@electron/get",
+      "version": "3.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:8"
+    },
+    {
+      "type": "library",
+      "name": "fs-extra",
+      "version": "8.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:9"
+    },
+    {
+      "type": "library",
+      "name": "jsonfile",
+      "version": "4.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:10"
+    },
+    {
+      "type": "library",
+      "name": "semver",
+      "version": "6.3.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:11"
+    },
+    {
+      "type": "library",
+      "name": "universalify",
+      "version": "0.1.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:12"
+    },
+    {
+      "type": "library",
+      "name": "@electron/notarize",
+      "version": "2.5.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:13"
+    },
+    {
+      "type": "library",
+      "name": "@electron/osx-sign",
+      "version": "1.3.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-2-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:14"
+    },
+    {
+      "type": "library",
+      "name": "isbinaryfile",
+      "version": "4.0.10",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:15"
+    },
+    {
+      "type": "library",
+      "name": "@electron/rebuild",
+      "version": "4.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:16"
+    },
+    {
+      "type": "library",
+      "name": "@electron/universal",
+      "version": "2.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:17"
+    },
+    {
+      "type": "library",
+      "name": "brace-expansion",
+      "version": "2.1.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:18"
+    },
+    {
+      "type": "library",
+      "name": "fs-extra",
+      "version": "11.3.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:19"
+    },
+    {
+      "type": "library",
+      "name": "minimatch",
+      "version": "9.0.9",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:20"
+    },
+    {
+      "type": "library",
+      "name": "@electron/windows-sign",
+      "version": "1.2.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-2-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:21"
+    },
+    {
+      "type": "library",
+      "name": "@isaacs/fs-minipass",
+      "version": "4.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:22"
+    },
+    {
+      "type": "library",
+      "name": "@malept/cross-spawn-promise",
+      "version": "2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:23"
+    },
+    {
+      "type": "library",
+      "name": "@malept/flatpak-bundler",
+      "version": "0.4.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:24"
+    },
+    {
+      "type": "library",
+      "name": "@sindresorhus/is",
+      "version": "4.6.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:25"
+    },
+    {
+      "type": "library",
+      "name": "@szmarczak/http-timer",
+      "version": "4.0.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:26"
+    },
+    {
+      "type": "library",
+      "name": "@types/cacheable-request",
+      "version": "6.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:27"
+    },
+    {
+      "type": "library",
+      "name": "@types/debug",
+      "version": "4.1.13",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:28"
+    },
+    {
+      "type": "library",
+      "name": "@types/fs-extra",
+      "version": "9.0.13",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:29"
+    },
+    {
+      "type": "library",
+      "name": "@types/http-cache-semantics",
+      "version": "4.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:30"
+    },
+    {
+      "type": "library",
+      "name": "@types/keyv",
+      "version": "3.1.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:31"
+    },
+    {
+      "type": "library",
+      "name": "@types/ms",
+      "version": "2.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:32"
+    },
+    {
+      "type": "library",
+      "name": "@types/node",
+      "version": "26.1.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:33"
+    },
+    {
+      "type": "library",
+      "name": "@types/plist",
+      "version": "3.0.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:34"
+    },
+    {
+      "type": "library",
+      "name": "@types/responselike",
+      "version": "1.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:35"
+    },
+    {
+      "type": "library",
+      "name": "@types/verror",
+      "version": "1.10.11",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:36"
+    },
+    {
+      "type": "library",
+      "name": "@types/yauzl",
+      "version": "2.10.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:37"
+    },
+    {
+      "type": "library",
+      "name": "@xmldom/xmldom",
+      "version": "0.8.13",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:38"
+    },
+    {
+      "type": "library",
+      "name": "7zip-bin",
+      "version": "5.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:39"
+    },
+    {
+      "type": "library",
+      "name": "abbrev",
+      "version": "4.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:40"
+    },
+    {
+      "type": "library",
+      "name": "agent-base",
+      "version": "7.1.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:41"
+    },
+    {
+      "type": "library",
+      "name": "ajv",
+      "version": "6.15.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:42"
+    },
+    {
+      "type": "library",
+      "name": "ajv-keywords",
+      "version": "3.5.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:43"
+    },
+    {
+      "type": "library",
+      "name": "ansi-regex",
+      "version": "5.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:44"
+    },
+    {
+      "type": "library",
+      "name": "ansi-styles",
+      "version": "4.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:45"
+    },
+    {
+      "type": "library",
+      "name": "app-builder-bin",
+      "version": "5.0.0-alpha.12",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:46"
+    },
+    {
+      "type": "library",
+      "name": "app-builder-lib",
+      "version": "26.8.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:47"
+    },
+    {
+      "type": "library",
+      "name": "ci-info",
+      "version": "4.3.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:48"
+    },
+    {
+      "type": "library",
+      "name": "argparse",
+      "version": "2.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Python-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:49"
+    },
+    {
+      "type": "library",
+      "name": "assert-plus",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:50"
+    },
+    {
+      "type": "library",
+      "name": "astral-regex",
+      "version": "2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:51"
+    },
+    {
+      "type": "library",
+      "name": "async",
+      "version": "3.2.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:52"
+    },
+    {
+      "type": "library",
+      "name": "async-exit-hook",
+      "version": "2.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:53"
+    },
+    {
+      "type": "library",
+      "name": "asynckit",
+      "version": "0.4.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:54"
+    },
+    {
+      "type": "library",
+      "name": "at-least-node",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:55"
+    },
+    {
+      "type": "library",
+      "name": "balanced-match",
+      "version": "4.0.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:56"
+    },
+    {
+      "type": "library",
+      "name": "base64-js",
+      "version": "1.5.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:57"
+    },
+    {
+      "type": "library",
+      "name": "boolean",
+      "version": "3.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:58"
+    },
+    {
+      "type": "library",
+      "name": "brace-expansion",
+      "version": "5.0.7",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:59"
+    },
+    {
+      "type": "library",
+      "name": "buffer",
+      "version": "5.7.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:60"
+    },
+    {
+      "type": "library",
+      "name": "buffer-crc32",
+      "version": "0.2.13",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:61"
+    },
+    {
+      "type": "library",
+      "name": "buffer-from",
+      "version": "1.1.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:62"
+    },
+    {
+      "type": "library",
+      "name": "builder-util",
+      "version": "26.8.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:63"
+    },
+    {
+      "type": "library",
+      "name": "builder-util-runtime",
+      "version": "9.5.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:64"
+    },
+    {
+      "type": "library",
+      "name": "cacheable-lookup",
+      "version": "5.0.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:65"
+    },
+    {
+      "type": "library",
+      "name": "cacheable-request",
+      "version": "7.0.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:66"
+    },
+    {
+      "type": "library",
+      "name": "call-bind-apply-helpers",
+      "version": "1.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:67"
+    },
+    {
+      "type": "library",
+      "name": "chalk",
+      "version": "4.1.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:68"
+    },
+    {
+      "type": "library",
+      "name": "chownr",
+      "version": "3.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "BlueOak-1.0.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:69"
+    },
+    {
+      "type": "library",
+      "name": "chromium-pickle-js",
+      "version": "0.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:70"
+    },
+    {
+      "type": "library",
+      "name": "ci-info",
+      "version": "4.4.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:71"
+    },
+    {
+      "type": "library",
+      "name": "cli-truncate",
+      "version": "2.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:72"
+    },
+    {
+      "type": "library",
+      "name": "cliui",
+      "version": "8.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:73"
+    },
+    {
+      "type": "library",
+      "name": "clone-response",
+      "version": "1.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:74"
+    },
+    {
+      "type": "library",
+      "name": "color-convert",
+      "version": "2.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:75"
+    },
+    {
+      "type": "library",
+      "name": "color-name",
+      "version": "1.1.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:76"
+    },
+    {
+      "type": "library",
+      "name": "combined-stream",
+      "version": "1.0.8",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:77"
+    },
+    {
+      "type": "library",
+      "name": "commander",
+      "version": "5.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:78"
+    },
+    {
+      "type": "library",
+      "name": "compare-version",
+      "version": "0.1.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:79"
+    },
+    {
+      "type": "library",
+      "name": "concat-map",
+      "version": "0.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:80"
+    },
+    {
+      "type": "library",
+      "name": "core-util-is",
+      "version": "1.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:81"
+    },
+    {
+      "type": "library",
+      "name": "crc",
+      "version": "3.8.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:82"
+    },
+    {
+      "type": "library",
+      "name": "cross-dirname",
+      "version": "0.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:83"
+    },
+    {
+      "type": "library",
+      "name": "cross-spawn",
+      "version": "7.0.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:84"
+    },
+    {
+      "type": "library",
+      "name": "isexe",
+      "version": "2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:85"
+    },
+    {
+      "type": "library",
+      "name": "which",
+      "version": "2.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:86"
+    },
+    {
+      "type": "library",
+      "name": "debug",
+      "version": "4.4.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:87"
+    },
+    {
+      "type": "library",
+      "name": "decompress-response",
+      "version": "6.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:88"
+    },
+    {
+      "type": "library",
+      "name": "mimic-response",
+      "version": "3.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:89"
+    },
+    {
+      "type": "library",
+      "name": "defer-to-connect",
+      "version": "2.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:90"
+    },
+    {
+      "type": "library",
+      "name": "define-data-property",
+      "version": "1.1.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:91"
+    },
+    {
+      "type": "library",
+      "name": "define-properties",
+      "version": "1.2.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:92"
+    },
+    {
+      "type": "library",
+      "name": "delayed-stream",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:93"
+    },
+    {
+      "type": "library",
+      "name": "detect-node",
+      "version": "2.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:94"
+    },
+    {
+      "type": "library",
+      "name": "dir-compare",
+      "version": "4.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:95"
+    },
+    {
+      "type": "library",
+      "name": "dmg-builder",
+      "version": "26.8.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:96"
+    },
+    {
+      "type": "library",
+      "name": "dmg-license",
+      "version": "1.0.11",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:97"
+    },
+    {
+      "type": "library",
+      "name": "dotenv",
+      "version": "16.6.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-2-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:98"
+    },
+    {
+      "type": "library",
+      "name": "dotenv-expand",
+      "version": "11.0.7",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-2-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:99"
+    },
+    {
+      "type": "library",
+      "name": "dunder-proto",
+      "version": "1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:100"
+    },
+    {
+      "type": "library",
+      "name": "ejs",
+      "version": "3.1.10",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:101"
+    },
+    {
+      "type": "library",
+      "name": "electron",
+      "version": "39.2.7",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:102"
+    },
+    {
+      "type": "library",
+      "name": "electron-builder",
+      "version": "26.8.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:103"
+    },
+    {
+      "type": "library",
+      "name": "electron-builder-squirrel-windows",
+      "version": "26.8.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:104"
+    },
+    {
+      "type": "library",
+      "name": "electron-publish",
+      "version": "26.8.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:105"
+    },
+    {
+      "type": "library",
+      "name": "electron-winstaller",
+      "version": "5.4.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:106"
+    },
+    {
+      "type": "library",
+      "name": "fs-extra",
+      "version": "7.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:107"
+    },
+    {
+      "type": "library",
+      "name": "@electron/get",
+      "version": "2.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:108"
+    },
+    {
+      "type": "library",
+      "name": "@types/node",
+      "version": "22.20.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:109"
+    },
+    {
+      "type": "library",
+      "name": "undici-types",
+      "version": "6.21.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:110"
+    },
+    {
+      "type": "library",
+      "name": "emoji-regex",
+      "version": "8.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:111"
+    },
+    {
+      "type": "library",
+      "name": "end-of-stream",
+      "version": "1.4.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:112"
+    },
+    {
+      "type": "library",
+      "name": "env-paths",
+      "version": "2.2.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:113"
+    },
+    {
+      "type": "library",
+      "name": "err-code",
+      "version": "2.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:114"
+    },
+    {
+      "type": "library",
+      "name": "es-define-property",
+      "version": "1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:115"
+    },
+    {
+      "type": "library",
+      "name": "es-errors",
+      "version": "1.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:116"
+    },
+    {
+      "type": "library",
+      "name": "es-object-atoms",
+      "version": "1.1.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:117"
+    },
+    {
+      "type": "library",
+      "name": "es-set-tostringtag",
+      "version": "2.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:118"
+    },
+    {
+      "type": "library",
+      "name": "es6-error",
+      "version": "4.1.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:119"
+    },
+    {
+      "type": "library",
+      "name": "escalade",
+      "version": "3.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:120"
+    },
+    {
+      "type": "library",
+      "name": "escape-string-regexp",
+      "version": "4.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:121"
+    },
+    {
+      "type": "library",
+      "name": "exponential-backoff",
+      "version": "3.1.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:122"
+    },
+    {
+      "type": "library",
+      "name": "extract-zip",
+      "version": "2.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-2-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:123"
+    },
+    {
+      "type": "library",
+      "name": "extsprintf",
+      "version": "1.4.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:124"
+    },
+    {
+      "type": "library",
+      "name": "fast-deep-equal",
+      "version": "3.1.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:125"
+    },
+    {
+      "type": "library",
+      "name": "fast-json-stable-stringify",
+      "version": "2.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:126"
+    },
+    {
+      "type": "library",
+      "name": "fd-slicer",
+      "version": "1.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:127"
+    },
+    {
+      "type": "library",
+      "name": "fdir",
+      "version": "6.5.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:128"
+    },
+    {
+      "type": "library",
+      "name": "filelist",
+      "version": "1.0.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:129"
+    },
+    {
+      "type": "library",
+      "name": "minimatch",
+      "version": "5.1.9",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:130"
+    },
+    {
+      "type": "library",
+      "name": "form-data",
+      "version": "4.0.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:131"
+    },
+    {
+      "type": "library",
+      "name": "fs-extra",
+      "version": "10.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:132"
+    },
+    {
+      "type": "library",
+      "name": "fs.realpath",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:133"
+    },
+    {
+      "type": "library",
+      "name": "function-bind",
+      "version": "1.1.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:134"
+    },
+    {
+      "type": "library",
+      "name": "get-caller-file",
+      "version": "2.0.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:135"
+    },
+    {
+      "type": "library",
+      "name": "get-intrinsic",
+      "version": "1.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:136"
+    },
+    {
+      "type": "library",
+      "name": "get-proto",
+      "version": "1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:137"
+    },
+    {
+      "type": "library",
+      "name": "get-stream",
+      "version": "5.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:138"
+    },
+    {
+      "type": "library",
+      "name": "glob",
+      "version": "7.2.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:139"
+    },
+    {
+      "type": "library",
+      "name": "global-agent",
+      "version": "3.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:140"
+    },
+    {
+      "type": "library",
+      "name": "globalthis",
+      "version": "1.0.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:141"
+    },
+    {
+      "type": "library",
+      "name": "gopd",
+      "version": "1.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:142"
+    },
+    {
+      "type": "library",
+      "name": "got",
+      "version": "11.8.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:143"
+    },
+    {
+      "type": "library",
+      "name": "graceful-fs",
+      "version": "4.2.11",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:144"
+    },
+    {
+      "type": "library",
+      "name": "has-flag",
+      "version": "4.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:145"
+    },
+    {
+      "type": "library",
+      "name": "has-property-descriptors",
+      "version": "1.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:146"
+    },
+    {
+      "type": "library",
+      "name": "has-symbols",
+      "version": "1.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:147"
+    },
+    {
+      "type": "library",
+      "name": "has-tostringtag",
+      "version": "1.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:148"
+    },
+    {
+      "type": "library",
+      "name": "hasown",
+      "version": "2.0.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:149"
+    },
+    {
+      "type": "library",
+      "name": "hosted-git-info",
+      "version": "4.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:150"
+    },
+    {
+      "type": "library",
+      "name": "http-cache-semantics",
+      "version": "4.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-2-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:151"
+    },
+    {
+      "type": "library",
+      "name": "http-proxy-agent",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:152"
+    },
+    {
+      "type": "library",
+      "name": "http2-wrapper",
+      "version": "1.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:153"
+    },
+    {
+      "type": "library",
+      "name": "https-proxy-agent",
+      "version": "7.0.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:154"
+    },
+    {
+      "type": "library",
+      "name": "iconv-corefoundation",
+      "version": "1.1.7",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:155"
+    },
+    {
+      "type": "library",
+      "name": "iconv-lite",
+      "version": "0.6.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:156"
+    },
+    {
+      "type": "library",
+      "name": "ieee754",
+      "version": "1.2.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:157"
+    },
+    {
+      "type": "library",
+      "name": "inflight",
+      "version": "1.0.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:158"
+    },
+    {
+      "type": "library",
+      "name": "inherits",
+      "version": "2.0.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:159"
+    },
+    {
+      "type": "library",
+      "name": "is-fullwidth-code-point",
+      "version": "3.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:160"
+    },
+    {
+      "type": "library",
+      "name": "isbinaryfile",
+      "version": "5.0.7",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:161"
+    },
+    {
+      "type": "library",
+      "name": "isexe",
+      "version": "3.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "BlueOak-1.0.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:162"
+    },
+    {
+      "type": "library",
+      "name": "jake",
+      "version": "10.9.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:163"
+    },
+    {
+      "type": "library",
+      "name": "jiti",
+      "version": "2.7.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:164"
+    },
+    {
+      "type": "library",
+      "name": "js-yaml",
+      "version": "4.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:165"
+    },
+    {
+      "type": "library",
+      "name": "json-buffer",
+      "version": "3.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:166"
+    },
+    {
+      "type": "library",
+      "name": "json-schema-traverse",
+      "version": "0.4.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:167"
+    },
+    {
+      "type": "library",
+      "name": "json-stringify-safe",
+      "version": "5.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:168"
+    },
+    {
+      "type": "library",
+      "name": "json5",
+      "version": "2.2.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:169"
+    },
+    {
+      "type": "library",
+      "name": "jsonfile",
+      "version": "6.2.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:170"
+    },
+    {
+      "type": "library",
+      "name": "keyv",
+      "version": "4.5.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:171"
+    },
+    {
+      "type": "library",
+      "name": "lazy-val",
+      "version": "1.0.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:172"
+    },
+    {
+      "type": "library",
+      "name": "lodash",
+      "version": "4.18.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:173"
+    },
+    {
+      "type": "library",
+      "name": "lowercase-keys",
+      "version": "2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:174"
+    },
+    {
+      "type": "library",
+      "name": "lru-cache",
+      "version": "6.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:175"
+    },
+    {
+      "type": "library",
+      "name": "matcher",
+      "version": "3.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:176"
+    },
+    {
+      "type": "library",
+      "name": "math-intrinsics",
+      "version": "1.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:177"
+    },
+    {
+      "type": "library",
+      "name": "mime",
+      "version": "2.6.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:178"
+    },
+    {
+      "type": "library",
+      "name": "mime-db",
+      "version": "1.52.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:179"
+    },
+    {
+      "type": "library",
+      "name": "mime-types",
+      "version": "2.1.35",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:180"
+    },
+    {
+      "type": "library",
+      "name": "mimic-response",
+      "version": "1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:181"
+    },
+    {
+      "type": "library",
+      "name": "minimatch",
+      "version": "10.2.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "BlueOak-1.0.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:182"
+    },
+    {
+      "type": "library",
+      "name": "minimist",
+      "version": "1.2.8",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:183"
+    },
+    {
+      "type": "library",
+      "name": "minipass",
+      "version": "7.1.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "BlueOak-1.0.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:184"
+    },
+    {
+      "type": "library",
+      "name": "minizlib",
+      "version": "3.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:185"
+    },
+    {
+      "type": "library",
+      "name": "mkdirp",
+      "version": "0.5.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:186"
+    },
+    {
+      "type": "library",
+      "name": "ms",
+      "version": "2.1.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:187"
+    },
+    {
+      "type": "library",
+      "name": "node-abi",
+      "version": "4.33.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:188"
+    },
+    {
+      "type": "library",
+      "name": "node-addon-api",
+      "version": "1.7.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:189"
+    },
+    {
+      "type": "library",
+      "name": "node-api-version",
+      "version": "0.2.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:190"
+    },
+    {
+      "type": "library",
+      "name": "node-gyp",
+      "version": "12.4.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:191"
+    },
+    {
+      "type": "library",
+      "name": "isexe",
+      "version": "4.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "BlueOak-1.0.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:192"
+    },
+    {
+      "type": "library",
+      "name": "which",
+      "version": "6.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:193"
+    },
+    {
+      "type": "library",
+      "name": "nopt",
+      "version": "9.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:194"
+    },
+    {
+      "type": "library",
+      "name": "normalize-url",
+      "version": "6.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:195"
+    },
+    {
+      "type": "library",
+      "name": "object-keys",
+      "version": "1.1.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:196"
+    },
+    {
+      "type": "library",
+      "name": "once",
+      "version": "1.4.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:197"
+    },
+    {
+      "type": "library",
+      "name": "p-cancelable",
+      "version": "2.1.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:198"
+    },
+    {
+      "type": "library",
+      "name": "p-limit",
+      "version": "3.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:199"
+    },
+    {
+      "type": "library",
+      "name": "path-is-absolute",
+      "version": "1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:200"
+    },
+    {
+      "type": "library",
+      "name": "path-key",
+      "version": "3.1.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:201"
+    },
+    {
+      "type": "library",
+      "name": "pe-library",
+      "version": "0.4.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:202"
+    },
+    {
+      "type": "library",
+      "name": "pend",
+      "version": "1.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:203"
+    },
+    {
+      "type": "library",
+      "name": "picocolors",
+      "version": "1.1.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:204"
+    },
+    {
+      "type": "library",
+      "name": "picomatch",
+      "version": "4.0.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:205"
+    },
+    {
+      "type": "library",
+      "name": "playwright-core",
+      "version": "1.55.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:206"
+    },
+    {
+      "type": "library",
+      "name": "plist",
+      "version": "3.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:207"
+    },
+    {
+      "type": "library",
+      "name": "postject",
+      "version": "1.0.0-alpha.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:208"
+    },
+    {
+      "type": "library",
+      "name": "commander",
+      "version": "9.5.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:209"
+    },
+    {
+      "type": "library",
+      "name": "proc-log",
+      "version": "6.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:210"
+    },
+    {
+      "type": "library",
+      "name": "progress",
+      "version": "2.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:211"
+    },
+    {
+      "type": "library",
+      "name": "promise-retry",
+      "version": "2.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:212"
+    },
+    {
+      "type": "library",
+      "name": "proper-lockfile",
+      "version": "4.1.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:213"
+    },
+    {
+      "type": "library",
+      "name": "pump",
+      "version": "3.0.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:214"
+    },
+    {
+      "type": "library",
+      "name": "punycode",
+      "version": "2.3.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:215"
+    },
+    {
+      "type": "library",
+      "name": "quick-lru",
+      "version": "5.1.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:216"
+    },
+    {
+      "type": "library",
+      "name": "read-binary-file-arch",
+      "version": "1.0.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:217"
+    },
+    {
+      "type": "library",
+      "name": "require-directory",
+      "version": "2.1.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:218"
+    },
+    {
+      "type": "library",
+      "name": "resedit",
+      "version": "1.7.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:219"
+    },
+    {
+      "type": "library",
+      "name": "resolve-alpn",
+      "version": "1.2.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:220"
+    },
+    {
+      "type": "library",
+      "name": "responselike",
+      "version": "2.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:221"
+    },
+    {
+      "type": "library",
+      "name": "retry",
+      "version": "0.12.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:222"
+    },
+    {
+      "type": "library",
+      "name": "rimraf",
+      "version": "2.6.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:223"
+    },
+    {
+      "type": "library",
+      "name": "roarr",
+      "version": "2.15.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:224"
+    },
+    {
+      "type": "library",
+      "name": "safer-buffer",
+      "version": "2.1.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:225"
+    },
+    {
+      "type": "library",
+      "name": "sanitize-filename",
+      "version": "1.6.4",
+      "licenses": [
+        {
+          "expression": "WTFPL OR ISC"
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:226"
+    },
+    {
+      "type": "library",
+      "name": "sax",
+      "version": "1.6.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "BlueOak-1.0.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:227"
+    },
+    {
+      "type": "library",
+      "name": "semver",
+      "version": "7.7.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:228"
+    },
+    {
+      "type": "library",
+      "name": "semver-compare",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:229"
+    },
+    {
+      "type": "library",
+      "name": "serialize-error",
+      "version": "7.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:230"
+    },
+    {
+      "type": "library",
+      "name": "shebang-command",
+      "version": "2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:231"
+    },
+    {
+      "type": "library",
+      "name": "shebang-regex",
+      "version": "3.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:232"
+    },
+    {
+      "type": "library",
+      "name": "signal-exit",
+      "version": "3.0.7",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:233"
+    },
+    {
+      "type": "library",
+      "name": "simple-update-notifier",
+      "version": "2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:234"
+    },
+    {
+      "type": "library",
+      "name": "slice-ansi",
+      "version": "3.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:235"
+    },
+    {
+      "type": "library",
+      "name": "smart-buffer",
+      "version": "4.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:236"
+    },
+    {
+      "type": "library",
+      "name": "source-map",
+      "version": "0.6.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:237"
+    },
+    {
+      "type": "library",
+      "name": "source-map-support",
+      "version": "0.5.21",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:238"
+    },
+    {
+      "type": "library",
+      "name": "sprintf-js",
+      "version": "1.1.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:239"
+    },
+    {
+      "type": "library",
+      "name": "stat-mode",
+      "version": "1.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:240"
+    },
+    {
+      "type": "library",
+      "name": "string-width",
+      "version": "4.2.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:241"
+    },
+    {
+      "type": "library",
+      "name": "strip-ansi",
+      "version": "6.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:242"
+    },
+    {
+      "type": "library",
+      "name": "sumchecker",
+      "version": "3.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:243"
+    },
+    {
+      "type": "library",
+      "name": "supports-color",
+      "version": "7.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:244"
+    },
+    {
+      "type": "library",
+      "name": "tar",
+      "version": "7.5.20",
+      "licenses": [
+        {
+          "license": {
+            "id": "BlueOak-1.0.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:245"
+    },
+    {
+      "type": "library",
+      "name": "yallist",
+      "version": "5.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "BlueOak-1.0.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:246"
+    },
+    {
+      "type": "library",
+      "name": "temp",
+      "version": "0.9.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:247"
+    },
+    {
+      "type": "library",
+      "name": "temp-file",
+      "version": "3.4.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:248"
+    },
+    {
+      "type": "library",
+      "name": "tiny-async-pool",
+      "version": "1.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:249"
+    },
+    {
+      "type": "library",
+      "name": "semver",
+      "version": "5.7.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:250"
+    },
+    {
+      "type": "library",
+      "name": "tinyglobby",
+      "version": "0.2.17",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:251"
+    },
+    {
+      "type": "library",
+      "name": "tmp",
+      "version": "0.2.7",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:252"
+    },
+    {
+      "type": "library",
+      "name": "tmp-promise",
+      "version": "3.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:253"
+    },
+    {
+      "type": "library",
+      "name": "truncate-utf8-bytes",
+      "version": "1.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "WTFPL"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:254"
+    },
+    {
+      "type": "library",
+      "name": "type-fest",
+      "version": "0.13.1",
+      "licenses": [
+        {
+          "expression": "(MIT OR CC0-1.0)"
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:255"
+    },
+    {
+      "type": "library",
+      "name": "undici",
+      "version": "6.27.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:256"
+    },
+    {
+      "type": "library",
+      "name": "undici-types",
+      "version": "8.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:257"
+    },
+    {
+      "type": "library",
+      "name": "universalify",
+      "version": "2.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:258"
+    },
+    {
+      "type": "library",
+      "name": "uri-js",
+      "version": "4.4.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-2-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:259"
+    },
+    {
+      "type": "library",
+      "name": "utf8-byte-length",
+      "version": "1.0.5",
+      "licenses": [
+        {
+          "expression": "(WTFPL OR MIT)"
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:260"
+    },
+    {
+      "type": "library",
+      "name": "verror",
+      "version": "1.10.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:261"
+    },
+    {
+      "type": "library",
+      "name": "which",
+      "version": "5.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:262"
+    },
+    {
+      "type": "library",
+      "name": "wrap-ansi",
+      "version": "7.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:263"
+    },
+    {
+      "type": "library",
+      "name": "wrappy",
+      "version": "1.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:264"
+    },
+    {
+      "type": "library",
+      "name": "xmlbuilder",
+      "version": "15.1.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:265"
+    },
+    {
+      "type": "library",
+      "name": "y18n",
+      "version": "5.0.8",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:266"
+    },
+    {
+      "type": "library",
+      "name": "yallist",
+      "version": "4.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:267"
+    },
+    {
+      "type": "library",
+      "name": "yargs",
+      "version": "17.7.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:268"
+    },
+    {
+      "type": "library",
+      "name": "yargs-parser",
+      "version": "21.1.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:269"
+    },
+    {
+      "type": "library",
+      "name": "yauzl",
+      "version": "2.10.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:270"
+    },
+    {
+      "type": "library",
+      "name": "yocto-queue",
+      "version": "0.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:271"
+    },
+    {
+      "type": "library",
+      "name": "@emnapi/core",
+      "version": "1.11.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:272"
+    },
+    {
+      "type": "library",
+      "name": "@emnapi/runtime",
+      "version": "1.11.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:273"
+    },
+    {
+      "type": "library",
+      "name": "@emnapi/wasi-threads",
+      "version": "1.2.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:274"
+    },
+    {
+      "type": "library",
+      "name": "@jridgewell/sourcemap-codec",
+      "version": "1.5.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:275"
+    },
+    {
+      "type": "library",
+      "name": "@napi-rs/wasm-runtime",
+      "version": "1.1.6",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:276"
+    },
+    {
+      "type": "library",
+      "name": "@oxc-project/types",
+      "version": "0.139.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:277"
+    },
+    {
+      "type": "library",
+      "name": "@rolldown/binding-android-arm64",
+      "version": "1.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:278"
+    },
+    {
+      "type": "library",
+      "name": "@rolldown/binding-darwin-arm64",
+      "version": "1.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:279"
+    },
+    {
+      "type": "library",
+      "name": "@rolldown/binding-darwin-x64",
+      "version": "1.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:280"
+    },
+    {
+      "type": "library",
+      "name": "@rolldown/binding-freebsd-x64",
+      "version": "1.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:281"
+    },
+    {
+      "type": "library",
+      "name": "@rolldown/binding-linux-arm-gnueabihf",
+      "version": "1.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:282"
+    },
+    {
+      "type": "library",
+      "name": "@rolldown/binding-linux-arm64-gnu",
+      "version": "1.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:283"
+    },
+    {
+      "type": "library",
+      "name": "@rolldown/binding-linux-arm64-musl",
+      "version": "1.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:284"
+    },
+    {
+      "type": "library",
+      "name": "@rolldown/binding-linux-ppc64-gnu",
+      "version": "1.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:285"
+    },
+    {
+      "type": "library",
+      "name": "@rolldown/binding-linux-s390x-gnu",
+      "version": "1.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:286"
+    },
+    {
+      "type": "library",
+      "name": "@rolldown/binding-linux-x64-gnu",
+      "version": "1.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:287"
+    },
+    {
+      "type": "library",
+      "name": "@rolldown/binding-linux-x64-musl",
+      "version": "1.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:288"
+    },
+    {
+      "type": "library",
+      "name": "@rolldown/binding-openharmony-arm64",
+      "version": "1.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:289"
+    },
+    {
+      "type": "library",
+      "name": "@rolldown/binding-wasm32-wasi",
+      "version": "1.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:290"
+    },
+    {
+      "type": "library",
+      "name": "@emnapi/core",
+      "version": "1.11.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:291"
+    },
+    {
+      "type": "library",
+      "name": "@emnapi/runtime",
+      "version": "1.11.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:292"
+    },
+    {
+      "type": "library",
+      "name": "@rolldown/binding-win32-arm64-msvc",
+      "version": "1.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:293"
+    },
+    {
+      "type": "library",
+      "name": "@rolldown/binding-win32-x64-msvc",
+      "version": "1.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:294"
+    },
+    {
+      "type": "library",
+      "name": "@rolldown/pluginutils",
+      "version": "1.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:295"
+    },
+    {
+      "type": "library",
+      "name": "@standard-schema/spec",
+      "version": "1.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:296"
+    },
+    {
+      "type": "library",
+      "name": "@tybys/wasm-util",
+      "version": "0.10.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:297"
+    },
+    {
+      "type": "library",
+      "name": "@types/chai",
+      "version": "5.2.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:298"
+    },
+    {
+      "type": "library",
+      "name": "@types/deep-eql",
+      "version": "4.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:299"
+    },
+    {
+      "type": "library",
+      "name": "@types/estree",
+      "version": "1.0.9",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:300"
+    },
+    {
+      "type": "library",
+      "name": "@types/node",
+      "version": "22.15.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:301"
+    },
+    {
+      "type": "library",
+      "name": "@types/react",
+      "version": "19.2.17",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:302"
+    },
+    {
+      "type": "library",
+      "name": "@types/react-dom",
+      "version": "19.2.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:303"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-aix-ppc64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:304"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-darwin-arm64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:305"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-darwin-x64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:306"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-freebsd-arm64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:307"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-freebsd-x64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:308"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-linux-arm",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:309"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-linux-arm64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:310"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-linux-loong64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:311"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-linux-mips64el",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:312"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-linux-ppc64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:313"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-linux-riscv64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:314"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-linux-s390x",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:315"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-linux-x64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:316"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-netbsd-arm64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:317"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-netbsd-x64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:318"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-openbsd-arm64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:319"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-openbsd-x64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:320"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-sunos-x64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:321"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-win32-arm64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:322"
+    },
+    {
+      "type": "library",
+      "name": "@typescript/typescript-win32-x64",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:323"
+    },
+    {
+      "type": "library",
+      "name": "@vitejs/plugin-react",
+      "version": "6.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:324"
+    },
+    {
+      "type": "library",
+      "name": "@vitest/expect",
+      "version": "4.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:325"
+    },
+    {
+      "type": "library",
+      "name": "@vitest/mocker",
+      "version": "4.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:326"
+    },
+    {
+      "type": "library",
+      "name": "@vitest/pretty-format",
+      "version": "4.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:327"
+    },
+    {
+      "type": "library",
+      "name": "@vitest/runner",
+      "version": "4.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:328"
+    },
+    {
+      "type": "library",
+      "name": "@vitest/snapshot",
+      "version": "4.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:329"
+    },
+    {
+      "type": "library",
+      "name": "@vitest/spy",
+      "version": "4.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:330"
+    },
+    {
+      "type": "library",
+      "name": "@vitest/utils",
+      "version": "4.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:331"
+    },
+    {
+      "type": "library",
+      "name": "assertion-error",
+      "version": "2.0.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:332"
+    },
+    {
+      "type": "library",
+      "name": "chai",
+      "version": "6.2.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:333"
+    },
+    {
+      "type": "library",
+      "name": "convert-source-map",
+      "version": "2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:334"
+    },
+    {
+      "type": "library",
+      "name": "csstype",
+      "version": "3.2.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:335"
+    },
+    {
+      "type": "library",
+      "name": "detect-libc",
+      "version": "2.1.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:336"
+    },
+    {
+      "type": "library",
+      "name": "es-module-lexer",
+      "version": "2.3.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:337"
+    },
+    {
+      "type": "library",
+      "name": "estree-walker",
+      "version": "3.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:338"
+    },
+    {
+      "type": "library",
+      "name": "expect-type",
+      "version": "1.4.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:339"
+    },
+    {
+      "type": "library",
+      "name": "fsevents",
+      "version": "2.3.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:340"
+    },
+    {
+      "type": "library",
+      "name": "lightningcss",
+      "version": "1.32.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:341"
+    },
+    {
+      "type": "library",
+      "name": "lightningcss-android-arm64",
+      "version": "1.32.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:342"
+    },
+    {
+      "type": "library",
+      "name": "lightningcss-darwin-arm64",
+      "version": "1.32.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:343"
+    },
+    {
+      "type": "library",
+      "name": "lightningcss-darwin-x64",
+      "version": "1.32.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:344"
+    },
+    {
+      "type": "library",
+      "name": "lightningcss-freebsd-x64",
+      "version": "1.32.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:345"
+    },
+    {
+      "type": "library",
+      "name": "lightningcss-linux-arm-gnueabihf",
+      "version": "1.32.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:346"
+    },
+    {
+      "type": "library",
+      "name": "lightningcss-linux-arm64-gnu",
+      "version": "1.32.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:347"
+    },
+    {
+      "type": "library",
+      "name": "lightningcss-linux-arm64-musl",
+      "version": "1.32.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:348"
+    },
+    {
+      "type": "library",
+      "name": "lightningcss-linux-x64-gnu",
+      "version": "1.32.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:349"
+    },
+    {
+      "type": "library",
+      "name": "lightningcss-linux-x64-musl",
+      "version": "1.32.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:350"
+    },
+    {
+      "type": "library",
+      "name": "lightningcss-win32-arm64-msvc",
+      "version": "1.32.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:351"
+    },
+    {
+      "type": "library",
+      "name": "lightningcss-win32-x64-msvc",
+      "version": "1.32.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MPL-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:352"
+    },
+    {
+      "type": "library",
+      "name": "magic-string",
+      "version": "0.30.21",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:353"
+    },
+    {
+      "type": "library",
+      "name": "nanoid",
+      "version": "3.3.16",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:354"
+    },
+    {
+      "type": "library",
+      "name": "obug",
+      "version": "2.1.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:355"
+    },
+    {
+      "type": "library",
+      "name": "pathe",
+      "version": "2.0.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:356"
+    },
+    {
+      "type": "library",
+      "name": "postcss",
+      "version": "8.5.17",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:357"
+    },
+    {
+      "type": "library",
+      "name": "react",
+      "version": "19.2.7",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:358"
+    },
+    {
+      "type": "library",
+      "name": "react-dom",
+      "version": "19.2.7",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:359"
+    },
+    {
+      "type": "library",
+      "name": "rolldown",
+      "version": "1.1.5",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:360"
+    },
+    {
+      "type": "library",
+      "name": "scheduler",
+      "version": "0.27.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:361"
+    },
+    {
+      "type": "library",
+      "name": "siginfo",
+      "version": "2.0.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "ISC"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:362"
+    },
+    {
+      "type": "library",
+      "name": "source-map-js",
+      "version": "1.2.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:363"
+    },
+    {
+      "type": "library",
+      "name": "stackback",
+      "version": "0.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:364"
+    },
+    {
+      "type": "library",
+      "name": "std-env",
+      "version": "4.2.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:365"
+    },
+    {
+      "type": "library",
+      "name": "tinybench",
+      "version": "2.9.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:366"
+    },
+    {
+      "type": "library",
+      "name": "tinyexec",
+      "version": "1.2.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:367"
+    },
+    {
+      "type": "library",
+      "name": "tinyrainbow",
+      "version": "3.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:368"
+    },
+    {
+      "type": "library",
+      "name": "tslib",
+      "version": "2.8.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "0BSD"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:369"
+    },
+    {
+      "type": "library",
+      "name": "typescript",
+      "version": "7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:370"
+    },
+    {
+      "type": "library",
+      "name": "vite",
+      "version": "8.1.4",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:371"
+    },
+    {
+      "type": "library",
+      "name": "vitest",
+      "version": "4.1.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:372"
+    },
+    {
+      "type": "library",
+      "name": "why-is-node-running",
+      "version": "2.3.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "frontend/package-lock.json"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:373"
+    },
+    {
+      "type": "library",
+      "name": "fastapi",
+      "version": "0.136.3",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:374"
+    },
+    {
+      "type": "library",
+      "name": "uvicorn",
+      "version": "0.49.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:375"
+    },
+    {
+      "type": "library",
+      "name": "aiosqlite",
+      "version": "0.22.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "NOASSERTION"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:376"
+    },
+    {
+      "type": "library",
+      "name": "cryptography",
+      "version": "48.0.0",
+      "licenses": [
+        {
+          "expression": "Apache-2.0 OR BSD-3-Clause"
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:377"
+    },
+    {
+      "type": "library",
+      "name": "websockets",
+      "version": "13.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "NOASSERTION"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:378"
+    },
+    {
+      "type": "library",
+      "name": "watchfiles",
+      "version": "1.2.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "NOASSERTION"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:379"
+    },
+    {
+      "type": "library",
+      "name": "watchdog",
+      "version": "5.0.3",
+      "licenses": [
+        {
+          "license": {
+            "name": "NOASSERTION"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:380"
+    },
+    {
+      "type": "library",
+      "name": "pillow",
+      "version": "12.1.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT-CMU"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:381"
+    },
+    {
+      "type": "library",
+      "name": "PyMuPDF",
+      "version": "1.27.2.3",
+      "licenses": [
+        {
+          "license": {
+            "name": "NOASSERTION"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:382"
+    },
+    {
+      "type": "library",
+      "name": "PyPDF2",
+      "version": "3.0.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "NOASSERTION"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:383"
+    },
+    {
+      "type": "library",
+      "name": "pypdf",
+      "version": "6.10.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "BSD-3-Clause"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:384"
+    },
+    {
+      "type": "library",
+      "name": "python-docx",
+      "version": "1.2.0",
+      "licenses": [
+        {
+          "license": {
+            "name": "NOASSERTION"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:385"
+    },
+    {
+      "type": "library",
+      "name": "lxml",
+      "version": "6.0.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "NOASSERTION"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:386"
+    },
+    {
+      "type": "library",
+      "name": "numpy",
+      "version": "2.4.6",
+      "licenses": [
+        {
+          "expression": "BSD-3-Clause AND 0BSD AND MIT AND Zlib AND CC0-1.0"
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:387"
+    },
+    {
+      "type": "library",
+      "name": "scipy",
+      "version": "1.17.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "NOASSERTION"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:388"
+    },
+    {
+      "type": "library",
+      "name": "pandas",
+      "version": "2.3.3",
+      "licenses": [
+        {
+          "license": {
+            "name": "NOASSERTION"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:389"
+    },
+    {
+      "type": "library",
+      "name": "matplotlib",
+      "version": "3.10.8",
+      "licenses": [
+        {
+          "license": {
+            "name": "NOASSERTION"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:390"
+    },
+    {
+      "type": "library",
+      "name": "seaborn",
+      "version": "0.13.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "NOASSERTION"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:391"
+    },
+    {
+      "type": "library",
+      "name": "openpyxl",
+      "version": "3.1.5",
+      "licenses": [
+        {
+          "license": {
+            "name": "NOASSERTION"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:392"
+    },
+    {
+      "type": "library",
+      "name": "requests",
+      "version": "2.33.1",
+      "licenses": [
+        {
+          "license": {
+            "name": "NOASSERTION"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:393"
+    },
+    {
+      "type": "library",
+      "name": "PyYAML",
+      "version": "6.0.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "NOASSERTION"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:source",
+          "value": "runtime-release/python"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:394"
+    },
+    {
+      "type": "application",
+      "name": "python",
+      "version": "Python 3.11.9",
+      "licenses": [
+        {
+          "license": {
+            "id": "PSF-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:path",
+          "value": "python/python.exe"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "5f7b89a612c9b8af1d6456cdfcd1dbe5ca630849e79aebced9bee9a6694952ec"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:395"
+    },
+    {
+      "type": "application",
+      "name": "node",
+      "version": "v24.13.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:path",
+          "value": "node/node.exe"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d14ba95cdce1ef7dc9ad3ac74949ca5db38b27378ee30f30a23cf26f9e875a11"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:396"
+    },
+    {
+      "type": "application",
+      "name": "codex",
+      "version": "codex-cli 0.144.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:path",
+          "value": "node/node_modules/@openai/codex/node_modules/@openai/codex-win32-x64/vendor/x86_64-pc-windows-msvc/bin/codex.exe"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "cbacbb9726262ef558b4af0438a1b2a5bba9076132401d947b5b4d2bf92ab0e4"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:397"
+    },
+    {
+      "type": "application",
+      "name": "ripgrep",
+      "version": "ripgrep 15.1.0 (rev af60c2de9d)",
+      "licenses": [
+        {
+          "expression": "MIT OR Unlicense"
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:path",
+          "value": "node/node_modules/@openai/codex/node_modules/@openai/codex-win32-x64/vendor/x86_64-pc-windows-msvc/codex-path/rg.exe"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "decdd4992f3f1b9a5ef9898f1b40ab16886d579d6516b4efd3d5eaa19364e408"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:398"
+    },
+    {
+      "type": "application",
+      "name": "git",
+      "version": "git version 2.52.0.windows.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-only"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:path",
+          "value": "git/cmd/git.exe"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "3cbd024d9d11ef08bd6a0cb5a973613c50825b4952bc6006f3f4222f436091e5"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:399"
+    },
+    {
+      "type": "application",
+      "name": "bash",
+      "version": "GNU bash, version 5.2.37(1)-release (x86_64-pc-msys)",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-3.0-or-later"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:path",
+          "value": "git/bin/bash.exe"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "c79fa1cd106bd3e2321f87e580930142ba9309d17b968fa5e3e71dedbbdc36aa"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:400"
+    },
+    {
+      "type": "application",
+      "name": "pandoc",
+      "version": "pandoc.exe 3.7.0.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-or-later"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:path",
+          "value": "pandoc/pandoc.exe"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "805c46254def553373790ba158e5634cf714e9785a0e5cfadeadb03b60413248"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:401"
+    },
+    {
+      "type": "application",
+      "name": "drawio",
+      "version": "28.2.5.0",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:path",
+          "value": "draw.io/draw.io.exe"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "d34969d2cd3a076cd1bbfce69f3a7ce8b52ba90e6fcd0171b1b6e967b2a799ad"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:402"
+    },
+    {
+      "type": "application",
+      "name": "xelatex",
+      "version": "25.12",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-or-later"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:path",
+          "value": "texlive/texmfs/install/miktex/bin/x64/xelatex.exe"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "ef2397c0f8638ccb79a46a693be196e64ce90b361fde5cbcd7397a72e13e8ff4"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:403"
+    },
+    {
+      "type": "application",
+      "name": "pdflatex",
+      "version": "25.12",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-or-later"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:path",
+          "value": "texlive/texmfs/install/miktex/bin/x64/pdflatex.exe"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "de48c5ef651d2ded45e8d82188af22aaeebf0055d679b090609aff1881d97d30"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:404"
+    },
+    {
+      "type": "application",
+      "name": "latexmk",
+      "version": "unknown",
+      "licenses": [
+        {
+          "license": {
+            "id": "GPL-2.0-or-later"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:path",
+          "value": "texlive/texmfs/install/miktex/bin/x64/latexmk.exe"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "85a166631fecc56b37cdf87d4e4e238372007178046327dc2d780b455caad3fa"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:405"
+    },
+    {
+      "type": "application",
+      "name": "biber",
+      "version": "unknown",
+      "licenses": [
+        {
+          "license": {
+            "id": "Artistic-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:path",
+          "value": "texlive/texmfs/install/miktex/bin/x64/biber.exe"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "e38abd420f3ad59f34b105392061ee6f099ed1d119e24f623625a5189a5f60f2"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:406"
+    },
+    {
+      "type": "application",
+      "name": "OpenAI Codex CLI",
+      "version": "0.144.1",
+      "licenses": [
+        {
+          "license": {
+            "id": "Apache-2.0"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:path",
+          "value": "node/node_modules/@openai/codex/node_modules/@openai/codex-win32-x64/vendor/x86_64-pc-windows-msvc/bin/codex.exe"
+        },
+        {
+          "name": "vibe:reported-version",
+          "value": "codex-cli 0.144.1"
+        },
+        {
+          "name": "vibe:redistribution-status",
+          "value": "permitted_by_apache_2_0"
+        },
+        {
+          "name": "vibe:npm-package",
+          "value": "@openai/codex"
+        },
+        {
+          "name": "vibe:npm-integrity",
+          "value": "sha512-Xir1zqPfpenhdoAoshN53uonzbBXj18COyzRkFlVZpSNyEl5XtkuYu9oddELePFN7K/0sXUcSO34Ad5IeCXPbw=="
+        },
+        {
+          "name": "vibe:license-files",
+          "value": "[{\"path\":\"agents/codex/LICENSE\",\"sha256\":\"d17f227e4df5da1600391338865ce0f3055211760a36688f816941d58232d8dc\",\"bytes\":10926},{\"path\":\"agents/codex/NOTICE\",\"sha256\":\"9d71575ecfd9a843fc1677b0efb08053c6ba9fd686a0de1a6f5382fd3c220915\",\"bytes\":242}]"
+        }
+      ],
+      "hashes": [
+        {
+          "alg": "SHA-256",
+          "content": "cbacbb9726262ef558b4af0438a1b2a5bba9076132401d947b5b4d2bf92ab0e4"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:407"
+    },
+    {
+      "type": "application",
+      "name": "Vibe Research",
+      "version": "1.2.2",
+      "licenses": [
+        {
+          "license": {
+            "id": "MIT"
+          }
+        }
+      ],
+      "bom-ref": "urn:vibe:component:408"
+    },
+    {
+      "type": "runtime",
+      "name": "Vibe Research portable production runtime",
+      "version": "1.2",
+      "licenses": [
+        {
+          "license": {
+            "name": "NOASSERTION"
+          }
+        }
+      ],
+      "properties": [
+        {
+          "name": "vibe:files",
+          "value": "31371"
+        },
+        {
+          "name": "vibe:bytes",
+          "value": "3083982446"
+        },
+        {
+          "name": "vibe:manifest-sha256",
+          "value": "191abdea2b79a514eeef441a3a3c04188a0bcd5ce6a6684aa65104f576f0cb62"
+        },
+        {
+          "name": "vibe:manifest-summary-sha256",
+          "value": "88976b579c189033185d637d51c2e7641abd2c52b567ac204ea0423a3c81183e"
+        },
+        {
+          "name": "vibe:requirements-sha256",
+          "value": "bd9268904a4d25fa60beecea9c1659007064976c5eb66d97a8fbb680b5839585"
+        },
+        {
+          "name": "vibe:release-eligible",
+          "value": "true"
+        },
+        {
+          "name": "vibe:release-blockers",
+          "value": "[]"
+        }
+      ],
+      "bom-ref": "urn:vibe:component:409"
+    }
+  ],
+  "dependencies": [
+    {
+      "ref": "urn:vibe:component:408",
+      "dependsOn": [
+        "urn:vibe:component:1",
+        "urn:vibe:component:2",
+        "urn:vibe:component:3",
+        "urn:vibe:component:4",
+        "urn:vibe:component:5",
+        "urn:vibe:component:6",
+        "urn:vibe:component:7",
+        "urn:vibe:component:8",
+        "urn:vibe:component:9",
+        "urn:vibe:component:10",
+        "urn:vibe:component:11",
+        "urn:vibe:component:12",
+        "urn:vibe:component:13",
+        "urn:vibe:component:14",
+        "urn:vibe:component:15",
+        "urn:vibe:component:16",
+        "urn:vibe:component:17",
+        "urn:vibe:component:18",
+        "urn:vibe:component:19",
+        "urn:vibe:component:20",
+        "urn:vibe:component:21",
+        "urn:vibe:component:22",
+        "urn:vibe:component:23",
+        "urn:vibe:component:24",
+        "urn:vibe:component:25",
+        "urn:vibe:component:26",
+        "urn:vibe:component:27",
+        "urn:vibe:component:28",
+        "urn:vibe:component:29",
+        "urn:vibe:component:30",
+        "urn:vibe:component:31",
+        "urn:vibe:component:32",
+        "urn:vibe:component:33",
+        "urn:vibe:component:34",
+        "urn:vibe:component:35",
+        "urn:vibe:component:36",
+        "urn:vibe:component:37",
+        "urn:vibe:component:38",
+        "urn:vibe:component:39",
+        "urn:vibe:component:40",
+        "urn:vibe:component:41",
+        "urn:vibe:component:42",
+        "urn:vibe:component:43",
+        "urn:vibe:component:44",
+        "urn:vibe:component:45",
+        "urn:vibe:component:46",
+        "urn:vibe:component:47",
+        "urn:vibe:component:48",
+        "urn:vibe:component:49",
+        "urn:vibe:component:50",
+        "urn:vibe:component:51",
+        "urn:vibe:component:52",
+        "urn:vibe:component:53",
+        "urn:vibe:component:54",
+        "urn:vibe:component:55",
+        "urn:vibe:component:56",
+        "urn:vibe:component:57",
+        "urn:vibe:component:58",
+        "urn:vibe:component:59",
+        "urn:vibe:component:60",
+        "urn:vibe:component:61",
+        "urn:vibe:component:62",
+        "urn:vibe:component:63",
+        "urn:vibe:component:64",
+        "urn:vibe:component:65",
+        "urn:vibe:component:66",
+        "urn:vibe:component:67",
+        "urn:vibe:component:68",
+        "urn:vibe:component:69",
+        "urn:vibe:component:70",
+        "urn:vibe:component:71",
+        "urn:vibe:component:72",
+        "urn:vibe:component:73",
+        "urn:vibe:component:74",
+        "urn:vibe:component:75",
+        "urn:vibe:component:76",
+        "urn:vibe:component:77",
+        "urn:vibe:component:78",
+        "urn:vibe:component:79",
+        "urn:vibe:component:80",
+        "urn:vibe:component:81",
+        "urn:vibe:component:82",
+        "urn:vibe:component:83",
+        "urn:vibe:component:84",
+        "urn:vibe:component:85",
+        "urn:vibe:component:86",
+        "urn:vibe:component:87",
+        "urn:vibe:component:88",
+        "urn:vibe:component:89",
+        "urn:vibe:component:90",
+        "urn:vibe:component:91",
+        "urn:vibe:component:92",
+        "urn:vibe:component:93",
+        "urn:vibe:component:94",
+        "urn:vibe:component:95",
+        "urn:vibe:component:96",
+        "urn:vibe:component:97",
+        "urn:vibe:component:98",
+        "urn:vibe:component:99",
+        "urn:vibe:component:100",
+        "urn:vibe:component:101",
+        "urn:vibe:component:102",
+        "urn:vibe:component:103",
+        "urn:vibe:component:104",
+        "urn:vibe:component:105",
+        "urn:vibe:component:106",
+        "urn:vibe:component:107",
+        "urn:vibe:component:108",
+        "urn:vibe:component:109",
+        "urn:vibe:component:110",
+        "urn:vibe:component:111",
+        "urn:vibe:component:112",
+        "urn:vibe:component:113",
+        "urn:vibe:component:114",
+        "urn:vibe:component:115",
+        "urn:vibe:component:116",
+        "urn:vibe:component:117",
+        "urn:vibe:component:118",
+        "urn:vibe:component:119",
+        "urn:vibe:component:120",
+        "urn:vibe:component:121",
+        "urn:vibe:component:122",
+        "urn:vibe:component:123",
+        "urn:vibe:component:124",
+        "urn:vibe:component:125",
+        "urn:vibe:component:126",
+        "urn:vibe:component:127",
+        "urn:vibe:component:128",
+        "urn:vibe:component:129",
+        "urn:vibe:component:130",
+        "urn:vibe:component:131",
+        "urn:vibe:component:132",
+        "urn:vibe:component:133",
+        "urn:vibe:component:134",
+        "urn:vibe:component:135",
+        "urn:vibe:component:136",
+        "urn:vibe:component:137",
+        "urn:vibe:component:138",
+        "urn:vibe:component:139",
+        "urn:vibe:component:140",
+        "urn:vibe:component:141",
+        "urn:vibe:component:142",
+        "urn:vibe:component:143",
+        "urn:vibe:component:144",
+        "urn:vibe:component:145",
+        "urn:vibe:component:146",
+        "urn:vibe:component:147",
+        "urn:vibe:component:148",
+        "urn:vibe:component:149",
+        "urn:vibe:component:150",
+        "urn:vibe:component:151",
+        "urn:vibe:component:152",
+        "urn:vibe:component:153",
+        "urn:vibe:component:154",
+        "urn:vibe:component:155",
+        "urn:vibe:component:156",
+        "urn:vibe:component:157",
+        "urn:vibe:component:158",
+        "urn:vibe:component:159",
+        "urn:vibe:component:160",
+        "urn:vibe:component:161",
+        "urn:vibe:component:162",
+        "urn:vibe:component:163",
+        "urn:vibe:component:164",
+        "urn:vibe:component:165",
+        "urn:vibe:component:166",
+        "urn:vibe:component:167",
+        "urn:vibe:component:168",
+        "urn:vibe:component:169",
+        "urn:vibe:component:170",
+        "urn:vibe:component:171",
+        "urn:vibe:component:172",
+        "urn:vibe:component:173",
+        "urn:vibe:component:174",
+        "urn:vibe:component:175",
+        "urn:vibe:component:176",
+        "urn:vibe:component:177",
+        "urn:vibe:component:178",
+        "urn:vibe:component:179",
+        "urn:vibe:component:180",
+        "urn:vibe:component:181",
+        "urn:vibe:component:182",
+        "urn:vibe:component:183",
+        "urn:vibe:component:184",
+        "urn:vibe:component:185",
+        "urn:vibe:component:186",
+        "urn:vibe:component:187",
+        "urn:vibe:component:188",
+        "urn:vibe:component:189",
+        "urn:vibe:component:190",
+        "urn:vibe:component:191",
+        "urn:vibe:component:192",
+        "urn:vibe:component:193",
+        "urn:vibe:component:194",
+        "urn:vibe:component:195",
+        "urn:vibe:component:196",
+        "urn:vibe:component:197",
+        "urn:vibe:component:198",
+        "urn:vibe:component:199",
+        "urn:vibe:component:200",
+        "urn:vibe:component:201",
+        "urn:vibe:component:202",
+        "urn:vibe:component:203",
+        "urn:vibe:component:204",
+        "urn:vibe:component:205",
+        "urn:vibe:component:206",
+        "urn:vibe:component:207",
+        "urn:vibe:component:208",
+        "urn:vibe:component:209",
+        "urn:vibe:component:210",
+        "urn:vibe:component:211",
+        "urn:vibe:component:212",
+        "urn:vibe:component:213",
+        "urn:vibe:component:214",
+        "urn:vibe:component:215",
+        "urn:vibe:component:216",
+        "urn:vibe:component:217",
+        "urn:vibe:component:218",
+        "urn:vibe:component:219",
+        "urn:vibe:component:220",
+        "urn:vibe:component:221",
+        "urn:vibe:component:222",
+        "urn:vibe:component:223",
+        "urn:vibe:component:224",
+        "urn:vibe:component:225",
+        "urn:vibe:component:226",
+        "urn:vibe:component:227",
+        "urn:vibe:component:228",
+        "urn:vibe:component:229",
+        "urn:vibe:component:230",
+        "urn:vibe:component:231",
+        "urn:vibe:component:232",
+        "urn:vibe:component:233",
+        "urn:vibe:component:234",
+        "urn:vibe:component:235",
+        "urn:vibe:component:236",
+        "urn:vibe:component:237",
+        "urn:vibe:component:238",
+        "urn:vibe:component:239",
+        "urn:vibe:component:240",
+        "urn:vibe:component:241",
+        "urn:vibe:component:242",
+        "urn:vibe:component:243",
+        "urn:vibe:component:244",
+        "urn:vibe:component:245",
+        "urn:vibe:component:246",
+        "urn:vibe:component:247",
+        "urn:vibe:component:248",
+        "urn:vibe:component:249",
+        "urn:vibe:component:250",
+        "urn:vibe:component:251",
+        "urn:vibe:component:252",
+        "urn:vibe:component:253",
+        "urn:vibe:component:254",
+        "urn:vibe:component:255",
+        "urn:vibe:component:256",
+        "urn:vibe:component:257",
+        "urn:vibe:component:258",
+        "urn:vibe:component:259",
+        "urn:vibe:component:260",
+        "urn:vibe:component:261",
+        "urn:vibe:component:262",
+        "urn:vibe:component:263",
+        "urn:vibe:component:264",
+        "urn:vibe:component:265",
+        "urn:vibe:component:266",
+        "urn:vibe:component:267",
+        "urn:vibe:component:268",
+        "urn:vibe:component:269",
+        "urn:vibe:component:270",
+        "urn:vibe:component:271",
+        "urn:vibe:component:272",
+        "urn:vibe:component:273",
+        "urn:vibe:component:274",
+        "urn:vibe:component:275",
+        "urn:vibe:component:276",
+        "urn:vibe:component:277",
+        "urn:vibe:component:278",
+        "urn:vibe:component:279",
+        "urn:vibe:component:280",
+        "urn:vibe:component:281",
+        "urn:vibe:component:282",
+        "urn:vibe:component:283",
+        "urn:vibe:component:284",
+        "urn:vibe:component:285",
+        "urn:vibe:component:286",
+        "urn:vibe:component:287",
+        "urn:vibe:component:288",
+        "urn:vibe:component:289",
+        "urn:vibe:component:290",
+        "urn:vibe:component:291",
+        "urn:vibe:component:292",
+        "urn:vibe:component:293",
+        "urn:vibe:component:294",
+        "urn:vibe:component:295",
+        "urn:vibe:component:296",
+        "urn:vibe:component:297",
+        "urn:vibe:component:298",
+        "urn:vibe:component:299",
+        "urn:vibe:component:300",
+        "urn:vibe:component:301",
+        "urn:vibe:component:302",
+        "urn:vibe:component:303",
+        "urn:vibe:component:304",
+        "urn:vibe:component:305",
+        "urn:vibe:component:306",
+        "urn:vibe:component:307",
+        "urn:vibe:component:308",
+        "urn:vibe:component:309",
+        "urn:vibe:component:310",
+        "urn:vibe:component:311",
+        "urn:vibe:component:312",
+        "urn:vibe:component:313",
+        "urn:vibe:component:314",
+        "urn:vibe:component:315",
+        "urn:vibe:component:316",
+        "urn:vibe:component:317",
+        "urn:vibe:component:318",
+        "urn:vibe:component:319",
+        "urn:vibe:component:320",
+        "urn:vibe:component:321",
+        "urn:vibe:component:322",
+        "urn:vibe:component:323",
+        "urn:vibe:component:324",
+        "urn:vibe:component:325",
+        "urn:vibe:component:326",
+        "urn:vibe:component:327",
+        "urn:vibe:component:328",
+        "urn:vibe:component:329",
+        "urn:vibe:component:330",
+        "urn:vibe:component:331",
+        "urn:vibe:component:332",
+        "urn:vibe:component:333",
+        "urn:vibe:component:334",
+        "urn:vibe:component:335",
+        "urn:vibe:component:336",
+        "urn:vibe:component:337",
+        "urn:vibe:component:338",
+        "urn:vibe:component:339",
+        "urn:vibe:component:340",
+        "urn:vibe:component:341",
+        "urn:vibe:component:342",
+        "urn:vibe:component:343",
+        "urn:vibe:component:344",
+        "urn:vibe:component:345",
+        "urn:vibe:component:346",
+        "urn:vibe:component:347",
+        "urn:vibe:component:348",
+        "urn:vibe:component:349",
+        "urn:vibe:component:350",
+        "urn:vibe:component:351",
+        "urn:vibe:component:352",
+        "urn:vibe:component:353",
+        "urn:vibe:component:354",
+        "urn:vibe:component:355",
+        "urn:vibe:component:356",
+        "urn:vibe:component:357",
+        "urn:vibe:component:358",
+        "urn:vibe:component:359",
+        "urn:vibe:component:360",
+        "urn:vibe:component:361",
+        "urn:vibe:component:362",
+        "urn:vibe:component:363",
+        "urn:vibe:component:364",
+        "urn:vibe:component:365",
+        "urn:vibe:component:366",
+        "urn:vibe:component:367",
+        "urn:vibe:component:368",
+        "urn:vibe:component:369",
+        "urn:vibe:component:370",
+        "urn:vibe:component:371",
+        "urn:vibe:component:372",
+        "urn:vibe:component:373",
+        "urn:vibe:component:374",
+        "urn:vibe:component:375",
+        "urn:vibe:component:376",
+        "urn:vibe:component:377",
+        "urn:vibe:component:378",
+        "urn:vibe:component:379",
+        "urn:vibe:component:380",
+        "urn:vibe:component:381",
+        "urn:vibe:component:382",
+        "urn:vibe:component:383",
+        "urn:vibe:component:384",
+        "urn:vibe:component:385",
+        "urn:vibe:component:386",
+        "urn:vibe:component:387",
+        "urn:vibe:component:388",
+        "urn:vibe:component:389",
+        "urn:vibe:component:390",
+        "urn:vibe:component:391",
+        "urn:vibe:component:392",
+        "urn:vibe:component:393",
+        "urn:vibe:component:394",
+        "urn:vibe:component:395",
+        "urn:vibe:component:396",
+        "urn:vibe:component:397",
+        "urn:vibe:component:398",
+        "urn:vibe:component:399",
+        "urn:vibe:component:400",
+        "urn:vibe:component:401",
+        "urn:vibe:component:402",
+        "urn:vibe:component:403",
+        "urn:vibe:component:404",
+        "urn:vibe:component:405",
+        "urn:vibe:component:406",
+        "urn:vibe:component:407",
+        "urn:vibe:component:409"
+      ]
+    }
+  ]
+}

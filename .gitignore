@@ -1,0 +1,36 @@
+
+# Python / Node runtime & compiled artifacts
+runtime/
+runtime-release/
+.venv-dev/
+node_modules/
+**/__pycache__/
+*.py[cod]
+
+# Local user data & secrets
+workspaces/
+cache/
+*.db
+*.sqlite*
+.env
+
+# Build & release outputs
+release/
+release-cn/
+release-cn-no-voice/
+dist/
+
+# Large harness data (research evidence & dev state — excluded for repo size)
+harness/v2/
+harness/evidence/
+
+# Other generated / runtime artifacts
+.codex-goal-harness/
+_backups/
+verification-logs/
+*.log
+runtime-manifest.json
+split_manifest.json
+split_manifest.sha256
+electron_epipe_acceptance.json
+.p9-launch.json

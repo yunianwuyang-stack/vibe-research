@@ -1,0 +1,29 @@
+{
+  "durable_provenance_snapshot": "harness/evidence/G0/external-cli-e2e-source-snapshot-20260718T104643Z/manifest.json",
+  "engineering_assurance": "pending_external_cli_validation",
+  "evidence": [
+    "harness/evidence/G0/g0-runner-full-post-p0-3-20260718T100651Z.outer-recovery.json",
+    "harness/evidence/G0/external-cli-e2e-source-snapshot-20260718T104643Z/manifest.json"
+  ],
+  "evidence_hashes": {
+    "harness/evidence/G0/external-cli-e2e-source-snapshot-20260718T104643Z/manifest.json": "5eed5a6079bd39035701fc32ca9c1fa8d4cba615c73ced8dae566ee38689e12e",
+    "harness/evidence/G0/g0-runner-full-post-p0-3-20260718T100651Z.outer-recovery.json": "617c0cbfbc7c998244e22f804f063527ad112500ce26f87f2e600d5e0268a1f9"
+  },
+  "external_validation": "pending",
+  "finding_id": "G0-F-007",
+  "phase": "G0",
+  "qualification_scope": "External adapter evidence only; blocks desktop lane and G0 acceptance.",
+  "release_qualification": "pending",
+  "root_cause": "The real desktop lane recorded Claude CLI not logged in and a separate Codex invocation failed after upstream retry limit/429; neither failure is converted to a mock, skip, or success.",
+  "schema_version": "1.0",
+  "severity": "P0",
+  "status": "BLOCKED",
+  "title": "Real dual-clean CLI E2E external validation blocked",
+  "unblock_conditions": [
+    "User-managed official Claude login is available in the test environment.",
+    "Codex service/model configuration is available without retry-limit/429 failure and without packaging credentials.",
+    "A fresh dual-clean CLI E2E run is executed after the environment changes, with real durable report artifacts and zero skipped/failing cases."
+  ],
+  "updated_utc": "2026-07-18T10:46:43.856380Z",
+  "workflow_state": "BLOCKED"
+}

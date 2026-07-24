@@ -1,0 +1,47 @@
+{
+  "confirmed_defect": {
+    "id": "F008-staged-source-provenance",
+    "mechanism": "The previous _commit_staged_evidence_file checked only the target. source.is_file(), parse_junit(staged_junit), and shutil.copyfile could accept a staged hardlink or file reparse point whose underlying valid XML is outside the staging directory. The final evidence copy then appears unlinked and validates its own digest.",
+    "minimum_reproduction": [
+      "Create a normal workspace/evidence directory and a valid external JUnit file.",
+      "During the fake supervisor run, create an NTFS hardlink at staging/lane-unit.xml to the external file and return code 0.",
+      "Previous run_lanes produces lane PASS, receipt-validation PASS, and an unlinked final evidence copy equal to forged content."
+    ],
+    "required_repair": [
+      "Validate staged source lstat/provenance before parse and before copy.",
+      "Reject staged source reparse points and st_nlink != 1.",
+      "Bind staging directory identity and enforce direct parent plus lexical/resolved containment.",
+      "Add real NTFS hardlink regression through run_lanes."
+    ],
+    "severity": "P1"
+  },
+  "finding_id": "G0-F-008",
+  "input_hashes": {
+    "bootstrap_os": "a843e10612a602e8226cfc89f5976811e4e0094b41dfa5f60f65dfd5db51cdf8",
+    "final_harness_receipt_prior": "2fb511c5fd5b683683b93d1091e99d0a97722267ffb99cd753b920d5de8c6d4a",
+    "final_real_e2e_receipt_prior": "97d0f34b37c0b4d7ca6b79cee091cce8e8380464ae709a0fee78f419547e688b",
+    "final_unit_receipt_prior": "3532ea4317a2dbeb7dbb4e41fb6d511f9abc4811bae5ff2caf4c3040c09fcb1d",
+    "final_verification_summary_prior": "b5824c46926c981c4d79f2a5809e1f453f8e48140a3ac844c5f7ab951311c27d",
+    "g0_runner": "55bd355478725273f3a0f8ae0ce91a0b36a9c5445d2b501e4b7aae3ceae318af",
+    "test_harness_g0": "fde4e71f9ebb878503e0b87e718949cebbe8804b70d38a665487cbb9bbc183a5"
+  },
+  "limitations": [
+    "The reviewer did not access files or execute commands; supplied hash values were not recomputed.",
+    "This is not human acceptance, external validation, sealed evaluation, or release qualification.",
+    "The reviewer explicitly stated that protected-trust, ownership, candidate-handoff, real external CLI, human/expert, sealed-eval, and external_validation=pending blockers remain unaffected."
+  ],
+  "review_id": "G0-IR-20260718T124236Z-staged-source-cold-review-round4",
+  "reviewer": {
+    "agent_id": "019f752e-2236-7da0-94aa-eeaa3c7ec90f",
+    "mode": "separate no-write model session; snapshot-only after an initial no-access inconclusive attempt",
+    "nickname": "Descartes",
+    "permissions": {
+      "commands": false,
+      "filesystem": false,
+      "network": false,
+      "writes": false
+    }
+  },
+  "schema_version": "1.0",
+  "verdict": "NEEDS_REPAIR"
+}

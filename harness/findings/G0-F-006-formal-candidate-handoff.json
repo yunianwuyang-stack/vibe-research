@@ -1,0 +1,26 @@
+{
+  "engineering_assurance": "STALE",
+  "evidence": [
+    "harness/adjudications/G0-IR-20260718T095650Z-independent-cold-review.json",
+    "harness/decisions/ADR-G0-013-formal-candidate-handoff-staleness.md",
+    "harness/evidence/G0/g0-runner-full-post-p0-3-20260718T100651Z.outer-recovery.json"
+  ],
+  "external_validation": "pending",
+  "finding_id": "G0-F-006",
+  "phase": "G0",
+  "qualification_scope": "Blocks formal acceptance; no local contract rewrite was performed.",
+  "release_qualification": "pending",
+  "root_cause": "The frozen phase contract's historical verify_truth runner hash does not bind the current implementation; diagnostic reports are not the formal candidate lock/manifest/root-level report set with protected signed runner receipts.",
+  "schema_version": "1.0",
+  "severity": "P0",
+  "source_review": "harness/adjudications/G0-IR-20260718T095650Z-independent-cold-review.json",
+  "status": "STALE",
+  "title": "Formal candidate handoff and frozen runner binding are stale",
+  "unblock_conditions": [
+    "Protected authorized owner approves a new phase instance/contract transition through independent ADR and review.",
+    "Fresh candidate lock, manifest, report set and signed runner receipts bind root contract, exact tools, inputs, outputs and environment.",
+    "Independent human/external adjudication validates the protected handoff."
+  ],
+  "updated_utc": "2026-07-18T10:23:25.799503Z",
+  "workflow_state": "STALE"
+}

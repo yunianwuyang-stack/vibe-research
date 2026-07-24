@@ -1,0 +1,33 @@
+{
+  "engineering_assurance": "NEEDS_REVIEW",
+  "evidence": [
+    "harness/adjudications/G0-IR-20260718T095650Z-independent-cold-review.json",
+    "harness/evidence/G0/g0-p0-3-junit-receipt-reverify-20260718T102325Z.json",
+    "harness/decisions/ADR-G0-013-formal-candidate-handoff-staleness.md"
+  ],
+  "external_validation": "pending",
+  "finding_id": "G0-F-003",
+  "local_remediation": [
+    "Bare PASS, unsigned receipts, runner hash mismatch, and nonzero exits are covered by local verifier tests.",
+    "P0-3 JUnit integrity defect is separately repaired and verified locally."
+  ],
+  "phase": "G0",
+  "qualification_scope": "Local controls do not constitute formal acceptance or top-journal readiness.",
+  "release_qualification": "pending",
+  "review_open_items": [
+    "Protected trust root remains caller/config governed rather than externally anchored.",
+    "Current real runner artifacts cannot enter formal candidate acceptance because the frozen lock/runner binding and canonical candidate handoff are stale or absent."
+  ],
+  "schema_version": "1.0",
+  "severity": "P0",
+  "source_review": "harness/adjudications/G0-IR-20260718T095650Z-independent-cold-review.json",
+  "status": "NEEDS_REVIEW",
+  "title": "Formal adjudication bare PASS bypass",
+  "unblock_conditions": [
+    "Protected external trust and signer are outside candidate/caller control.",
+    "Authorized independent contract owner creates a fresh formal candidate handoff without silently editing the frozen historical lock.",
+    "A human/external independent reviewer validates raw artifacts and signatures."
+  ],
+  "updated_utc": "2026-07-18T10:23:25.799503Z",
+  "workflow_state": "NEEDS_REVIEW"
+}

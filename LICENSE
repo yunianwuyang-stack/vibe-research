@@ -1,0 +1,80 @@
+MIT License
+
+Copyright (c) 2026 Vibe Research contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+-------------------------------------------------------------------------------
+
+THIRD-PARTY ACKNOWLEDGEMENTS
+
+This software was inspired by and builds upon concepts and ideas from the
+following open-source projects. Their original licenses and copyright notices
+are preserved in the respective packages. Please refer to
+THIRD_PARTY_NOTICES.md and the SBOM files (SBOM.cdx.json, SBOM.spdx.json)
+for the complete list of bundled dependencies and their license terms.
+
+  - Auto-claude-code-research-in-sleep
+    Unattended Claude Code CLI autonomous research execution design,
+    task encapsulation and checkpoint/recovery mechanism.
+
+  - ruflo
+    Workflow orchestration engine design, skill runner architecture,
+    and skill pack management patterns.
+
+  - local-deep-research
+    Local offline deep literature search, multi-source aggregation
+    design, and systematic review protocol concepts.
+
+  - Rethlas
+    Academic document generation approach, LaTeX/DOCX toolchain
+    integration patterns, and writing rules framework design.
+
+Note: The above acknowledgements cover design inspiration and conceptual
+borrowing. Where code from these projects was directly incorporated, the
+applicable original license terms apply and are noted in
+THIRD_PARTY_NOTICES.md. If you believe your project's license terms require
+additional attribution, please open an issue.
+
+-------------------------------------------------------------------------------
+
+BUNDLED RUNTIME COMPONENTS
+
+This distribution includes bundled runtime components under their own
+licenses. Key components include:
+
+  - Python (PSF License)
+  - TeX Live (various free licenses, see runtime/texlive for details)
+  - Electron (MIT License)
+  - Node.js (MIT License)
+
+All bundled component licenses are detailed in THIRD_PARTY_NOTICES.md,
+SBOM.cdx.json, and SBOM.spdx.json included with this distribution.
+
+-------------------------------------------------------------------------------
+
+中文说明（Chinese Notice）
+
+本软件采用 MIT 许可证开源。上述英文条款为具有法律效力的正式文本，中文仅供参考。
+
+本软件设计参考了以下开源项目的理念与架构，已在上方 THIRD-PARTY ACKNOWLEDGEMENTS
+部分列明。如您认为需要额外的许可声明，请通过 Issue 联系我们。
+
+本软件旨在提升科研质量与证据可信度，不代表能保证论文录用或任何学术成果。
+学术研究的最终责任由研究者本人承担。

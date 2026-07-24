@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<!-- ============================================================
+  系统架构图模板 (arch) —— 分层 / 模块
+  ------------------------------------------------------------
+  产物文件名建议: fig_arch.html → fig_arch.pdf
+  适用: 系统分层架构、模块组成、软件/平台结构
+
+  【怎么改】
+   1. <html> class 换主题。
+   2. 每个 .layer 是一层: .layer-tag 是层名(竖排在左), .modules 里放该层模块 .mod。
+   3. 模块 .mod 可加 class="mod hl" 高亮核心模块。
+   4. 加/减层: 复制 .layer 块; 加/减模块: 复制 .mod。
+   5. 层间用 .layer-arrow 表示自上而下的数据/调用流(双向用 ⇅)。
+   6. ⛔ 图内不写标题。
+
+  【布局原理】grid 让每层模块等宽自适应铺满, 层与层堆叠, 增删模块自动重排。
+============================================================ -->
+<html lang="zh-CN" class="theme-slate">
+<head>
+<meta charset="UTF-8">
+<style>
+  .theme-slate  { --c-primary:#5b7fa6; --c-primary-d:#3f5d7d; --c-secondary:#dbe4ee; --c-accent:#c58a5a; --c-border:#9db0c4; --c-bg:#f7f9fc; --c-node-bg:#ffffff; --c-text:#26303b; --c-text-inv:#fff; --c-muted:#6b7683; }
+  .theme-teal   { --c-primary:#3f8079; --c-primary-d:#2c5c57; --c-secondary:#d5e7e3; --c-accent:#c08a4a; --c-border:#8fb5af; --c-bg:#f5faf8; --c-node-bg:#ffffff; --c-text:#223330; --c-text-inv:#fff; --c-muted:#5f7570; }
+  .theme-amber  { --c-primary:#b57a45; --c-primary-d:#8f5c2f; --c-secondary:#f0e2d0; --c-accent:#6d8b74; --c-border:#cbb09a; --c-bg:#fbf7f1; --c-node-bg:#ffffff; --c-text:#3a2e22; --c-text-inv:#fff; --c-muted:#7a6a58; }
+  .theme-indigo { --c-primary:#5566a8; --c-primary-d:#3b4780; --c-secondary:#dde1f2; --c-accent:#4a94a8; --c-border:#a6adcf; --c-bg:#f6f7fc; --c-node-bg:#ffffff; --c-text:#262b40; --c-text-inv:#fff; --c-muted:#676e8a; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: transparent; }
+  body { font-family: "Microsoft YaHei","Noto Sans SC","PingFang SC",sans-serif; color: var(--c-text); }
+  .fig { display: inline-block; background: transparent; padding: 32px 38px; width: 960px; }
+
+  .layer { display: flex; align-items: stretch; margin: 0; }
+  /* 层名(竖排标签) */
+  .layer-tag {
+    flex: 0 0 46px; background: var(--c-primary); color: var(--c-text-inv);
+    writing-mode: vertical-rl; text-orientation: upright;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px; font-weight: 700; letter-spacing: 4px;
+    border-radius: 6px 0 0 6px;
+  }
+  /* 该层模块容器 */
+  .layer-box {
+    flex: 1 1 auto; background: var(--c-secondary);
+    border: 2px solid var(--c-border); border-left: none;
+    border-radius: 0 6px 6px 0; padding: 12px 14px;
+  }
+  .layer-name { font-size: 13px; color: var(--c-muted); margin-bottom: 8px; font-weight: 600; }
+  .modules { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
+  /* 模块块 */
+  .mod {
+    background: var(--c-node-bg); border: 2px solid var(--c-primary);
+    border-radius: 6px; padding: 10px 12px; text-align: center;
+    font-size: 14.5px; font-weight: 600; color: var(--c-primary-d); line-height: 1.45;
+  }
+  .mod .sub { display: block; font-size: 12px; color: var(--c-muted); font-weight: 400; margin-top: 3px; }
+  .mod.hl { background: var(--c-primary); color: var(--c-text-inv); border-color: var(--c-primary-d); }
+  .mod.hl .sub { color: rgba(255,255,255,.85); }
+  /* 层间箭头 */
+  .layer-arrow { text-align: center; color: var(--c-primary); font-size: 20px; line-height: 1; padding: 5px 0; }
+</style>
+</head>
+<body>
+<div class="fig">
+
+  <!-- ▼▼ 第 1 层：应用/表现层 ▼▼ -->
+  <div class="layer">
+    <div class="layer-tag">应用层</div>
+    <div class="layer-box">
+      <div class="layer-name">面向用户的功能入口</div>
+      <div class="modules">
+        <div class="mod">可视化界面<span class="sub">结果展示 / 交互</span></div>
+        <div class="mod">报告导出<span class="sub">图表 / 文档</span></div>
+        <div class="mod">参数配置<span class="sub">任务下发</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="layer-arrow">⇅</div>
+
+  <!-- ▼▼ 第 2 层：核心算法/服务层 ▼▼ -->
+  <div class="layer">
+    <div class="layer-tag">核心层</div>
+    <div class="layer-box">
+      <div class="layer-name">核心模型与算法（填论文真实模块名）</div>
+      <div class="modules">
+        <div class="mod hl">主模型引擎<span class="sub">建模 · 求解</span></div>
+        <div class="mod">优化模块<span class="sub">参数寻优</span></div>
+        <div class="mod">评估模块<span class="sub">指标计算</span></div>
+        <div class="mod">调度控制<span class="sub">流程编排</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="layer-arrow">⇅</div>
+
+  <!-- ▼▼ 第 3 层：数据层 ▼▼ -->
+  <div class="layer">
+    <div class="layer-tag">数据层</div>
+    <div class="layer-box">
+      <div class="layer-name">数据存取与预处理</div>
+      <div class="modules">
+        <div class="mod">原始数据源<span class="sub">采集 / 接入</span></div>
+        <div class="mod">预处理<span class="sub">清洗 · 特征</span></div>
+        <div class="mod">数据存储<span class="sub">缓存 / 库</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{
+  "engineering_assurance": "local_regression_pass",
+  "evidence": [
+    "harness/evidence/G0/unit-lane-post-p0-p1-20260718T0910Z.json",
+    "harness/evidence/G0/g0-f005-unicode-uri-patch-prepost-20260718T0913Z.json",
+    "harness/evidence/G0/g0-f005-research-ledger-reverify-20260718T0914Z.json",
+    "harness/evidence/G0/unit-lane-post-f005-20260718T0915Z.json",
+    "harness/decisions/ADR-G0-011-unicode-artifact-file-uri.md"
+  ],
+  "evidence_hashes": {
+    "harness/decisions/ADR-G0-011-unicode-artifact-file-uri.md": "f7906d53a08b4cfe4abb1ebe5575c1042ba2ff796155789ecd1ae6202f56cbdf",
+    "harness/evidence/G0/g0-f005-research-ledger-reverify-20260718T0914Z.json": "5363a2cb4f8ece232ae250a95ba3091b5192945e9bd47e893f8d0c82db97ba47",
+    "harness/evidence/G0/g0-f005-unicode-uri-patch-prepost-20260718T0913Z.json": "45770231507e30d9d5b10180222e0fbc658eaf9e8cc1a13dfcb8ddcda651556f",
+    "harness/evidence/G0/g0-runner-full-post-p0-p1-f005-checker-repair-20260718T0925Z.json": "bbb48f2b806314ab0d9881f8b7aa0cc085d2a9ff91dbfc56bd1fa40cc1e778e3",
+    "harness/evidence/G0/unit-lane-post-f005-20260718T0915Z.json": "e89dfc5c3b4af33cae295225f89c4de00cb74d8f0288ac211d7f52b4ff48381d",
+    "harness/evidence/G0/unit-lane-post-p0-p1-20260718T0910Z.json": "b7d7a05c544adb238fa5241b5f73a9d882c35dae6e9747446a7090fe6c346383"
+  },
+  "external_validation": "not_applicable_to_defect_fix",
+  "finding_id": "G0-F-005",
+  "local_remediation": [
+    "ArtifactIndex.verify now parses only local file URIs, URL-decodes their path component, normalizes the Windows drive-prefix form, and rejects malformed/non-local URI schemes before hashing.",
+    "A regression test uses a percent-encoded Unicode file URI and retains tamper verification."
+  ],
+  "phase": "G0",
+  "qualification_scope": "Resolved for the described local persistence defect only; it does not unblock G0 or elevate scientific/release qualification.",
+  "release_qualification": "pending",
+  "root_cause": "ArtifactIndex.register persisted Path.as_uri(), which percent-encodes Unicode paths, while ArtifactIndex.verify converted file URIs to paths without URL decoding.",
+  "schema_version": "1.0",
+  "severity": "P1",
+  "status": "resolved_local_verification",
+  "title": "Percent-encoded Unicode file URI fails artifact integrity verification",
+  "unblock_conditions": [
+    "Retain the Unicode URI regression in subsequent full lane and package verification."
+  ],
+  "updated_utc": "2026-07-18T09:32:59.407071Z"
+}

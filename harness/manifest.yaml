@@ -1,0 +1,237 @@
+{
+  "schema_version": "1.0",
+  "completion_policy": "quality_gates_only_no_project_budget",
+  "root_contract": {
+    "path": "D:\\科研软件制作\\开发指导.bootstrap.json",
+    "sha256": "a843e10612a602e8226cfc89f5976811e4e0094b41dfa5f60f65dfd5db51cdf8",
+    "requirements": 207,
+    "tamper_vectors": 12,
+    "merkle_root": "6e2a54e318865379781909a43ac2d0c5ff6878342c57415770899afce675b6d0"
+  },
+  "state": {
+    "journal": "harness/events.jsonl",
+    "projection": "harness/state.json",
+    "findings": "harness/findings.jsonl"
+  },
+  "phases": [
+    {
+      "id": "G0",
+      "depends_on": [],
+      "allowed_paths": [
+        "harness/**",
+        "tests/conftest.py",
+        "tests/test_harness_g0.py",
+        "pytest.ini",
+        "backend/config.py",
+        "backend/services/process_supervisor.py",
+        "tests/test_domain_template_builds.py",
+        "tests/test_openai_compatible_agent.py",
+        "tests/test_dual_clean_real_cli_agents_e2e.py",
+        "tests/test_dual_clean_multi_agent_cli_e2e.py",
+        "tests/run_packaged_gui_dual_clean_e2e.js",
+        "tests/test_candidate_lock_mode.py",
+        "tests/test_g0_truth.py"
+      ]
+    },
+    {
+      "id": "G1",
+      "depends_on": [
+        {
+          "task_id": "G0",
+          "assurance_class": "engineering_assurance",
+          "required_state": "accepted"
+        }
+      ],
+      "allowed_paths": [
+        "backend/**",
+        "frontend/**",
+        "tests/**",
+        "harness/evidence/G1/**"
+      ]
+    },
+    {
+      "id": "G2",
+      "depends_on": [
+        {
+          "task_id": "G1",
+          "assurance_class": "engineering_assurance",
+          "required_state": "accepted"
+        }
+      ],
+      "allowed_paths": [
+        "backend/**",
+        "frontend/**",
+        "tests/**",
+        "harness/evidence/G2/**"
+      ]
+    },
+    {
+      "id": "G3",
+      "depends_on": [
+        {
+          "task_id": "G1",
+          "assurance_class": "engineering_assurance",
+          "required_state": "accepted"
+        }
+      ],
+      "allowed_paths": [
+        "backend/**",
+        "main.js",
+        "preload.js",
+        "tests/**",
+        "harness/evidence/G3/**"
+      ]
+    },
+    {
+      "id": "G4",
+      "depends_on": [
+        {
+          "task_id": "G2",
+          "assurance_class": "engineering_assurance",
+          "required_state": "accepted"
+        }
+      ],
+      "allowed_paths": [
+        "backend/**",
+        "tools/**",
+        "tests/**",
+        "harness/evidence/G4/**"
+      ]
+    },
+    {
+      "id": "G5",
+      "depends_on": [
+        {
+          "task_id": "G2",
+          "assurance_class": "engineering_assurance",
+          "required_state": "accepted"
+        }
+      ],
+      "allowed_paths": [
+        "backend/**",
+        "tests/**",
+        "harness/evidence/G5/**"
+      ]
+    },
+    {
+      "id": "G6",
+      "depends_on": [
+        {
+          "task_id": "G5",
+          "assurance_class": "engineering_assurance",
+          "required_state": "accepted"
+        }
+      ],
+      "allowed_paths": [
+        "backend/**",
+        "tools/**",
+        "tests/**",
+        "harness/evidence/G6/**"
+      ]
+    },
+    {
+      "id": "G7",
+      "depends_on": [
+        {
+          "task_id": "G4",
+          "assurance_class": "engineering_assurance",
+          "required_state": "accepted"
+        },
+        {
+          "task_id": "G6",
+          "assurance_class": "engineering_assurance",
+          "required_state": "accepted"
+        }
+      ],
+      "allowed_paths": [
+        "backend/**",
+        "skills/**",
+        "tests/**",
+        "harness/evidence/G7/**"
+      ]
+    },
+    {
+      "id": "G8",
+      "depends_on": [
+        {
+          "task_id": "G2",
+          "assurance_class": "engineering_assurance",
+          "required_state": "accepted"
+        }
+      ],
+      "allowed_paths": [
+        "backend/**",
+        "tests/**",
+        "harness/evidence/G8/**"
+      ]
+    },
+    {
+      "id": "G9",
+      "depends_on": [
+        {
+          "task_id": "G2",
+          "assurance_class": "engineering_assurance",
+          "required_state": "accepted"
+        }
+      ],
+      "allowed_paths": [
+        "frontend/**",
+        "main.js",
+        "preload.js",
+        "tests/**",
+        "harness/evidence/G9/**"
+      ]
+    },
+    {
+      "id": "G10",
+      "depends_on": [
+        {
+          "task_id": "G7",
+          "assurance_class": "engineering_assurance",
+          "required_state": "accepted"
+        },
+        {
+          "task_id": "G9",
+          "assurance_class": "engineering_assurance",
+          "required_state": "accepted"
+        }
+      ],
+      "allowed_paths": [
+        "harness/private-evals/**",
+        "harness/adjudications/**",
+        "harness/evidence/G10/**",
+        "tests/**"
+      ]
+    },
+    {
+      "id": "G11",
+      "depends_on": [
+        {
+          "task_id": "G10",
+          "assurance_class": "external_validation",
+          "required_state": "accepted"
+        }
+      ],
+      "allowed_paths": [
+        "build/**",
+        "scripts/**",
+        "package.json",
+        "main.js",
+        "preload.js",
+        "SBOM*",
+        "THIRD_PARTY_NOTICES.md",
+        "tests/**",
+        "harness/evidence/G11/**"
+      ]
+    }
+  ],
+  "test_lanes": {
+    "unit": "pytest -m unit",
+    "contract": "pytest -m contract",
+    "integration": "pytest -m integration",
+    "live_provider": "pytest -m live_provider",
+    "desktop": "pytest -m desktop",
+    "release": "pytest -m release",
+    "private_eval": "pytest -m private_eval"
+  }
+}

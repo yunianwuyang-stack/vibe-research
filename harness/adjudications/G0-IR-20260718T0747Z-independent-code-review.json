@@ -1,0 +1,87 @@
+{
+  "findings": [
+    {
+      "evidence": [
+        "tests/test_g0_truth.py::test_real_generated_candidate_passes_formal_api_and_cli",
+        "harness/scripts/g0_truth.py::_candidate_lock",
+        "harness/scripts/bootstrap_contract.py::validate_gate_report"
+      ],
+      "id": "G0-F-003",
+      "required_remediation": "Formal adjudication must parse and semantically verify each report and require a protected-trust signed runner receipt bound to runner hash, exact argv, derivation/input/output hashes, exit code and gate id. Bare/manual/nonempty fake receipts must be rejected.",
+      "severity": "P0",
+      "state": "open",
+      "title": "Formal G0 adjudication accepts a manually constructed bare PASS report set"
+    },
+    {
+      "evidence": [
+        "harness/scripts/g0_runner.py::_load_prior_automation_ownership",
+        "harness/baseline/prior-automation-ownership.json"
+      ],
+      "id": "G0-F-004",
+      "required_remediation": "Fail closed on legacy writable prior-automation manifests. Accept pre-baseline ownership only via a protected external signed attestation bound to the Day-0 baseline/root contract; remove broad harness automatic ownership.",
+      "severity": "P1",
+      "state": "open",
+      "title": "Prior-automation ownership can be self-attested by an unanchored writable manifest"
+    }
+  ],
+  "input_hashes": {
+    "bootstrap": "a843e10612a602e8226cfc89f5976811e4e0094b41dfa5f60f65dfd5db51cdf8",
+    "bootstrap_contract": "d369c5bfc72e6f87631e61778e14a16fb372fb54215f8fe62dbb090b2e44d6ca",
+    "g0_runner": "ec53edf0948f4c39659607a36ad876fcf4a03f2668a702daba3662f1f2e8d692",
+    "g0_test": "8ea7e5de8932a8b4070392bee29f07e5f604d0a7c30eb1ed741321740d755d5c",
+    "g0_truth": "131ca0b08ddb8850bec2c1d44c41872602feab5f45077f72a79cbcc664a182bc",
+    "guide": "8d8dba9dac5cb9488617fbdff75200e59c9d24d5e4888a60c5d895778c168f77",
+    "prior_automation_ledger": "8255b542a0c27888e42b04d88fa95c6c2d22aaf7982893128a081869d2010c6d",
+    "verify_truth": "0ac39184dd1eefa23e5d22c989f7f6e0de425a10bad9336e1edb55c0356c747b"
+  },
+  "kind": "independent_read_only_code_review",
+  "local_positive_evidence": {
+    "desktop": "harness/evidence/G0/desktop-lane-post-reparse-repair-20260718T0735Z.json",
+    "focused_reparse": "harness/evidence/G0/g0-reparse-point-focused-reverify-20260718T0728Z.json",
+    "trusted_runner_local": "harness/evidence/G0/g0-runner-full-post-reparse-repair-20260718T0737Z.outer-receipt.json",
+    "unit": "harness/evidence/G0/unit-lane-post-reparse-repair-20260718T0731Z.json"
+  },
+  "review_conclusion": {
+    "not_acceptance": [
+      "engineering_assurance accepted",
+      "external_validation accepted",
+      "release_qualification accepted",
+      "G0 phase accepted",
+      "Goal complete"
+    ],
+    "statement": "The local reparse repair is internally coherent, but the G0 qualification package cannot be accepted until P0/P1 are repaired and independently re-reviewed.",
+    "verdict": "BLOCKED"
+  },
+  "review_id": "G0-IR-20260718T0747Z",
+  "reviewer": {
+    "agent_id": "019f7425-08ab-7170-8869-22174790449f",
+    "nickname": "Herschel",
+    "permissions": "read-only",
+    "session_independence": "fork_context=false; cold-read task; no parent summary used",
+    "writes_observed_by_reviewer": false
+  },
+  "root_contract": {
+    "merkle_root": "6e2a54e318865379781909a43ac2d0c5ff6878342c57415770899afce675b6d0",
+    "requirements": 207,
+    "tamper_vectors": 12,
+    "unique_requirements": 207,
+    "verdict": "PASS"
+  },
+  "schema_version": "1.0",
+  "scope": {
+    "product_root": "D:\\科研软件制作\\Vibe-research源码",
+    "reviewed_paths": [
+      "tests/test_g0_truth.py",
+      "harness/scripts/g0_truth.py",
+      "harness/scripts/verify_truth.py",
+      "harness/scripts/bootstrap_contract.py",
+      "harness/scripts/g0_runner.py",
+      "harness/baseline/prior-automation-ownership.json",
+      "harness/events.jsonl",
+      "harness/state.json",
+      "harness/findings/G0-F-001-reparse-point-no-skip.json",
+      "harness/findings/G0-F-002-desktop-confirmatory-http500-monitoring.json"
+    ],
+    "root_contract": "D:/科研软件制作/开发指导.bootstrap.json"
+  }
+}

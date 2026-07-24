@@ -1,0 +1,65 @@
+{
+  "kind": "independent_cold_code_review",
+  "review_timestamp_utc": "2026-07-18T09:56:51.814611Z",
+  "review_validity": "Independent no-write model review only; it must not substitute for the required human/external adjudication.",
+  "reviewer_report": {
+    "core_input_hashes": {
+      "backend/infrastructure/persistence/research_ledger.py": "87ff7ec2f3ab9f9b0b23b670694a9108104f5f35f6425e60d01dfc52a4f9c489",
+      "harness/evidence/G0/g0-runner-full-post-p0-p1-f005-checker-repair-20260718T0925Z.json": "bbb48f2b806314ab0d9881f8b7aa0cc085d2a9ff91dbfc56bd1fa40cc1e778e3",
+      "harness/scripts/bootstrap_contract.py": "9e7f1ab6b3a9f7746f21e5c9973b7c166f9f41f0d0c9c9db39e16c618e6e7836",
+      "harness/scripts/g0_runner.py": "4a494de0fa4a781af13407f4173d1d8ce5aa06b3113f1080235e08d076dab100",
+      "harness/scripts/g0_truth.py": "c99246c90be6b1300f5d4e3c242d845a559dec21ddbc4c8bb372c4958383d405",
+      "tests/test_g0_truth.py": "8bc302b689209b0bdb014fc6819522d8b9aefaeda79d12b5f0f2c88a51d68dfa",
+      "tests/test_harness_g0.py": "8c54e1603960e2b67f56e6744410b51ddb7e23ad1b51646ef7ebb5dd7d3220c7",
+      "tests/test_research_ledger.py": "a5a5e57312920a124e092e5da72c94a49516536e9929ac7cc8b1f13307ba567b"
+    },
+    "external_acceptance_statement": "This is a model-only local code/receipt review, not human/external/protected-trust/release/G0 acceptance. G0 remains BLOCKED/PENDING.",
+    "external_materials_not_read": [
+      "D:\\科研软件制作\\开发指导.bootstrap.json",
+      "Day0 baseline",
+      "protected trust/key stores"
+    ],
+    "findings": {
+      "P0-1": {
+        "action": "Place trust/config, signer, revocation and replay ledger outside candidate/caller control and bind them in protected deployment.",
+        "issue": "g0_truth accepts caller-selected --protected-root and --config; source alone cannot anchor an external protected trust root."
+      },
+      "P0-2": {
+        "action": "Create a protected end-to-end formal candidate handoff with current frozen inputs and real signed receipts; do not self-update the frozen lock.",
+        "issue": "phase-contract.lock/gate reports use old verify_truth hash; reports are nested gate-reports while formal candidate requires root report set; candidate lock/manifest/report set absent."
+      },
+      "P0-3": {
+        "action": "Record/recompute/validate JUnit hashes and fail closed when absent before issuing a replacement receipt.",
+        "issue": "checker requires hash-shaped JUnit receipts but all five lane junit_sha256 values are null while it reports PASS."
+      }
+    },
+    "permissions": "strict read-only; no pytest/build/g0 runner; no create/edit/rename/delete/stage",
+    "reference_repo_access": "not accessed: D:\\科研软件制作\\参考开源仓库",
+    "reviewer_identity": "独立新会话只读冷审查员 (Mendel; agent 019f7493-060c-7aa0-8596-b4b69d2b87e6)",
+    "session_independence": "independent new session; no context fork; cold read only",
+    "verdicts": {
+      "F005": {
+        "scope": "local Unicode file URI regression only",
+        "verdict": "PASS"
+      },
+      "P0": {
+        "external_acceptance": "BLOCKED/PENDING",
+        "local_formal_controls": "PASS",
+        "verdict": "NEEDS_REVIEW"
+      },
+      "P1": {
+        "scope": "local fail-closed ownership only",
+        "verdict": "PASS"
+      },
+      "journal": {
+        "detail": "8 event hash chain and state projection consistent",
+        "verdict": "PASS"
+      },
+      "overall": "NEEDS_REVIEW"
+    }
+  },
+  "reviewer_report_canonical_sha256": "464bc3810f159adcc3281957d29a4f19a567dfb8978bb6eb448c879d950b701a",
+  "schema_version": "1.0",
+  "supervisor_receipt_id": "g0-independent-review-red-prewrite-20260718T095650Z",
+  "verdict": "NEEDS_REVIEW"
+}

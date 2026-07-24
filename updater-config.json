@@ -1,0 +1,6 @@
+{
+  "_comment": "Vibe Research 本地交付版默认禁用远程更新；配置自有 HTTPS 服务后方可启用。",
+  "enabled": false,
+  "server_url": null,
+  "check_interval_hours": 0
+}

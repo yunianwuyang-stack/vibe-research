@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "finding_id": "G0-F-010",
+  "phase": "G0",
+  "severity": "P0-governance",
+  "title": "Sponsor-directed G1 execution before G0 engineering acceptance",
+  "status": "BLOCKED",
+  "workflow_state": "BLOCKED",
+  "engineering_assurance": "STALE",
+  "external_validation": "pending",
+  "release_qualification": "pending",
+  "evidence": [
+    "harness/adjudications/G0-UA-20260718T134723Z-workspace-owner-resumption.json",
+    "harness/decisions/ADR-G0-024-sponsor-directed-g1-engineering-override.md",
+    "harness/state.json"
+  ],
+  "qualification_effect": "G1 execution is authorized but cannot qualify, promote, release, or complete the Goal while G0 is not accepted.",
+  "unblock_conditions": [
+    "G0 engineering assurance is accepted through the unchanged trusted gate path.",
+    "A fresh root-contract receipt still matches the immutable bootstrap contract.",
+    "G1 artifacts are revalidated after the ordinary dependency is satisfied."
+  ],
+  "updated_utc": "2026-07-18T13:57:16.3479276Z"
+}
