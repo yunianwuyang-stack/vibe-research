@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "target": "win32-x64",
+  "registry": "https://registry.npmjs.org/",
+  "adapters": {
+    "codex": {
+      "npm_package": "@openai/codex",
+      "version": "0.144.1",
+      "integrity": "sha512-Xir1zqPfpenhdoAoshN53uonzbBXj18COyzRkFlVZpSNyEl5XtkuYu9oddELePFN7K/0sXUcSO34Ad5IeCXPbw==",
+      "platform_package": "@openai/codex-win32-x64",
+      "platform_registry_package": "@openai/codex",
+      "platform_version": "0.144.1-win32-x64",
+      "platform_integrity": "sha512-qv2HOp6v/nVP31p5I5GxYyL0wa79PMzim1+W9CKSV0UldjFV9AMbualA8PeXcYhbvvh9Y1UASXxwjuQdlyfAvw==",
+      "license": "Apache-2.0",
+      "redistribution_status": "permitted_by_apache_2_0",
+      "license_files": [
+        "licenses/OpenAI-Codex-LICENSE.txt",
+        "licenses/OpenAI-Codex-NOTICE.txt"
+      ],
+      "install_mode": "pinned_npm_registry",
+      "platform_alias": "@openai/codex-win32-x64",
+      "bundled_components": [
+        {
+          "name": "ripgrep",
+          "version": "15.1.0",
+          "license": "MIT OR Unlicense",
+          "source": "https://github.com/BurntSushi/ripgrep/tree/15.1.0",
+          "license_files": [
+            "licenses/ripgrep-COPYING",
+            "licenses/ripgrep-LICENSE-MIT",
+            "licenses/ripgrep-UNLICENSE"
+          ]
+        }
+      ]
+    },
+    "claude": {
+      "bundled": false,
+      "required": false,
+      "install_mode": "external_user_managed",
+      "redistribution_status": "not_bundled_external_optional",
+      "discovery": [
+        "CLAUDE_BIN",
+        "PATH",
+        "saved_setting"
+      ]
+    }
+  }
+}

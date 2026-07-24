@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<!-- ============================================================
+  求解流程图模板 (flow) —— 带判断分支 / 循环反馈
+  ------------------------------------------------------------
+  产物文件名建议: fig_flow.html / fig_flow_q1.html → fig_flow_q1.pdf
+  适用: 子问题求解流程、算法执行流程（节点内可含数学公式）
+
+  【怎么改】
+   1. <html> class 换主题。
+   2. 普通步骤 = <div class="node">文字</div>
+      输入输出 = class="node io"(平行四边形观感)
+      数据源  = class="node data"(圆柱观感)
+      判断    = <div class="decision">条件?</div>
+   3. 判断分支: .branch 横排两条路, 各自 .branch-label 标"是/否"。
+   4. 循环反馈: 用 .loop-note 文字提示"不满足→返回步骤 X"(HTML 相对布局不便画
+      折回箭头, 用带 ↺ 的回流卡表达循环, 学术上同样清晰)。
+   5. 竖直箭头 .arrow 是纯 CSS 画的"竖杆+三角头"，元素留空 <div class="arrow"></div>
+      即可（不要再往里塞 ▼ 字符，会和三角叠加）。
+   6. 公式：节点/判断/回流卡内直接写 \( ... \)（行内）或 \[ ... \]（独立行），
+      如 \(\theta_0(t)\)、\(\lVert p_i-p_j\rVert^2=L^2\)。
+      ⛔ 出图命令必须带 --render-math，KaTeX 才会把它们渲染成真公式（见 SKILL Step 3）。
+   7. ⛔ 图内不写标题。⛔ 必须包含: 判断分支 + (分叉或循环) + 双行节点其一。
+
+  【布局原理】flex 纵向主干 + 局部横向分支, 自动居中, 无坐标错位。
+============================================================ -->
+<html lang="zh-CN" class="theme-indigo">
+<head>
+<meta charset="UTF-8">
+<style>
+  .theme-slate  { --c-primary:#5b7fa6; --c-primary-d:#3f5d7d; --c-secondary:#dbe4ee; --c-accent:#c58a5a; --c-border:#9db0c4; --c-bg:#f7f9fc; --c-node-bg:#ffffff; --c-text:#26303b; --c-text-inv:#fff; --c-muted:#6b7683; }
+  .theme-teal   { --c-primary:#3f8079; --c-primary-d:#2c5c57; --c-secondary:#d5e7e3; --c-accent:#c08a4a; --c-border:#8fb5af; --c-bg:#f5faf8; --c-node-bg:#ffffff; --c-text:#223330; --c-text-inv:#fff; --c-muted:#5f7570; }
+  .theme-amber  { --c-primary:#b57a45; --c-primary-d:#8f5c2f; --c-secondary:#f0e2d0; --c-accent:#6d8b74; --c-border:#cbb09a; --c-bg:#fbf7f1; --c-node-bg:#ffffff; --c-text:#3a2e22; --c-text-inv:#fff; --c-muted:#7a6a58; }
+  .theme-indigo { --c-primary:#5566a8; --c-primary-d:#3b4780; --c-secondary:#dde1f2; --c-accent:#4a94a8; --c-border:#a6adcf; --c-bg:#f6f7fc; --c-node-bg:#ffffff; --c-text:#262b40; --c-text-inv:#fff; --c-muted:#676e8a; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: transparent; }
+  body { font-family: "Microsoft YaHei","Noto Sans SC","PingFang SC",sans-serif; color: var(--c-text); }
+  .fig {
+    display: inline-block; background: transparent;
+    padding: 34px 46px; width: 640px;
+  }
+  .col { display: flex; flex-direction: column; align-items: center; }
+
+  /* 普通步骤节点 */
+  .node {
+    background: var(--c-node-bg); border: 2px solid var(--c-primary);
+    border-radius: 8px; padding: 11px 20px; min-width: 220px;
+    text-align: center; font-size: 15px; line-height: 1.5; font-weight: 600;
+    color: var(--c-primary-d);
+  }
+  /* 输入输出(平行四边形观感) */
+  .node.io { transform: skewX(-12deg); background: var(--c-secondary); border-color: var(--c-border); }
+  .node.io > span { display: inline-block; transform: skewX(12deg); }
+  /* 数据源(圆柱观感) */
+  .node.data { border-radius: 40px / 12px; background: var(--c-secondary); }
+  /* 起止节点(胶囊) */
+  .node.term { border-radius: 24px; background: var(--c-primary); color: var(--c-text-inv); border-color: var(--c-primary-d); }
+
+  /* 判断菱形 */
+  .decision {
+    width: 150px; height: 150px; margin: 4px 0;
+    background: var(--c-accent); transform: rotate(45deg);
+    display: flex; align-items: center; justify-content: center;
+    border: 2px solid var(--c-primary-d);
+  }
+  .decision > span {
+    transform: rotate(-45deg); text-align: center; color: var(--c-text-inv);
+    font-size: 14px; font-weight: 700; width: 130px; line-height: 1.4;
+  }
+
+  /* 竖直连接箭头：竖杆 + 三角头（纯 CSS 画，不用 ▼ 字符，避免孤立三角对不齐） */
+  .arrow {
+    width: 2.5px; height: 26px; background: var(--c-primary);
+    position: relative; margin: 1px 0; flex: none;
+  }
+  .arrow::after {
+    content: ''; position: absolute; left: 50%; bottom: -1px;
+    transform: translateX(-50%);
+    border-left: 6px solid transparent; border-right: 6px solid transparent;
+    border-top: 9px solid var(--c-primary);
+  }
+
+  /* 判断分支: 横排两条路 */
+  .branch { display: flex; gap: 60px; align-items: flex-start; justify-content: center; width: 100%; margin-top: 2px; }
+  .branch-col { display: flex; flex-direction: column; align-items: center; }
+  .branch-label {
+    font-size: 13px; font-weight: 700; color: var(--c-primary-d);
+    background: var(--c-node-bg); border: 1px solid var(--c-border);
+    border-radius: 10px; padding: 1px 10px; margin-bottom: 2px;
+  }
+  /* 循环回流提示卡 */
+  .loop-note {
+    background: var(--c-node-bg); border: 2px dashed var(--c-accent);
+    border-radius: 8px; padding: 8px 16px; font-size: 13.5px;
+    color: var(--c-accent); font-weight: 600; text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="fig">
+ <div class="col">
+
+  <!-- 起点 -->
+  <div class="node term">开始</div>
+  <div class="arrow"></div>
+
+  <!-- 输入(平行四边形) -->
+  <div class="node io"><span>输入：问题数据 / 参数</span></div>
+  <div class="arrow"></div>
+
+  <!-- 普通步骤(双行) -->
+  <div class="node">数据预处理<br>（清洗 · 归一化 · 缺失值填补）</div>
+  <div class="arrow"></div>
+
+  <!-- 核心处理：节点内可写公式，用 \( ... \) 包裹（出图时加 --render-math 由 KaTeX 渲染） -->
+  <div class="node">牛顿法反解初值 \(\theta_0(t)\)<br>约束 \(\lVert p_i(\theta_{i+1})-p_i\rVert^2 - L_i^2 = 0\)</div>
+  <div class="arrow"></div>
+
+  <!-- 判断分支 -->
+  <div class="decision"><span>是否收敛 / 满足精度？</span></div>
+  <div class="branch">
+    <!-- 否：循环回流 -->
+    <div class="branch-col">
+      <div class="branch-label">否</div>
+      <div class="arrow"></div>
+      <div class="loop-note">↺ 更新参数<br>返回「构建模型」重算</div>
+    </div>
+    <!-- 是：继续 -->
+    <div class="branch-col">
+      <div class="branch-label">是</div>
+      <div class="arrow"></div>
+      <div class="node">输出最优解 \(\theta^\ast\)</div>
+      <div class="arrow"></div>
+      <div class="node io"><span>结果：解 / 指标</span></div>
+      <div class="arrow"></div>
+      <div class="node term">结束</div>
+    </div>
+  </div>
+
+ </div>
+</div>
+</body>
+</html>

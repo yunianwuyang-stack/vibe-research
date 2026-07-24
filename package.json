@@ -1,0 +1,128 @@
+{
+  "name": "vibe-research",
+  "version": "1.2.2",
+  "description": "Vibe Research 桌面版 — 研究证据工作台",
+  "main": "main.js",
+  "author": "Vibe Research Project",
+  "license": "MIT",
+  "scripts": {
+    "build:release": "powershell -ExecutionPolicy Bypass -File scripts/Build-Release.ps1",
+    "build:release:finalize": "powershell -ExecutionPolicy Bypass -File scripts/Finalize-Release.ps1",
+    "build:linux": "electron-builder --linux AppImage",
+    "test:desktop-e2e": "node tests/run_desktop_e2e.js"
+  },
+  "devDependencies": {
+    "electron": "^39.2.7",
+    "electron-builder": "26.8.1",
+    "playwright-core": "^1.55.0"
+  },
+  "build": {
+    "directories": {
+      "output": "release"
+    },
+    "appId": "com.viberesearch.workbench",
+    "productName": "Vibe Research",
+    "executableName": "Vibe Research",
+    "artifactName": "Vibe-Research-${version}-Setup.${ext}",
+    "compression": "normal",
+    "asar": true,
+    "asarUnpack": [
+      "backend{,/**}",
+      "dist{,/**}",
+      "tools{,/**}",
+      "templates{,/**}"
+    ],
+    "files": [
+      "main.js",
+      "preload.js",
+      "backend/**",
+      "!backend/analysis/**",
+      "!backend/**/__pycache__/**",
+      "!backend/**/*.pyc",
+      "!backend/**/*.pyo",
+      "!backend/**/*.log",
+      "dist/**",
+      "icon.ico",
+      "package.json",
+      "updater.js",
+      "updater-config.json",
+      "desktop-data.js",
+      "runtime-manifest.json",
+      "LICENSE",
+      "SBOM.cdx.json",
+      "SBOM.spdx.json",
+      "THIRD_PARTY_NOTICES.md",
+      "tools/**",
+      "!tools/**/test/**",
+      "!tools/**/tests/**",
+      "!tools/**/__tests__/**",
+      "!tools/**/*.map",
+      "!tools/**/*.ts",
+      "!tools/**/*.tsx",
+      "!tools/**/__pycache__/**",
+      "!tools/**/*.pyc",
+      "!tools/**/*.pyo",
+      "templates/**"
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "icon.ico",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false,
+      "include": "build/installer.nsh"
+    },
+    "linux": {
+      "target": [
+        "AppImage"
+      ],
+      "category": "Science"
+    },
+    "extraResources": [
+      {
+        "from": "skills",
+        "to": "app.asar.unpacked/skills",
+        "filter": [
+          "**/*",
+          "!**/evals/**",
+          "!**/test/**",
+          "!**/tests/**",
+          "!**/__tests__/**",
+          "!**/*.map",
+          "!**/__pycache__/**",
+          "!**/*.pyc",
+          "!**/*.pyo"
+        ]
+      },
+      {
+        "from": "templates",
+        "to": "app.asar.unpacked/templates",
+        "filter": [
+          "**/*",
+          "!**/evals/**",
+          "!**/test/**",
+          "!**/tests/**",
+          "!**/__tests__/**",
+          "!**/*.map",
+          "!**/__pycache__/**",
+          "!**/*.pyc",
+          "!**/*.pyo"
+        ]
+      },
+      {
+        "from": "runtime-release",
+        "to": "runtime",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ]
+  },
+  "allowScripts": {
+    "electron": true,
+    "electron-winstaller": false
+  }
+}

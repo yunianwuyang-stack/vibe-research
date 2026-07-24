@@ -1,0 +1,1 @@
+const p=require('../package.json');if(!p.build.linux?.target?.includes('AppImage'))throw Error('AppImage target absent');if(!p.scripts['build:linux'])throw Error('linux build script absent');if(!(p.build.extraResources||[]).some(x=>x.from==='skills'))throw Error('skills resources absent');console.log('linux packaging contract OK');

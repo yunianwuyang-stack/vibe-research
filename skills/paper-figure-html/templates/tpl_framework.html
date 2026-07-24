@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<!-- ============================================================
+  框架矩阵图模板 (framework) —— 方法对比 / 多维框架
+  ------------------------------------------------------------
+  产物文件名建议: fig_framework.html → fig_framework.pdf
+  适用: 方法对比矩阵、理论框架多维展示、维度×方案交叉表
+
+  两种用法(模板同时给出, 保留需要的那块, 删掉另一块):
+   A. 矩阵表(.matrix): 行=维度/指标, 列=方法/方案, 单元格填对比内容或 ●◐○ 强弱。
+   B. 分组框架(.groups): 若干并列的模块组, 每组内列条目, 适合理论框架分块。
+
+  【怎么改】
+   1. <html> class 换主题。
+   2. 矩阵: 改 <th>(表头) 和 <td>(单元格)。强弱用 <span class="dot full/half/none">。
+   3. 分组: 每个 .group 是一块, .group-head 组名, .group-body li 条目。
+   4. ⛔ 图内不写标题。
+
+  【布局原理】table 自动等分列宽 / grid 自动等分组宽, 增删行列自动重排。
+============================================================ -->
+<html lang="zh-CN" class="theme-amber">
+<head>
+<meta charset="UTF-8">
+<style>
+  .theme-slate  { --c-primary:#5b7fa6; --c-primary-d:#3f5d7d; --c-secondary:#dbe4ee; --c-accent:#c58a5a; --c-border:#9db0c4; --c-bg:#f7f9fc; --c-node-bg:#ffffff; --c-text:#26303b; --c-text-inv:#fff; --c-muted:#6b7683; }
+  .theme-teal   { --c-primary:#3f8079; --c-primary-d:#2c5c57; --c-secondary:#d5e7e3; --c-accent:#c08a4a; --c-border:#8fb5af; --c-bg:#f5faf8; --c-node-bg:#ffffff; --c-text:#223330; --c-text-inv:#fff; --c-muted:#5f7570; }
+  .theme-amber  { --c-primary:#b57a45; --c-primary-d:#8f5c2f; --c-secondary:#f0e2d0; --c-accent:#6d8b74; --c-border:#cbb09a; --c-bg:#fbf7f1; --c-node-bg:#ffffff; --c-text:#3a2e22; --c-text-inv:#fff; --c-muted:#7a6a58; }
+  .theme-indigo { --c-primary:#5566a8; --c-primary-d:#3b4780; --c-secondary:#dde1f2; --c-accent:#4a94a8; --c-border:#a6adcf; --c-bg:#f6f7fc; --c-node-bg:#ffffff; --c-text:#262b40; --c-text-inv:#fff; --c-muted:#676e8a; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: transparent; }
+  body { font-family: "Microsoft YaHei","Noto Sans SC","PingFang SC",sans-serif; color: var(--c-text); }
+  .fig { display: inline-block; background: transparent; padding: 32px 38px; width: 900px; }
+
+  /* —— A. 矩阵表 —— */
+  .matrix { border-collapse: separate; border-spacing: 0; width: 100%; }
+  .matrix th, .matrix td {
+    border: 1px solid var(--c-border); padding: 10px 12px;
+    font-size: 14px; text-align: center; line-height: 1.5;
+  }
+  .matrix thead th { background: var(--c-primary); color: var(--c-text-inv); font-size: 15px; }
+  .matrix tbody th { background: var(--c-secondary); color: var(--c-primary-d); text-align: left; font-weight: 700; }
+  .matrix tbody tr:nth-child(even) td { background: var(--c-node-bg); }
+  .matrix tbody tr:nth-child(odd) td { background: color-mix(in srgb, var(--c-secondary) 30%, #fff); }
+  /* 强弱圆点 */
+  .dot { display: inline-block; width: 15px; height: 15px; border-radius: 50%; border: 2px solid var(--c-primary-d); vertical-align: middle; }
+  .dot.full { background: var(--c-primary-d); }
+  .dot.half { background: linear-gradient(90deg, var(--c-primary-d) 50%, #fff 50%); }
+  .dot.none { background: #fff; }
+
+  /* —— B. 分组框架(与矩阵二选一) —— */
+  .groups { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+  .group { border: 2px solid var(--c-border); border-radius: 8px; overflow: hidden; }
+  .group-head { background: var(--c-primary); color: var(--c-text-inv); padding: 10px 14px; font-size: 15px; font-weight: 700; text-align: center; }
+  .group-body { padding: 12px 14px; background: var(--c-node-bg); font-size: 14px; line-height: 1.8; }
+  .group-body ul { list-style: none; }
+  .group-body li { padding-left: 15px; position: relative; }
+  .group-body li::before { content: "▪"; color: var(--c-primary); position: absolute; left: 0; }
+</style>
+</head>
+<body>
+<div class="fig">
+
+  <!-- ============ A. 矩阵表（方法对比）============ -->
+  <!-- 不用矩阵就删掉这个 <table> -->
+  <table class="matrix">
+    <thead>
+      <tr>
+        <th style="width:150px">评价维度 \ 方法</th>
+        <th>方法 A（本文）</th>
+        <th>方法 B（基准1）</th>
+        <th>方法 C（基准2）</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <th>求解精度</th>
+        <td><span class="dot full"></span></td>
+        <td><span class="dot half"></span></td>
+        <td><span class="dot none"></span></td>
+      </tr>
+      <tr>
+        <th>计算效率</th>
+        <td><span class="dot full"></span></td>
+        <td><span class="dot none"></span></td>
+        <td><span class="dot half"></span></td>
+      </tr>
+      <tr>
+        <th>鲁棒性</th>
+        <td><span class="dot full"></span></td>
+        <td><span class="dot half"></span></td>
+        <td><span class="dot half"></span></td>
+      </tr>
+      <tr>
+        <th>适用范围</th>
+        <td>通用</td>
+        <td>受限</td>
+        <td>特定场景</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <!-- ============ B. 分组框架（可选，与上面矩阵二选一）============
+  <div class="groups">
+    <div class="group">
+      <div class="group-head">理论基础</div>
+      <div class="group-body"><ul><li>核心假设一</li><li>核心假设二</li></ul></div>
+    </div>
+    <div class="group">
+      <div class="group-head">方法模块</div>
+      <div class="group-body"><ul><li>建模方法</li><li>求解算法</li></ul></div>
+    </div>
+    <div class="group">
+      <div class="group-head">应用验证</div>
+      <div class="group-body"><ul><li>案例分析</li><li>对比实验</li></ul></div>
+    </div>
+  </div>
+  ============ -->
+
+</div>
+</body>
+</html>

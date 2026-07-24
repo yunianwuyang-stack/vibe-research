@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<!-- ============================================================
+  数据流水线图模板 (pipeline) —— 横向多阶段数据流
+  ------------------------------------------------------------
+  产物文件名建议: fig_pipeline.html → fig_pipeline.pdf
+  适用: 数据处理 pipeline、方法流水线、端到端处理链
+
+  【怎么改】
+   1. <html> class 换主题。
+   2. 每个 .stage 是一个阶段: .stage-icon(可留数字/图标符)、.stage-title(阶段名)、
+      .stage-tool(该阶段方法/工具)。
+   3. 阶段间 .flow-arrow ▶ 自动生成。
+   4. 加/减阶段: 复制 .stage + 其后的 .flow-arrow。阶段多时会自动换行(wrap),
+      换行后仍靠 grid 对齐; 若想强制单行不换行, 把 .track 的 flex-wrap 改 nowrap。
+   5. ⛔ 图内不写标题。⛔ 横向过长会导致 PDF 过宽(宽高比告警), 阶段 >5 个建议换行。
+
+  【布局原理】flex 横向排列 + wrap 自动换行, 阶段等高, 无坐标错位。
+============================================================ -->
+<html lang="zh-CN" class="theme-teal">
+<head>
+<meta charset="UTF-8">
+<style>
+  .theme-slate  { --c-primary:#5b7fa6; --c-primary-d:#3f5d7d; --c-secondary:#dbe4ee; --c-accent:#c58a5a; --c-border:#9db0c4; --c-bg:#f7f9fc; --c-node-bg:#ffffff; --c-text:#26303b; --c-text-inv:#fff; --c-muted:#6b7683; }
+  .theme-teal   { --c-primary:#3f8079; --c-primary-d:#2c5c57; --c-secondary:#d5e7e3; --c-accent:#c08a4a; --c-border:#8fb5af; --c-bg:#f5faf8; --c-node-bg:#ffffff; --c-text:#223330; --c-text-inv:#fff; --c-muted:#5f7570; }
+  .theme-amber  { --c-primary:#b57a45; --c-primary-d:#8f5c2f; --c-secondary:#f0e2d0; --c-accent:#6d8b74; --c-border:#cbb09a; --c-bg:#fbf7f1; --c-node-bg:#ffffff; --c-text:#3a2e22; --c-text-inv:#fff; --c-muted:#7a6a58; }
+  .theme-indigo { --c-primary:#5566a8; --c-primary-d:#3b4780; --c-secondary:#dde1f2; --c-accent:#4a94a8; --c-border:#a6adcf; --c-bg:#f6f7fc; --c-node-bg:#ffffff; --c-text:#262b40; --c-text-inv:#fff; --c-muted:#676e8a; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: transparent; }
+  body { font-family: "Microsoft YaHei","Noto Sans SC","PingFang SC",sans-serif; color: var(--c-text); }
+  .fig { display: inline-block; background: transparent; padding: 34px 40px; width: 1080px; }
+
+  .track { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 4px; }
+  /* 阶段卡 */
+  .stage {
+    flex: 0 0 auto; width: 178px;
+    background: var(--c-node-bg); border: 2px solid var(--c-primary);
+    border-top: 5px solid var(--c-primary); border-radius: 8px;
+    padding: 12px 12px 14px; text-align: center;
+  }
+  .stage-icon {
+    width: 36px; height: 36px; margin: 0 auto 8px; border-radius: 50%;
+    background: var(--c-secondary); color: var(--c-primary-d);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px; font-weight: 700;
+  }
+  .stage-title { font-size: 15px; font-weight: 700; color: var(--c-primary-d); line-height: 1.4; }
+  .stage-tool {
+    margin-top: 8px; padding-top: 7px; border-top: 1px dashed var(--c-border);
+    font-size: 12.5px; color: var(--c-muted); line-height: 1.5;
+  }
+  /* 阶段间箭头 */
+  .flow-arrow { flex: 0 0 auto; color: var(--c-primary); font-size: 22px; line-height: 1; padding: 0 2px; }
+</style>
+</head>
+<body>
+<div class="fig">
+  <div class="track">
+
+    <!-- ▼ 阶段 1 ▼ -->
+    <div class="stage">
+      <div class="stage-icon">1</div>
+      <div class="stage-title">数据采集</div>
+      <div class="stage-tool">多源接入 · 传感器 / 数据库</div>
+    </div>
+    <div class="flow-arrow">▶</div>
+
+    <!-- ▼ 阶段 2 ▼ -->
+    <div class="stage">
+      <div class="stage-icon">2</div>
+      <div class="stage-title">数据清洗</div>
+      <div class="stage-tool">去噪 · 缺失填补 · 异常剔除</div>
+    </div>
+    <div class="flow-arrow">▶</div>
+
+    <!-- ▼ 阶段 3 ▼ -->
+    <div class="stage">
+      <div class="stage-icon">3</div>
+      <div class="stage-title">特征工程</div>
+      <div class="stage-tool">特征提取 · 降维 · 归一化</div>
+    </div>
+    <div class="flow-arrow">▶</div>
+
+    <!-- ▼ 阶段 4 ▼ -->
+    <div class="stage">
+      <div class="stage-icon">4</div>
+      <div class="stage-title">建模求解</div>
+      <div class="stage-tool">核心模型 · 训练 / 优化</div>
+    </div>
+    <div class="flow-arrow">▶</div>
+
+    <!-- ▼ 阶段 5 ▼ -->
+    <div class="stage">
+      <div class="stage-icon">5</div>
+      <div class="stage-title">结果输出</div>
+      <div class="stage-tool">预测 · 评估 · 可视化</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>

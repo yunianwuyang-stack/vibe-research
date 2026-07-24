@@ -1,0 +1,47 @@
+
+# Python / Node runtime & compiled artifacts
+runtime/
+runtime-release/
+.venv-dev/
+node_modules/
+**/__pycache__/
+*.py[cod]
+
+# Local user data & secrets
+workspaces/
+cache/
+*.db
+*.sqlite*
+.env
+
+# Build & release outputs
+release/
+release-cn/
+release-cn-no-voice/
+dist/
+
+# Development artifacts (never publish)
+harness/
+architecture/
+backend/analysis/
+goal提示词.md
+tools/_profile_test/
+tools/_rebrand_aris_to_vibe.py
+tools/p2_architecture_audit.py
+tools/structural_audit.py
+tools/generate_openapi_client.py
+requirements-dev.lock
+requirements-dev.txt
+docs/RELEASE_AUDIT_*.md
+docs/audit_*.md
+
+# Other generated / runtime artifacts
+.codex-goal-harness/
+_backups/
+verification-logs/
+*.log
+runtime-manifest.json
+split_manifest.json
+split_manifest.sha256
+electron_epipe_acceptance.json
+.p9-launch.json

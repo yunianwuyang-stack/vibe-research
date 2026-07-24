@@ -1,0 +1,10 @@
+const fs = require('fs');
+const assert = require('assert');
+const pkg = require('../package.json');
+const nsis = fs.readFileSync('build/installer.nsh', 'utf8');
+assert.equal(pkg.build.nsis.oneClick, false);
+assert.equal(pkg.build.nsis.deleteAppDataOnUninstall, false);
+assert.match(nsis, /MB_DEFBUTTON2/);
+assert.match(nsis, /--delete-app-data/);
+assert.match(nsis, /RMDir \/r "\$APPDATA\\Vibe Research"/);
+console.log('installer preserves by default and offers explicit deletion');
