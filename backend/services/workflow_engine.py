@@ -5385,7 +5385,9 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
                 )
             else:
                 context_summary = _build_context_summary(workspace_dir, workspace_files or [])
-            host_steps = {
+            # Pure tooling steps: deterministic file operations that never need LLM.
+            # These always use _HostStepRunner regardless of model configuration.
+            _pure_tooling_steps = {
                 "docx-export", "template-prepare", "latex-template-prepare",
                 "latex-template-apply", "docx-template-map", "format-profile",
                 "docx-format-check", "assets-inventory",
@@ -5396,7 +5398,14 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
                 "patent-draft", "copyright-draft", "software-copyright",
                 "patent-build", "copyright-build",
                 "paper-slides", "paper-poster",
-                # Doctoral domain host scaffolds (no cloud LLM required)
+                "auto-paper-improvement-docx",
+                "comp-paper-zh-docx", "comp-paper-en-docx",
+                "paper-write-docx", "paper-write-zh-docx", "paper-write-nature-docx",
+            }
+            # Content generation steps: require LLM for meaningful output.
+            # Use ClaudeRunner when executor model is configured; fall back to
+            # _HostStepRunner (scaffold/template mode) when no model is available.
+            _content_generation_steps = {
                 "thesis-proposal", "literature-review", "project-blueprint",
                 "paper-plan", "paper-plan-zh", "paper-analysis",
                 "paper-figure", "nature-figure", "experiment-bridge",
@@ -5407,16 +5416,39 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
                 "course-plan", "course-paper", "course-report", "course-report-plan",
                 "comp-prob-analysis", "comp-modeling", "comp-code",
                 "comp-paper-zh", "comp-paper-en",
-                "comp-paper-zh-docx", "comp-paper-en-docx",
-                "paper-write-docx", "paper-write-zh-docx", "paper-write-nature-docx",
-                "auto-paper-improvement-docx",
-                # Grad-project host scaffolds (no cloud LLM required)
                 "dev-requirement", "dev-design", "dev-code",
                 "dev-selfcheck", "dev-report",
                 "comp-stats-topic", "humanities-write-latex",
                 "auto-paper-improvement-loop",
             }
-            runner = _HostStepRunner(template, step_def) if skill_name in host_steps else ClaudeRunner()
+
+            # Determine which runner to use for this step.
+            if skill_name in _pure_tooling_steps:
+                # Always host — no LLM needed for compile/export/format operations.
+                runner = _HostStepRunner(template, step_def)
+            elif skill_name in _content_generation_steps:
+                # Use ClaudeRunner when executor model is configured; scaffold otherwise.
+                _executor_ready = False
+                try:
+                    from services.llm_client import get_all_settings, _configured_agent
+                    _settings = await get_all_settings()
+                    _configured_agent(_settings, "executor")  # raises if not configured
+                    _executor_ready = True
+                except Exception:
+                    pass
+                if _executor_ready:
+                    runner = ClaudeRunner()
+                    log.info("Step '%s': executor model configured — using ClaudeRunner", skill_name)
+                else:
+                    runner = _HostStepRunner(template, step_def)
+                    log.warning(
+                        "Step '%s': no executor model configured — falling back to scaffold mode. "
+                        "Configure an executor model in Settings to get real LLM output.",
+                        skill_name,
+                    )
+            else:
+                # Unknown skill — default to ClaudeRunner as before.
+                runner = ClaudeRunner()
             arguments = workflow_id if managed else json.dumps({
                 "template": template,
                 "skill_name": skill_name,

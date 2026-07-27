@@ -764,6 +764,79 @@ async def import_workflows(file: UploadFile = File(...)):
     return {"imported": imported}
 
 
+@router.post("/{wf_id}/sync-evidence")
+async def sync_evidence_cards(wf_id: str):
+    """Import top literature results for this workflow's research question
+    directly into the bound project's evidence library.
+
+    Searches openalex, semantic_scholar and crossref, caches the snapshots,
+    and saves up to 5 cards per provider — skipping duplicates silently.
+    Returns ``{imported, count, errors, project_id}``.
+    """
+    from services.state_store import get_db as _get_db
+    from services.research_contracts import save_provider_evidence
+    from infrastructure.literature import HttpTransport, LiteratureClient, ProviderUnavailable
+    from fastapi import HTTPException as _HTTP
+
+    db = await _get_db()
+    try:
+        row = await (await db.execute(
+            "SELECT project_id, params FROM workflows WHERE id=?", (wf_id,)
+        )).fetchone()
+    finally:
+        await db.close()
+
+    if not row:
+        raise HTTPException(status_code=404, detail="Workflow not found")
+
+    project_id = str(row["project_id"] or "").strip()
+    if not project_id:
+        raise HTTPException(status_code=409, detail="This workflow has no bound project — open it in the run-center and bind it to a research contract first")
+
+    params = json.loads(row["params"] or "{}")
+    research_question = str(params.get("research_question") or "").strip()
+    if not research_question:
+        raise HTTPException(status_code=409, detail="Workflow has no research_question in params — configure the workflow with a research question first")
+
+    client = LiteratureClient(
+        HttpTransport(),
+        WORKSPACES_DIR / "literature-cache",
+        min_interval_seconds=0.2,
+        timeout_seconds=15,
+    )
+    imported: list[dict] = []
+    errors: list[dict] = []
+
+    for provider in ("openalex", "semantic_scholar", "crossref"):
+        try:
+            await asyncio.to_thread(client.search, provider, research_question)
+            snap_records, digest = await asyncio.to_thread(client.replay_snapshot, provider, research_question)
+        except ProviderUnavailable as exc:
+            errors.append({"provider": provider, "error": str(exc)})
+            continue
+        except Exception as exc:
+            errors.append({"provider": provider, "error": str(exc)})
+            continue
+
+        for record in snap_records[:5]:
+            try:
+                await save_provider_evidence(project_id, provider, research_question, record.url, digest)
+                imported.append({"provider": provider, "title": record.title, "url": record.url})
+            except _HTTP as exc:
+                # 409 = already saved or snapshot race; 422 = URL mismatch — both are safe to skip
+                if exc.status_code not in (409, 422):
+                    errors.append({"provider": provider, "url": record.url, "error": exc.detail})
+            except Exception as exc:
+                errors.append({"provider": provider, "url": getattr(record, "url", ""), "error": str(exc)})
+
+    return {
+        "imported": imported,
+        "count": len(imported),
+        "errors": errors,
+        "project_id": project_id,
+    }
+
+
 # ============================================================
 
 # ============================================================

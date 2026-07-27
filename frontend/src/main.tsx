@@ -41,6 +41,7 @@ import {
   retryResearchRunStep,
   reviseHypothesis,
   resolveWorkflowCheckpoint,
+  syncWorkflowEvidence,
   retryAgentTask,
   reviewClaimEvidenceLink,
   reviewClaimExperimentLink,
@@ -358,6 +359,14 @@ const workflowInputRequirements: Record<string, string> = {
   paper_poster: "请先上传已编译论文目录（paper/main.tex 或 main.pdf，以及 figures/）。",
   software_copyright: "请先上传源代码、界面截图或现有产品材料。",
 };
+/** Format an ISO timestamp for display (e.g. "2026-07-27 15:21"). Falls back to the raw string if the date is invalid. */
+const fmtTime = (iso: string | undefined | null): string => {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return d.toLocaleString("zh-CN", { hour12: false, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+};
+
 const emptyNarrative = (): NarrativeMap => ({
   question: "",
   tension: "",
@@ -558,11 +567,12 @@ export function App() {
       setDraft(draftValue.content);
       setDraftHash(draftValue.sha256);
     }
+    // Non-critical secondary loads: failures must not abort project selection.
     await Promise.all([
-      loadClaimGraph(value.id),
-      loadAdversarialReviews(value.id),
-      loadAssurance(value.id),
-      loadInnovationCheck(value.id),
+      loadClaimGraph(value.id).catch(() => {}),
+      loadAdversarialReviews(value.id).catch(() => {}),
+      loadAssurance(value.id).catch(() => {}),
+      loadInnovationCheck(value.id).catch(() => {}),
     ]);
   };
   useEffect(() => {
@@ -802,15 +812,17 @@ export function App() {
   const reviewSupport = (cardId: string, decision: "approved" | "rejected") =>
     runSafe(async () => {
       if (!project) return;
-      setProject(
-        await reviewClaimSupport(
-          project.id,
-          cardId,
-          decision,
-          decision === "approved"
-            ? "原文段落与当前主张在适用范围内一致"
-            : "原文不足以支持当前主张",
-        ),
+      const updated = await reviewClaimSupport(
+        project.id,
+        cardId,
+        decision,
+        decision === "approved"
+          ? "原文段落与当前主张在适用范围内一致"
+          : "原文不足以支持当前主张",
+      );
+      setProject(updated);
+      setProjects((items) =>
+        items.map((item) => (item.id === updated.id ? updated : item)),
       );
     });
   const createDraft = () =>
@@ -910,6 +922,9 @@ export function App() {
       await api(`/api/workflows/${id}/${action}`, { method: "POST" });
       await refreshWorkflows();
       setRunCenter(await getWorkflowRunCenter(id));
+      // Keep evidence_cards fresh: a completed workflow may have created new
+      // literature snapshots in the session.
+      if (project) await loadProjectContext(project);
     });
   const uploadInputs = (files: File[]) =>
     runSafe(async () => {
@@ -936,6 +951,19 @@ export function App() {
       await api(`/api/workflows/${id}`, { method: "DELETE" });
       if (selectedId === id) setSelectedId("");
       await refreshWorkflows();
+    });
+  const syncEvidence = (workflowId: string) =>
+    runSafe(async () => {
+      if (!project) throw new Error("请先绑定研究合同");
+      const result = await syncWorkflowEvidence(workflowId);
+      // Refresh the project so evidence_cards reflects newly imported items.
+      await loadProjectContext(project);
+      // Surface result as a non-blocking status message rather than a native dialog.
+      const notice =
+        result.count > 0
+          ? `已从工作流同步 ${result.count} 条文献至证据库。${result.errors.length ? `（${result.errors.length} 个来源跳过）` : ""}`
+          : "未发现新文献可同步；请确认工作流已完成文献检索步骤后重试。";
+      setError(notice);
     });
   const openWorkflowFromOperations = (
     projectId: string | null | undefined,
@@ -1635,6 +1663,7 @@ export function App() {
           onResolve={resolveCheckpoint}
           onUpload={uploadInputs}
           onRemove={removeWorkflow}
+          onSync={syncEvidence}
           onDownload={(workflow) =>
             runSafe(() =>
               download(
@@ -3352,7 +3381,7 @@ function LegacyRunCenterPage({
                   <ol className="run-logs">
                     {selectedSnapshot.logs.map((entry, index) => (
                       <li key={`${entry.created_at}-${index}`}>
-                        <time>{entry.created_at}</time>
+                        <time dateTime={entry.created_at}>{fmtTime(entry.created_at)}</time>
                         <b>{entry.step_name || "workflow"}</b>
                         <span className={entry.level}>{entry.message}</span>
                       </li>
@@ -3389,6 +3418,7 @@ function RunCenterPage({
   onResolve,
   onUpload,
   onRemove,
+  onSync,
   onDownload,
 }: {
   project?: Project;
@@ -3409,6 +3439,7 @@ function RunCenterPage({
   onResolve: (action: "approve" | "feedback" | "stop") => void;
   onUpload: (files: File[]) => void;
   onRemove: (id: string) => void;
+  onSync: (id: string) => void;
   onDownload: (workflow: Workflow) => void;
 }) {
   if (!project)
@@ -3629,7 +3660,19 @@ function RunCenterPage({
                 </section>
               )}
               <section>
-                <h4>产物血缘快照</h4>
+                <div className="section-command">
+                  <h4>产物血缘快照</h4>
+                  {active.status === "completed" && (
+                    <button
+                      className="quiet compact-action"
+                      disabled={busy}
+                      title="将本工作流的文献检索结果同步至当前项目的证据库"
+                      onClick={() => onSync(active.id)}
+                    >
+                      ⇄ 同步至证据库
+                    </button>
+                  )}
+                </div>
                 {selectedSnapshot.artifacts.length ? (
                   <ol className="run-artifacts">
                     {selectedSnapshot.artifacts.map((item) => (
@@ -3655,7 +3698,7 @@ function RunCenterPage({
                   <ol className="run-logs">
                     {selectedSnapshot.logs.map((entry, index) => (
                       <li key={`${entry.created_at}-${index}`}>
-                        <time>{entry.created_at}</time>
+                        <time dateTime={entry.created_at}>{fmtTime(entry.created_at)}</time>
                         <b>{entry.step_name || "工作流"}</b>
                         <span className={entry.level}>{entry.message}</span>
                       </li>
@@ -3854,7 +3897,7 @@ function HypothesisWorkbench({
               <li key={event.id}>
                 <b>{event.event_type}</b>
                 <span>{event.actor} · {event.reason}</span>
-                <time>{event.created_at}</time>
+                <time dateTime={event.created_at}>{fmtTime(event.created_at)}</time>
               </li>
             ))}
           </ol>
@@ -5720,7 +5763,7 @@ function AuditReviewPage({
                             ? "模型独立审稿"
                             : "确定性对抗审计"}
                         </b>
-                        <span>{review.created_at}</span>
+                        <span>{fmtTime(review.created_at)}</span>
                       </div>
                       <span className={`review-verdict ${review.verdict}`}>
                         {review.status === "completed"

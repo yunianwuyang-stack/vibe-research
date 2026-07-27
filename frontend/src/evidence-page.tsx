@@ -24,6 +24,14 @@ export type EvidencePageProps = {
   onReviewSupport: (cardId: string, decision: "approved" | "rejected") => void;
 };
 
+/** Format ISO → "YYYY/MM/DD HH:mm" for display. */
+function fmtTs(iso: string | null | undefined): string {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return iso;
+  return d.toLocaleString("zh-CN", { hour12: false, year: "numeric", month: "2-digit", day: "2-digit", hour: "2-digit", minute: "2-digit" });
+}
+
 export function evidenceLibrarySummary(input: {
   recordCount: number;
   cardCount: number;
@@ -182,7 +190,7 @@ export function EvidencePage({
                         : (card.citation_machine_verdict || "").toUpperCase() ===
                             "FAIL"
                           ? "!"
-                          : "0"}
+                          : "○"}
                     </i>
                     机器引用 · {machineCitationLabel(card.citation_machine_verdict)}
                     {card.citation_machine_layer
@@ -190,11 +198,11 @@ export function EvidencePage({
                       : ""}
                   </span>
                   <span className={card.citation_status === "approved" ? "done" : ""}>
-                    <i aria-hidden="true">{card.citation_status === "approved" ? "✓" : "1"}</i>
+                    <i aria-hidden="true">{card.citation_status === "approved" ? "✓" : "○"}</i>
                     人工引用 · {statusText(card.citation_status)}
                   </span>
                   <span className={card.claim_support_status === "approved" ? "done" : ""}>
-                    <i aria-hidden="true">{card.claim_support_status === "approved" ? "✓" : "2"}</i>
+                    <i aria-hidden="true">{card.claim_support_status === "approved" ? "✓" : "○"}</i>
                     主张支持 · {statusText(card.claim_support_status)}
                   </span>
                 </div>
@@ -204,7 +212,7 @@ export function EvidencePage({
                   <p className="evidence-machine-detail">
                     {card.citation_machine_detail || "机器核验已执行"}
                     {card.citation_machine_checked_at
-                      ? ` · ${card.citation_machine_checked_at}`
+                      ? ` · 核验于 ${fmtTs(card.citation_machine_checked_at)}`
                       : ""}
                     {card.citation_machine_artifact_path
                       ? ` · ${card.citation_machine_artifact_path}`

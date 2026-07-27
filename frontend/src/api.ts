@@ -218,6 +218,7 @@ export async function streamWorkflowOperationsEvents(filters:{after_id?:number;p
   }
 }
 export const resolveWorkflowCheckpoint=(workflowId:string,action:'approve'|'feedback'|'stop',data:Record<string,unknown>={})=>api<{ok:boolean}>(`/api/workflows/${workflowId}/checkpoints/resolve`,{method:'POST',body:JSON.stringify({action,data})});
+export const syncWorkflowEvidence=(workflowId:string)=>api<{imported:Array<{provider:string;title:string;url:string}>;count:number;errors:Array<{provider:string;url?:string;error:string}>;project_id:string}>(`/api/workflows/${encodeURIComponent(workflowId)}/sync-evidence`,{method:'POST'});
 export type ResearchRunList={
   project_id:string;
   runs:Array<Pick<ResearchRun,'id'|'project_id'|'status'|'current_step'|'created_at'|'updated_at'>>;

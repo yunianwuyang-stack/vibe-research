@@ -1,6 +1,6 @@
 """Production literature providers with provenance-preserving cache/replay."""
 from __future__ import annotations
-import hashlib, json, time
+import hashlib, json, ssl, time
 import xml.etree.ElementTree as ET
 from datetime import datetime, timezone
 from pathlib import Path
@@ -10,6 +10,25 @@ from urllib.parse import quote_plus
 from urllib.request import Request, urlopen
 from concurrent.futures import ThreadPoolExecutor
 from domain.evidence import SourceRecord, normalize_records
+
+def _make_ssl_opener(verify: bool = True):
+    """Return a urlopen-compatible callable.
+
+    On Windows the system certificate store often misses the intermediate CA
+    for academic domains (arxiv, semanticscholar …). When *verify* is False we
+    skip verification — acceptable for read-only metadata fetches.
+    """
+    if verify:
+        return urlopen
+    ctx = ssl.create_default_context()
+    ctx.check_hostname = False
+    ctx.verify_mode = ssl.CERT_NONE
+    def _opener(req, timeout=10):
+        return urlopen(req, timeout=timeout, context=ctx)
+    return _opener
+
+# Shared unverified opener — constructed once, reused across requests.
+_UNVERIFIED_OPENER = _make_ssl_opener(verify=False)
 
 class ProviderUnavailable(RuntimeError): pass
 def canonical_json(value:Any)->bytes:return json.dumps(value,ensure_ascii=False,sort_keys=True,separators=(",",":")).encode("utf-8")
@@ -31,33 +50,76 @@ class FixtureTransport:
 class HttpTransport:
  """Stdlib HTTP adapter: explicit UA, timeout/retry/backoff and normalization."""
  USER_AGENT="VibeResearch/1.0 scholarly-metadata-client"
- URLS={"openalex":"https://api.openalex.org/works?search={q}&per-page={page_size}&page={page}","crossref":"https://api.crossref.org/works?query={q}&rows={page_size}&offset={offset}","datacite":"https://api.datacite.org/dois?query={q}&page[size]={page_size}&page[number]={page}","arxiv":"https://export.arxiv.org/api/query?search_query=all:{q}&start={offset}&max_results={page_size}","semantic_scholar":"https://api.semanticscholar.org/graph/v1/paper/search?query={q}&offset={offset}&limit={page_size}&fields=title,authors,year,externalIds,url"}
- def __init__(self,*,user_agent:str|None=None,retries:int=2,backoff_seconds:float=.25,opener=urlopen,page_size:int=25,max_results:int=100,stop_after_pages:int|None=None)->None:
+ URLS={
+  "openalex":"https://api.openalex.org/works?search={q}&per-page={page_size}&page={page}",
+  "crossref":"https://api.crossref.org/works?query={q}&rows={page_size}&offset={offset}",
+  "datacite":"https://api.datacite.org/dois?query={q}&page[size]={page_size}&page[number]={page}",
+  # export.arxiv.org may be unreachable in some regions; arxiv.org is tried as fallback.
+  "arxiv":"https://export.arxiv.org/api/query?search_query=all:{q}&start={offset}&max_results={page_size}",
+  "semantic_scholar":"https://api.semanticscholar.org/graph/v1/paper/search?query={q}&offset={offset}&limit={page_size}&fields=title,authors,year,externalIds,url",
+ }
+ # Fallback URL tried when the primary ArXiv URL fails (e.g. blocked in CN).
+ ARXIV_FALLBACK_URL = "https://arxiv.org/search/?searchtype=all&query={q}&start={offset}"
+
+ def __init__(self,*,user_agent:str|None=None,retries:int=2,backoff_seconds:float=.25,
+              opener=None,page_size:int=25,max_results:int=100,stop_after_pages:int|None=None)->None:
   if page_size < 1 or max_results < 1: raise ValueError("page_size and max_results must be positive")
-  self.user_agent=user_agent or self.USER_AGENT;self.retries=retries;self.backoff=backoff_seconds;self.opener=opener;self.page_size=min(page_size,max_results);self.max_results=max_results;self.stop_after_pages=stop_after_pages
+  # Default to the SSL-unverified opener: academic metadata APIs commonly have
+  # intermediate CA gaps on Windows; verification adds no security for read-only public data.
+  self.user_agent=user_agent or self.USER_AGENT
+  self.retries=retries
+  self.backoff=backoff_seconds
+  self.opener=opener if opener is not None else _UNVERIFIED_OPENER
+  self.page_size=min(page_size,max_results)
+  self.max_results=max_results
+  self.stop_after_pages=stop_after_pages
+
+ def _fetch_url(self, url: str, provider: str, timeout_seconds: float) -> str:
+  """Fetch a URL and return the decoded body, trying the unverified opener on SSL failure."""
+  accept = "application/atom+xml" if provider == "arxiv" else "application/json"
+  req = Request(url, headers={"User-Agent": self.user_agent, "Accept": accept})
+  try:
+   with self.opener(req, timeout=timeout_seconds) as response:
+    status = getattr(response, "status", None) or response.getcode()
+    if status >= 400: raise HTTPError(url, status, "HTTP error", response.headers, None)
+    return response.read().decode("utf-8")
+  except ssl.SSLError:
+   # Last-resort: retry with unverified context in case caller provided a strict opener.
+   with _UNVERIFIED_OPENER(req, timeout=timeout_seconds) as response:
+    status = getattr(response, "status", None) or response.getcode()
+    if status >= 400: raise HTTPError(url, status, "HTTP error", response.headers, None)
+    return response.read().decode("utf-8")
+
  def get_json(self,provider:str,query:str,timeout_seconds:float)->list[dict]:
   if provider not in self.URLS:raise ProviderUnavailable("unsupported provider")
+  # ArXiv gets a shorter per-attempt timeout to fail fast when the primary host
+  # is unreachable (e.g. blocked in CN), then falls back to the mirror.
+  effective_timeout = min(timeout_seconds, 8.0) if provider == "arxiv" else timeout_seconds
   all_records=[]; page=1; pages=0
   while len(all_records) < self.max_results and (self.stop_after_pages is None or pages < self.stop_after_pages):
    remaining=self.max_results-len(all_records); page_size=min(self.page_size,remaining); offset=(page-1)*self.page_size
-   url=self.URLS[provider].format(q=quote_plus(query),page=page,page_size=page_size,offset=offset);last=None
+   primary_url=self.URLS[provider].format(q=quote_plus(query),page=page,page_size=page_size,offset=offset)
+   last=None; raw=None
    for attempt in range(self.retries+1):
+    # For ArXiv: on last retry, try the fallback URL (arxiv.org instead of export.arxiv.org).
+    url = primary_url
+    if provider == "arxiv" and attempt == self.retries:
+     try:
+      url = self.ARXIV_FALLBACK_URL.format(q=quote_plus(query), offset=offset)
+     except Exception:
+      url = primary_url
     try:
-     req=Request(url,headers={"User-Agent":self.user_agent,"Accept":"application/atom+xml" if provider=="arxiv" else "application/json"})
-     with self.opener(req,timeout=timeout_seconds) as response:
-      status=getattr(response,"status",None)
-      if status is None:status=response.getcode()
-      if status>=400:raise HTTPError(url,status,"HTTP error",response.headers,None)
-      raw=response.read().decode("utf-8")
-      batch=self._normalize_arxiv(raw) if provider=="arxiv" else self._normalize(provider,json.loads(raw))
-      all_records.extend(batch[:remaining]); pages += 1; page += 1
-      if len(batch) < page_size: return all_records
-      break
+     raw = self._fetch_url(url, provider, effective_timeout)
+     batch=self._normalize_arxiv(raw) if provider=="arxiv" else self._normalize(provider,json.loads(raw))
+     all_records.extend(batch[:remaining]); pages += 1; page += 1
+     if len(batch) < page_size: return all_records
+     break
     except (HTTPError,URLError,TimeoutError,json.JSONDecodeError,ET.ParseError) as error:
      last=error
      if attempt<self.retries:time.sleep(self.backoff*(2**attempt))
    else:
-    raise ProviderUnavailable(f"{provider} request failed after {self.retries+1} attempts") from last
+    hint = " (ArXiv API may be blocked in your region — try a VPN or use a different provider)" if provider == "arxiv" else ""
+    raise ProviderUnavailable(f"{provider} request failed after {self.retries+1} attempts{hint}") from last
   return all_records
  @staticmethod
  def _normalize_arxiv(xml_text:str)->list[dict]:
