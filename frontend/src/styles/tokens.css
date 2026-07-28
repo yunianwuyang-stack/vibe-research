@@ -8,7 +8,7 @@
   --vr-border-2: #eef0f5;
   --vr-ink: #0e1623;
   --vr-ink-2: #4a5568;
-  --vr-ink-3: #8a95a8;
+  --vr-ink-3: #5c6a7a;  /* was #8a95a8 — darkened for 5.5:1 on white (WCAG AA) */
   --vr-accent: #00a99d;
   --vr-accent-dk: #007f79;
   --vr-accent-bg: #f0fdfc;

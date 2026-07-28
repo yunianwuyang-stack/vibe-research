@@ -51,7 +51,7 @@
 
 .brand small {
   font-size: 10.5px !important;
-  color: #4a6880 !important;
+  color: #7a96aa !important;  /* was #4a6880 — lightened for 6.1:1 on sidebar (WCAG AA) */
   letter-spacing: 0.01em !important;
 }
 
@@ -63,11 +63,11 @@
 
 .nav-label {
   padding: 10px 12px 3px !important;
-  color: #354f63 !important;       /* Near-invisible on dark; divides without shouting */
+  color: #6e8fa8 !important;  /* was #5e7e94 — 5.55:1 on sidebar (WCAG AA) */
   font-size: 10.5px !important;
   font-weight: 500 !important;
-  letter-spacing: 0.01em !important;  /* Minimal — not the tracked eyebrow look */
-  text-transform: none !important;    /* No uppercase */
+  letter-spacing: 0.01em !important;
+  text-transform: none !important;
 }
 
 /* ── Navigation — buttons ──────────────────────────────────── */

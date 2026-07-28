@@ -1,0 +1,317 @@
+/* ===============================================================
+   FEATURE PAGES — Evidence library & Research map
+   =============================================================== */
+
+/* ── Search bar ─────────────────────────────────────────────── */
+.search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.search select {
+  width: auto !important;
+  min-width: 140px !important;
+  flex-shrink: 0 !important;
+  font-size: 13px !important;
+  padding: 9px 10px !important;
+  border-radius: 7px !important;
+}
+
+.search input {
+  flex: 1 !important;
+  font-size: 13.5px !important;
+  padding: 9px 12px !important;
+  border-radius: 7px !important;
+}
+
+.search > button {
+  flex-shrink: 0 !important;
+  min-width: 56px !important;
+}
+
+/* ── Evidence notice banner ─────────────────────────────────── */
+.evidence-notice {
+  padding: 10px 14px;
+  background: var(--vr-accent-bg);
+  border: 1px solid rgba(0, 169, 157, 0.2);
+  border-radius: 8px;
+  color: var(--vr-accent-dk);
+  font-size: 13px;
+  line-height: 1.55;
+  margin-bottom: 14px;
+}
+
+/* ── Saved evidence heading ─────────────────────────────────── */
+.saved-evidence-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 32px 0 12px;
+  padding-top: 24px;
+  border-top: 1px solid var(--vr-border);
+}
+
+.saved-evidence-heading h3 {
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: var(--vr-ink);
+}
+
+.saved-evidence-heading p {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--vr-ink-3);
+  line-height: 1.55;
+  max-width: 56ch;
+}
+
+.saved-evidence-heading > span {
+  padding: 5px 10px;
+  background: var(--vr-bg);
+  border: 1px solid var(--vr-border);
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--vr-ink-2);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* ── Evidence card ──────────────────────────────────────────── */
+.results .evidence-card {
+  padding: 14px 16px !important;
+  display: grid !important;
+  gap: 10px !important;
+}
+
+.evidence-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.evidence-card-head > div > a {
+  font-size: 14px !important;
+  font-weight: 650 !important;
+  line-height: 1.4 !important;
+}
+
+.evidence-card-head > div > span {
+  display: block;
+  margin-top: 3px;
+  font-size: 11.5px;
+  color: var(--vr-ink-3);
+}
+
+/* Evidence completion state badge */
+.evidence-state {
+  flex-shrink: 0;
+  padding: 3px 9px;
+  border-radius: 99px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid var(--vr-border);
+  color: var(--vr-ink-3);
+  background: var(--vr-bg);
+}
+
+.evidence-state.state-true {
+  background: #dcfce7;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+
+/* Evidence progress bar */
+.evidence-progress {
+  height: 4px;
+  background: var(--vr-border-2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.evidence-progress > span {
+  display: block;
+  height: 100%;
+  background: var(--vr-accent);
+  border-radius: inherit;
+  transition: width 0.3s ease;
+}
+
+/* Evidence verification checks */
+.evidence-checks {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.evidence-checks > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  color: var(--vr-ink-3);
+  padding: 3px 8px;
+  background: var(--vr-bg);
+  border: 1px solid var(--vr-border-2);
+  border-radius: 5px;
+}
+
+.evidence-checks > span.done {
+  color: #15803d;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+/* Machine citation detail */
+.evidence-machine-detail {
+  font-size: 11px !important;
+  color: var(--vr-ink-3) !important;
+  font-family: var(--vr-font-mono) !important;
+  background: var(--vr-bg) !important;
+  padding: 6px 8px !important;
+  border-radius: 5px !important;
+  border: 1px solid var(--vr-border-2) !important;
+  overflow-wrap: anywhere !important;
+  margin: 0 !important;
+}
+
+/* Saved search result highlight */
+.search-results .saved-result {
+  background: var(--vr-accent-bg) !important;
+  border-color: rgba(0, 169, 157, 0.2) !important;
+}
+
+.saved-result > a {
+  color: var(--vr-accent-dk) !important;
+}
+
+/* ============================================================
+   RESEARCH MAP PAGE
+   ============================================================ */
+
+.research-map {
+  max-width: 900px;
+  padding: 32px 0 64px;
+}
+
+/* Header: remove English "Research Map" eyebrow */
+.research-map-status .eyebrow {
+  display: none;
+}
+
+.research-map-status {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--vr-border-2);
+}
+
+.research-map-status > div > h1 {
+  margin: 0 0 6px;
+  font-size: 24px;
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  color: var(--vr-ink);
+  font-family: var(--vr-font-display);
+}
+
+.research-map-status > div > p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--vr-ink-3);
+  line-height: 1.6;
+  max-width: 56ch;
+}
+
+/* Readiness status chip */
+.research-map-status .status-chip {
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+
+/* Research question section */
+.research-map-question {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  margin-bottom: 16px;
+  box-shadow: var(--vr-shadow-s);
+}
+
+.research-map-question > h2 {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vr-ink-3);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin: 0 0 12px;
+}
+
+.research-map-question .form-grid {
+  box-shadow: none !important;
+  border: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+/* Research map blockers */
+.research-map-blockers {
+  list-style: none;
+  padding: 0;
+  margin: 12px 0 0;
+  display: grid;
+  gap: 6px;
+}
+
+.research-map-blockers > li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #fef9c3;
+  border: 1px solid #fde68a;
+  border-radius: 7px;
+  font-size: 12.5px;
+  color: #854d0e;
+}
+
+.research-map-blockers > li::before {
+  content: "⚠";
+  font-size: 11px;
+  flex-shrink: 0;
+}
+
+/* Map form sections */
+.research-map .form-grid {
+  grid-template-columns: 1fr 1fr !important;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 760px) {
+  .research-map-status {
+    flex-direction: column;
+  }
+
+  .research-map .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .search {
+    flex-wrap: wrap;
+  }
+
+  .search select {
+    width: 100% !important;
+  }
+}

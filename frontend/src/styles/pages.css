@@ -508,7 +508,12 @@
   flex-wrap: wrap !important;
 }
 
-/* ── Run center layout ──────────────────────────────────────── */
+/* ── Cards ───────────────────────────────────────────────────── */
+/* Override legacy #70828c card body (3.99:1, fails WCAG AA) */
+.card p,
+.card > p {
+  color: var(--vr-ink-2) !important;  /* #4a5568 = 7.53:1 on white */
+}
 .run-center-layout {
   display: grid !important;
   grid-template-columns: 280px minmax(0, 1fr) !important;
