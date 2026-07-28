@@ -31,12 +31,14 @@ export function Empty({ text }: { text: string }) {
 
 export function Field({
   label,
+  hint,
   value,
   set,
   placeholder,
   area,
 }: {
   label: string;
+  hint?: string;
   value: string;
   set: (value: string) => void;
   placeholder: string;
@@ -45,6 +47,7 @@ export function Field({
   return (
     <label className={area ? "wide" : ""}>
       {label}
+      {hint && <span className="field-hint">{hint}</span>}
       {area ? (
         <textarea
           value={value}

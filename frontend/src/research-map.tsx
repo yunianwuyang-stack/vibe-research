@@ -1,6 +1,6 @@
 /**
- * P9.1 Research Map feature page.
- * Question → tension → mechanism → hypotheses → claims → boundaries.
+ * Research Map page — guides the user through the argument structure
+ * of their research in plain language before saving the narrative map.
  */
 import React from "react";
 import type { NarrativeMap, Project } from "./api";
@@ -39,13 +39,15 @@ export function researchMapReadiness(input: {
   canApprove: boolean;
 } {
   const blockers: string[] = [];
-  if (!input.project) blockers.push("尚未选择研究项目");
-  if (!input.narrative.tension.trim()) blockers.push("缺少文献张力");
-  if (!input.narrative.mechanism.trim()) blockers.push("缺少候选机制");
-  if (input.frozenCount === 0) blockers.push("尚无冻结假设");
-  if (!(input.narrative.claims[0] || "").trim()) blockers.push("缺少主张 ID");
+  if (!input.project) blockers.push("请先选择或创建研究项目");
+  if (!input.narrative.tension.trim()) blockers.push("请填写「文献争议与空白」");
+  if (!input.narrative.mechanism.trim()) blockers.push("请填写「你的解释机制」");
+  if (input.frozenCount === 0)
+    blockers.push("项目中还没有已冻结的假设 — 请先到「研究合同」冻结假设");
+  if (!(input.narrative.claims[0] || "").trim())
+    blockers.push("请给核心主张填写一个编号（如 C1）");
   if (!(input.narrative.competing_explanations[0] || "").trim())
-    blockers.push("缺少替代解释");
+    blockers.push("请填写「替代解释」");
   const canSave = Boolean(input.project) && input.frozenCount > 0;
   const canApprove = Boolean(input.project) && !input.narrative.approved;
   const status = !input.project
@@ -81,13 +83,17 @@ export function ResearchMapPage({
   return (
     <Panel
       title="研究地图"
-      detail="把研究问题、文献张力、机制、冻结假设、主张与边界放在同一张可审计的论证地图上。"
+      detail="在这里整理你的论点框架、已确认假设与核心主张。保存后，主张编号可在「主张-证据图」中关联文献，论证图通过后才能生成稿件。"
     >
       <div className="research-map" aria-label="研究地图">
+
+        {/* ── 项目标题 + 状态 ─────────────────── */}
         <header className="research-map-status">
           <div>
-            <p className="eyebrow">Research Map</p>
-            <h2>{project?.title || "未选择项目"}</h2>
+            <h1>{project?.title || "未选择项目"}</h1>
+            {project?.research_question && (
+              <p>{project.research_question}</p>
+            )}
           </div>
           <span className={`status-chip status-${readiness.status}`}>
             {STATUS_LABEL[readiness.status]}
@@ -98,76 +104,127 @@ export function ResearchMapPage({
           <Empty text="先建立或选择研究项目，再编辑研究地图。" />
         ) : (
           <>
-            <section className="research-map-question" aria-label="研究问题">
-              <h3>研究问题</h3>
-              <p>{project.research_question || narrative.question || "（项目尚未写入研究问题）"}</p>
+
+            {/* ── Section 1: 论点框架 ─────────────── */}
+            <section className="settings-section">
+              <div className="section-command">
+                <h3>论点框架</h3>
+              </div>
+              <p className="section-desc">说明你要解决的文献矛盾，以及你提出的解释方向。</p>
+              <div className="form-grid">
+                <Field
+                  label="文献争议与空白"
+                  hint="现有研究在哪里留下了矛盾或未解答的问题？"
+                  value={narrative.tension}
+                  set={(v) => setField("tension", v)}
+                  area
+                  placeholder="例：现有研究对X因素的结论相互矛盾，且缺乏针对……的纵向追踪数据"
+                />
+                <Field
+                  label="你的解释机制"
+                  hint="你认为什么原因或路径可以解释这个现象？"
+                  value={narrative.mechanism}
+                  set={(v) => setField("mechanism", v)}
+                  area
+                  placeholder="例：我们认为Y通过Z路径影响X，具体表现为……"
+                />
+              </div>
             </section>
 
-            <div className="form-grid">
-              <Field
-                label="文献张力"
-                value={narrative.tension}
-                set={(value) => setField("tension", value)}
-                area
-                placeholder="既有研究在哪些发现或解释上冲突？"
-              />
-              <Field
-                label="候选机制"
-                value={narrative.mechanism}
-                set={(value) => setField("mechanism", value)}
-                area
-                placeholder="提出可检验的机制"
-              />
+            {/* ── Section 2: 已确认假设 ───────────── */}
+            <section className="settings-section">
+              <div className="section-command">
+                <h3>已确认假设</h3>
+              </div>
+              <p className="section-desc">
+                来自研究合同，已冻结、不可在此修改。
+                {frozenHypotheses.length === 0 && (
+                  <> 点击下方「管理假设」去添加并冻结假设。</>
+                )}
+              </p>
               <label className="wide">
-                当前冻结假设（由注册表同步）
                 <textarea
                   readOnly
                   value={
                     frozenHypotheses.length
                       ? frozenHypotheses
-                          .map((item) => {
-                            const hid = (item.hypothesis_id || item.id || "").slice(0, 8);
-                            return `H-${hid} v${item.version ?? "?"}: ${item.statement || ""}`;
+                          .map((h) => {
+                            const hid = (h.hypothesis_id || h.id || "").slice(0, 8);
+                            return `H-${hid} v${h.version ?? "?"}: ${h.statement || ""}`;
                           })
                           .join("\n")
-                      : "尚无冻结假设；保存论证图将被阻断。请先在研究项目中冻结假设。"
+                      : "暂无已冻结的假设"
                   }
                 />
               </label>
-              <Field
-                label="主张 ID"
-                value={narrative.claims[0] || ""}
-                set={(value) => setField("claims", [value])}
-                placeholder="C1"
-              />
-              <Field
-                label="替代解释"
-                value={narrative.competing_explanations[0] || ""}
-                set={(value) => setField("competing_explanations", [value])}
-                placeholder="至少一个竞争解释"
-              />
-              <Field
-                label="边界条件"
-                value={narrative.boundaries[0] || ""}
-                set={(value) => setField("boundaries", [value])}
-                placeholder="适用范围"
-              />
-              <Field
-                label="局限"
-                value={narrative.limitations[0] || ""}
-                set={(value) => setField("limitations", [value])}
-                placeholder="已知局限"
-              />
-            </div>
+            </section>
 
+            {/* ── Section 3: 核心主张 ─────────────── */}
+            <section className="settings-section">
+              <div className="section-command">
+                <h3>核心主张</h3>
+              </div>
+              <p className="section-desc">
+                给你的每条核心主张起一个短编号（如 C1、C2）。
+                保存后，你可以在「主张-证据图」里用这个编号把文献证据关联进来。
+              </p>
+              <div className="form-grid">
+                <Field
+                  label="主张编号"
+                  hint="短编号即可，如 C1。后续在「主张-证据图」里关联证据时会用到它。"
+                  value={narrative.claims[0] || ""}
+                  set={(v) => setField("claims", [v])}
+                  placeholder="C1"
+                />
+              </div>
+            </section>
+
+            {/* ── Section 4: 论证边界 ─────────────── */}
+            <section className="settings-section">
+              <div className="section-command">
+                <h3>论证边界</h3>
+              </div>
+              <p className="section-desc">
+                说明你的结论在哪些条件下成立、你排除了哪些替代解释、以及研究的不足之处。
+              </p>
+              <div className="form-grid">
+                <Field
+                  label="替代解释"
+                  hint="还有什么其他可能的解释？你为什么不选择它？"
+                  value={narrative.competing_explanations[0] || ""}
+                  set={(v) => setField("competing_explanations", [v])}
+                  area
+                  placeholder="例：也可能是Z因素导致的，但我们认为……因为……"
+                />
+                <Field
+                  label="适用范围"
+                  hint="你的结论在哪些人群、时间段或情境下有效？"
+                  value={narrative.boundaries[0] || ""}
+                  set={(v) => setField("boundaries", [v])}
+                  area
+                  placeholder="例：本研究结论主要适用于……，不适用于……"
+                />
+                <Field
+                  label="已知局限"
+                  hint="这项研究有哪些不足或尚未解决的问题？"
+                  value={narrative.limitations[0] || ""}
+                  set={(v) => setField("limitations", [v])}
+                  area
+                  placeholder="例：样本量有限；未控制……变量；横断面数据无法确定因果"
+                />
+              </div>
+            </section>
+
+            {/* ── 阻断提示 ────────────────────────── */}
             {readiness.blockers.length > 0 && (
-              <ul className="research-map-blockers" aria-label="研究地图阻断">
+              <ul className="research-map-blockers" aria-label="待完成项">
                 {readiness.blockers.map((item) => (
                   <li key={item}>{item}</li>
                 ))}
               </ul>
             )}
 
+            {/* ── 操作按钮 ────────────────────────── */}
             <div className="actions">
               <button
                 type="button"
@@ -180,6 +237,7 @@ export function ResearchMapPage({
                 type="button"
                 disabled={busy || !readiness.canApprove}
                 onClick={onApprove}
+                className="quiet"
               >
                 人工批准论证图
               </button>
@@ -190,9 +248,10 @@ export function ResearchMapPage({
                 进入科学写作
               </button>
             </div>
+
             {narrative.approved && (
               <p className="cockpit-muted" role="status">
-                论证图已批准{narrative.approved_by ? ` · ${narrative.approved_by}` : ""}。稿件生成可消费此地图。
+                论证图已批准{narrative.approved_by ? ` · ${narrative.approved_by}` : ""}，可生成稿件。
               </p>
             )}
           </>
