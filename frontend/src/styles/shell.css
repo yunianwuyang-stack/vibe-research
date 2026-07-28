@@ -21,14 +21,14 @@
   --shell-nav-hover-bg: rgba(255, 255, 255, 0.07);
   --shell-nav-hover-text: #c5d9e6;
   --shell-border: rgba(255, 255, 255, 0.06);
-  --topbar-h: 64px;
+  --topbar-h: 56px;
 }
 
 /* ── Brand ─────────────────────────────────────────────────── */
 .brand {
-  padding: 18px 12px 20px;
+  padding: 12px 12px 14px;
   border-bottom: 1px solid var(--shell-border);
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 /* Gradient mark — drops the plain block color */
@@ -73,7 +73,7 @@
 /* ── Navigation — buttons ──────────────────────────────────── */
 nav button,
 .voice {
-  padding: 8px 12px !important;
+  padding: 6px 10px !important;
   border-radius: 7px !important;
   font-size: 13px !important;
   color: #6e8fa8 !important;
@@ -237,18 +237,18 @@ nav button.active {
 
 /* ── Content area padding ───────────────────────────────────── */
 .content {
-  padding: 0 48px 80px !important;
+  padding: 0 36px 48px !important;
 }
 
 @media (max-width: 1280px) {
   .content {
-    padding: 0 32px 64px !important;
+    padding: 0 24px 48px !important;
   }
 }
 
 @media (max-width: 768px) {
   .content {
-    padding: 0 20px 48px !important;
+    padding: 0 16px 40px !important;
   }
 }
 
@@ -277,16 +277,16 @@ nav button.active {
 /* ── Panel / section headers ────────────────────────────────── */
 .section-header h1 {
   font-family: var(--vr-font-display) !important;
-  font-size: 30px !important;
+  font-size: 24px !important;
   font-weight: 750 !important;
   letter-spacing: -0.025em !important;
   line-height: 1.25 !important;
 }
 
 .section-header p {
-  font-size: 14px !important;
+  font-size: 13px !important;
   color: var(--vr-ink-2) !important;
-  line-height: 1.75 !important;
+  line-height: 1.6 !important;
   max-width: 64ch !important;
 }
 

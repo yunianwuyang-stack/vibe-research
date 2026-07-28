@@ -7,18 +7,18 @@
 /* ── Panel ──────────────────────────────────────────────────── */
 .panel {
   max-width: 1080px !important;
-  padding: 40px 0 80px !important;
+  padding: 24px 0 48px !important;
 }
 
 .section-header {
-  margin-bottom: 28px !important;
-  padding-bottom: 20px !important;
+  margin-bottom: 18px !important;
+  padding-bottom: 12px !important;
   border-bottom: 1px solid var(--vr-border-2) !important;
 }
 
 .section-header h1 {
-  margin: 0 0 8px !important;
-  font-size: 26px !important;
+  margin: 0 0 4px !important;
+  font-size: 22px !important;
   font-weight: 750 !important;
   letter-spacing: -0.025em !important;
   line-height: 1.25 !important;
@@ -28,9 +28,9 @@
 
 .section-header > p {
   margin: 0 !important;
-  font-size: 14px !important;
+  font-size: 13px !important;
   color: var(--vr-ink-2) !important;
-  line-height: 1.72 !important;
+  line-height: 1.55 !important;
   max-width: 66ch !important;
 }
 
@@ -38,8 +38,8 @@
 .form-grid {
   display: grid !important;
   grid-template-columns: 1fr 1fr !important;
-  gap: 16px !important;
-  padding: 22px !important;
+  gap: 12px !important;
+  padding: 14px !important;
   background: var(--vr-surface) !important;
   border: 1px solid var(--vr-border) !important;
   border-radius: 10px !important;
@@ -50,7 +50,7 @@
   font-size: 12.5px !important;
   font-weight: 600 !important;
   color: var(--vr-ink-2) !important;
-  gap: 5px !important;
+  gap: 4px !important;
 }
 
 /* Field hint: one-line description below the label */
@@ -75,9 +75,9 @@
 .form-grid input,
 .form-grid textarea,
 .form-grid select {
-  font-size: 13.5px !important;
+  font-size: 13px !important;
   border-radius: 7px !important;
-  padding: 9px 11px !important;
+  padding: 7px 10px !important;
 }
 
 /* ── Actions row ────────────────────────────────────────────── */
@@ -86,12 +86,12 @@
   align-items: center !important;
   gap: 8px !important;
   flex-wrap: wrap !important;
-  margin: 16px 0 !important;
+  margin: 10px 0 !important;
 }
 
 /* ── Empty states ───────────────────────────────────────────── */
 .empty {
-  padding: 40px 24px !important;
+  padding: 24px 20px !important;
   background: var(--vr-surface) !important;
   border: 1px dashed var(--vr-border) !important;
   border-radius: 10px !important;
@@ -101,8 +101,8 @@
 
 .empty p {
   margin: 0 !important;
-  font-size: 13.5px !important;
-  line-height: 1.65 !important;
+  font-size: 13px !important;
+  line-height: 1.6 !important;
 }
 
 /* ── Badges ─────────────────────────────────────────────────── */
@@ -187,11 +187,11 @@
   padding: 0 !important;
   margin: 0 !important;
   display: grid !important;
-  gap: 8px !important;
+  gap: 5px !important;
 }
 
 .results li {
-  padding: 14px 16px !important;
+  padding: 10px 14px !important;
   background: var(--vr-surface) !important;
   border: 1px solid var(--vr-border) !important;
   border-radius: 8px !important;
@@ -201,7 +201,7 @@
   color: var(--vr-accent-dk) !important;
   text-decoration: none !important;
   font-weight: 600 !important;
-  font-size: 13.5px !important;
+  font-size: 13px !important;
 }
 
 .results a:hover {
@@ -210,22 +210,22 @@
 
 .results span {
   display: block !important;
-  margin-top: 5px !important;
+  margin-top: 3px !important;
   color: var(--vr-ink-3) !important;
   font-size: 11.5px !important;
 }
 
 /* ── Settings sections ──────────────────────────────────────── */
 .settings-section {
-  margin-bottom: 28px !important;
+  margin-bottom: 16px !important;
 }
 
 .settings-section > h3 {
-  font-size: 16px !important;
+  font-size: 14px !important;
   font-weight: 700 !important;
   letter-spacing: -0.015em !important;
   color: var(--vr-ink) !important;
-  margin: 0 0 12px !important;
+  margin: 0 0 8px !important;
 }
 
 /* ── Section command header ─────────────────────────────────── */
@@ -234,32 +234,32 @@
   align-items: flex-start !important;
   justify-content: space-between !important;
   gap: 12px !important;
-  margin-bottom: 14px !important;
+  margin-bottom: 8px !important;
 }
 
 .section-command h3 {
-  font-size: 17px !important;
+  font-size: 15px !important;
   font-weight: 700 !important;
   letter-spacing: -0.015em !important;
   color: var(--vr-ink) !important;
-  margin: 0 0 3px !important;
+  margin: 0 0 2px !important;
 }
 
 /* ── Project card ───────────────────────────────────────────── */
 .project-card {
   display: flex !important;
   justify-content: space-between !important;
-  gap: 24px !important;
-  margin: 20px 0 24px !important;
-  padding: 20px !important;
+  gap: 20px !important;
+  margin: 12px 0 16px !important;
+  padding: 14px !important;
   background: var(--vr-accent-bg) !important;
   border: 1px solid rgba(0, 169, 157, 0.2) !important;
   border-radius: 10px !important;
 }
 
 .project-card h3 {
-  margin: 4px 0 6px !important;
-  font-size: 18px !important;
+  margin: 2px 0 4px !important;
+  font-size: 16px !important;
   font-weight: 700 !important;
   letter-spacing: -0.02em !important;
   color: var(--vr-ink) !important;
@@ -466,12 +466,12 @@
 
 /* ── Claims onboarding (empty state) ────────────────────────── */
 .claims-onboarding {
-  padding: 24px 20px !important;
+  padding: 16px !important;
   background: var(--vr-surface) !important;
   border: 1px dashed var(--vr-border) !important;
   border-radius: 10px !important;
   display: grid !important;
-  gap: 16px !important;
+  gap: 10px !important;
 }
 
 .claims-onboarding-title {
@@ -546,16 +546,16 @@
   padding: 0 !important;
   margin: 0 !important;
   display: grid !important;
-  gap: 10px !important;
+  gap: 6px !important;
 }
 
 .review-list > li {
-  padding: 16px !important;
+  padding: 12px !important;
   background: var(--vr-surface) !important;
   border: 1px solid var(--vr-border) !important;
   border-radius: 9px !important;
   display: grid !important;
-  gap: 10px !important;
+  gap: 7px !important;
 }
 
 .review-verdict {
