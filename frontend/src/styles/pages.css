@@ -445,6 +445,69 @@
   color: #b91c1c !important;
 }
 
+/* ── Claims onboarding (empty state) ────────────────────────── */
+.claims-onboarding {
+  padding: 24px 20px !important;
+  background: var(--vr-surface) !important;
+  border: 1px dashed var(--vr-border) !important;
+  border-radius: 10px !important;
+  display: grid !important;
+  gap: 16px !important;
+}
+
+.claims-onboarding-title {
+  margin: 0 !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: var(--vr-ink) !important;
+}
+
+.claims-onboarding-steps {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: grid !important;
+  gap: 10px !important;
+}
+
+.claims-onboarding-steps > li {
+  display: flex !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+}
+
+.claims-onboarding-steps .step-num {
+  flex-shrink: 0 !important;
+  width: 22px !important;
+  height: 22px !important;
+  background: var(--vr-accent) !important;
+  color: #fff !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  margin-top: 1px !important;
+}
+
+.claims-onboarding-steps li > div {
+  display: grid !important;
+  gap: 2px !important;
+}
+
+.claims-onboarding-steps li strong {
+  font-size: 13px !important;
+  font-weight: 650 !important;
+  color: var(--vr-ink) !important;
+}
+
+.claims-onboarding-steps li > div > span {
+  font-size: 12px !important;
+  color: var(--vr-ink-3) !important;
+  line-height: 1.5 !important;
+}
+
 /* ── JSON card ──────────────────────────────────────────────── */
 .json-card {
   padding: 14px 16px !important;

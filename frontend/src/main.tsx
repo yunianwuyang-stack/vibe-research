@@ -2331,6 +2331,7 @@ export function App() {
             onReview={reviewClaimLink}
             onCreateExperiment={createExperimentLink}
             onReviewExperiment={reviewExperimentLink}
+            onGoToWriting={() => goToPage("科学写作")}
           />
         )}
       </section>
@@ -2748,6 +2749,7 @@ function ClaimEvidenceGraph({
   onReview,
   onCreateExperiment,
   onReviewExperiment,
+  onGoToWriting,
 }: {
   graph?: ClaimEvidenceGraph;
   busy: boolean;
@@ -2774,6 +2776,7 @@ function ClaimEvidenceGraph({
     linkId: string,
     decision: "approved" | "rejected",
   ) => Promise<void>;
+  onGoToWriting?: () => void;
 }) {
   const [claimId, setClaimId] = useState(""),
     [evidenceCardId, setEvidenceCardId] = useState(""),
@@ -2897,7 +2900,37 @@ function ClaimEvidenceGraph({
         </code>
       </div>
       {graph.claims.length === 0 ? (
-        <Empty text="保存至少包含一个唯一主张 ID 的论证图后，才能关联证据。" />
+        <div className="claims-onboarding">
+          <p className="claims-onboarding-title">还没有定义研究主张</p>
+          <ol className="claims-onboarding-steps">
+            <li>
+              <span className="step-num">1</span>
+              <div>
+                <strong>前往「科学写作」</strong>
+                <span>填写研究主张 ID（如 C1、C2），保存论证图</span>
+              </div>
+            </li>
+            <li>
+              <span className="step-num">2</span>
+              <div>
+                <strong>回到此处</strong>
+                <span>将已批准的证据卡与各主张关联起来</span>
+              </div>
+            </li>
+            <li>
+              <span className="step-num">3</span>
+              <div>
+                <strong>全部主张获得支持后，写作门禁自动通过</strong>
+                <span>可生成最终稿件</span>
+              </div>
+            </li>
+          </ol>
+          {onGoToWriting && (
+            <button className="quiet" onClick={onGoToWriting}>
+              前往科学写作 →
+            </button>
+          )}
+        </div>
       ) : (
         <>
           <div className="claim-node-list">
