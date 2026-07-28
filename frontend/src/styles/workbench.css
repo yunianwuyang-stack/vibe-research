@@ -1,0 +1,418 @@
+/* ===============================================================
+   WORKBENCH HOME v3 — First impression redesign
+   Goal: premium research companion, not SaaS dashboard template
+   =============================================================== */
+
+/* ── Hero section ───────────────────────────────────────────── */
+.hero-workspace {
+  padding: 56px 0 44px !important;
+  align-items: center !important;
+  gap: 52px !important;
+}
+
+.hero-copy h1 {
+  font-family: var(--vr-font-display) !important;
+  font-size: clamp(28px, 3.2vw, 46px) !important;
+  font-weight: 780 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.18 !important;
+  color: var(--vr-ink) !important;
+  text-wrap: balance !important;
+  margin: 0 0 16px !important;
+  max-width: 580px !important;
+}
+
+.hero-copy > p:not(.eyebrow) {
+  font-size: 15px !important;
+  line-height: 1.78 !important;
+  color: var(--vr-ink-2) !important;
+  max-width: 56ch !important;
+  margin: 0 0 28px !important;
+}
+
+/* Remove eyebrow above hero — not needed with a strong headline */
+.hero-copy .eyebrow {
+  display: none !important;
+}
+
+/* CTA buttons */
+.hero-copy .actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/* Hero trust bar */
+.hero-trust {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px !important;
+  color: var(--vr-ink-3) !important;
+  font-size: 11px !important;
+}
+
+.live-dot {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background: #4ade80 !important;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.2) !important;
+}
+
+.trust-divider {
+  width: 1px !important;
+  height: 12px !important;
+  background: var(--vr-border) !important;
+  margin: 0 2px !important;
+}
+
+/* Hero visual panel */
+.hero-visual {
+  border: 1px solid var(--vr-border) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  background: #f0f4f8 !important;
+  box-shadow: var(--vr-shadow) !important;
+}
+
+.hero-visual::after {
+  display: none !important; /* Remove old gradient overlay */
+}
+
+.visual-toolbar {
+  height: 34px !important;
+  background: #f6f8fb !important;
+  border-bottom: 1px solid var(--vr-border) !important;
+  color: var(--vr-ink-3) !important;
+  font-size: 11px !important;
+  letter-spacing: 0 !important;
+}
+
+.visual-window-dots i {
+  background: var(--vr-border) !important;
+}
+
+.visual-window-dots i:first-child {
+  background: var(--vr-accent) !important;
+  opacity: 0.7 !important;
+}
+
+.visual-secure {
+  background: var(--vr-accent-bg) !important;
+  color: var(--vr-accent-dk) !important;
+  font-size: 9px !important;
+  font-weight: 700 !important;
+  padding: 3px 6px !important;
+  border-radius: 4px !important;
+}
+
+.hero-visual img {
+  height: 220px !important;
+  filter: saturate(0.85) contrast(0.95) !important;
+}
+
+.visual-caption {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border: 0 !important;
+  border-top: 1px solid var(--vr-border) !important;
+  backdrop-filter: none !important;
+  color: var(--vr-ink-2) !important;
+  font-size: 11px !important;
+  padding: 8px 12px !important;
+}
+
+.visual-caption b {
+  color: var(--vr-accent-dk) !important;
+  font-size: 11px !important;
+}
+
+/* ── Workspace stats bar ────────────────────────────────────── */
+.workspace-stats {
+  border-top: 1px solid var(--vr-border) !important;
+  border-bottom: 1px solid var(--vr-border) !important;
+  background: var(--vr-surface) !important;
+  border-radius: 10px !important;
+  margin-bottom: 8px !important;
+}
+
+.workspace-stats > div {
+  padding: 18px 24px !important;
+}
+
+.workspace-stats span {
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: var(--vr-ink-3) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+.workspace-stats b {
+  font-size: 22px !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.025em !important;
+  color: var(--vr-ink) !important;
+  line-height: 1.2 !important;
+}
+
+.workspace-stats small {
+  font-size: 10.5px !important;
+  color: var(--vr-ink-3) !important;
+  margin-top: 1px !important;
+}
+
+/* ── Quick-start section ────────────────────────────────────── */
+.quick-start {
+  padding-top: 36px !important;
+}
+
+/* Section command header: no eyebrow, clean h3 */
+.section-command {
+  margin-bottom: 18px !important;
+}
+
+.section-command h3 {
+  font-size: 20px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--vr-ink) !important;
+  margin: 0 0 4px !important;
+}
+
+.section-command > div > p {
+  font-size: 13px !important;
+  color: var(--vr-ink-3) !important;
+  margin: 0 !important;
+}
+
+/* Cards: differentiable, not identical grid */
+.cards {
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+}
+
+.card {
+  min-height: 160px !important;
+  padding: 20px 20px 18px !important;
+  border-radius: 10px !important;
+  border: 1px solid var(--vr-border) !important;
+  background: var(--vr-surface) !important;
+  box-shadow: var(--vr-shadow-s) !important;
+  display: flex !important;
+  flex-direction: column !important;
+  text-align: left !important;
+  cursor: pointer !important;
+  transition:
+    box-shadow 0.15s,
+    border-color 0.15s !important;
+}
+
+.card:hover {
+  box-shadow: var(--vr-shadow) !important;
+  border-color: #c5d4e0 !important;
+  transform: none !important; /* Remove the translateY — product register: no gratuitous motion */
+}
+
+/* Card meta: hidden since we removed it */
+.card-meta {
+  display: none !important;
+}
+
+.card > span:not([aria-hidden]) {
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: var(--vr-ink) !important;
+  letter-spacing: -0.015em !important;
+  margin-bottom: 8px !important;
+  line-height: 1.3 !important;
+}
+
+.card > p {
+  font-size: 13px !important;
+  color: var(--vr-ink-2) !important;
+  line-height: 1.65 !important;
+  flex: 1 !important;
+}
+
+.card > em {
+  display: flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  margin-top: 14px !important;
+  font-style: normal !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--vr-accent-dk) !important;
+}
+
+/* ── Insights panels ────────────────────────────────────────── */
+.workspace-insights {
+  margin-top: 32px !important;
+  padding-top: 28px !important;
+  border-top: 1px solid var(--vr-border) !important;
+  gap: 14px !important;
+}
+
+.coverage-panel,
+.activity-panel {
+  padding: 20px !important;
+  border: 1px solid var(--vr-border) !important;
+  border-radius: 10px !important;
+  background: var(--vr-surface) !important;
+  box-shadow: var(--vr-shadow-s) !important;
+}
+
+/* Insight heading: remove English eyebrow */
+.insight-heading .eyebrow {
+  display: none !important;
+}
+
+.insight-heading h3 {
+  font-size: 15px !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.01em !important;
+  color: var(--vr-ink) !important;
+  margin: 0 !important;
+}
+
+.insight-heading strong {
+  font-size: 24px !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.03em !important;
+  color: var(--vr-accent-dk) !important;
+}
+
+/* Coverage bar */
+.coverage-bar {
+  height: 6px !important;
+  border-radius: 99px !important;
+  background: var(--vr-border-2) !important;
+  margin: 18px 0 10px !important;
+}
+
+.coverage-bar i {
+  border-radius: inherit !important;
+  background: var(--vr-accent) !important;
+}
+
+.coverage-legend {
+  font-size: 11px !important;
+  gap: 14px !important;
+  color: var(--vr-ink-3) !important;
+}
+
+.legend-dot {
+  background: var(--vr-border) !important;
+}
+
+.legend-dot.verified {
+  background: var(--vr-accent) !important;
+}
+
+.legend-dot.review {
+  background: #f59e0b !important;
+}
+
+/* Mini bar chart */
+.mini-bars {
+  gap: 5px !important;
+  height: 44px !important;
+  border-bottom: 1px solid var(--vr-border) !important;
+  margin-top: 18px !important;
+}
+
+.mini-bars span {
+  border-radius: 3px 3px 0 0 !important;
+  background: var(--vr-border) !important;
+}
+
+.mini-bars span:nth-child(4),
+.mini-bars span:nth-child(6) {
+  background: var(--vr-accent) !important;
+}
+
+/* Activity list */
+.activity-list li {
+  padding: 10px 0 !important;
+  border-top: 1px solid var(--vr-border-2) !important;
+  gap: 10px !important;
+}
+
+.activity-icon {
+  width: 22px !important;
+  height: 22px !important;
+  border-radius: 6px !important;
+  font-size: 11px !important;
+}
+
+.activity-icon.teal {
+  background: var(--vr-accent-bg) !important;
+  color: var(--vr-accent-dk) !important;
+}
+
+.activity-icon.blue {
+  background: #eff6ff !important;
+  color: #2563eb !important;
+}
+
+.activity-icon.amber {
+  background: #fffbeb !important;
+  color: #b45309 !important;
+}
+
+.activity-list b {
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  color: var(--vr-ink) !important;
+}
+
+.activity-list small {
+  font-size: 10px !important;
+  color: var(--vr-ink-3) !important;
+}
+
+.activity-list em {
+  font-style: normal !important;
+  font-size: 10px !important;
+  color: var(--vr-ink-3) !important;
+  white-space: nowrap !important;
+}
+
+/* ── Eyebrow: reduce weight globally ────────────────────────── */
+/* Don't hide all eyebrows (some are useful), but remove uppercase */
+.eyebrow {
+  text-transform: none !important;
+  letter-spacing: 0.02em !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  color: var(--vr-ink-3) !important;
+}
+
+/* ── Reduced motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    transition: none !important;
+  }
+}
+
+@media (max-width: 900px) {
+  .hero-workspace {
+    grid-template-columns: 1fr !important;
+    gap: 32px !important;
+  }
+
+  .hero-copy h1 {
+    font-size: 34px !important;
+  }
+
+  .cards {
+    grid-template-columns: 1fr !important;
+  }
+
+  .workspace-insights {
+    grid-template-columns: 1fr !important;
+  }
+}

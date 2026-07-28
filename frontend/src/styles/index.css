@@ -1,0 +1,18 @@
+/**
+ * VibeResearch Style Entry Point
+ *
+ * Import order matters for cascade:
+ * 1. legacy   — original accumulated rules (to be migrated away over time)
+ * 2. tokens   — CSS custom properties, imported via base.css
+ * 3. base     — reset, app shell, layout
+ * 4. components — reusable UI pieces
+ * 5. responsive — media queries
+ */
+@import "./legacy.css";
+@import "./base.css";
+@import "./components.css";
+@import "./responsive.css";
+@import "./shell.css";
+@import "./workbench.css";
+@import "./pages.css";
+@import "./cockpit.css";

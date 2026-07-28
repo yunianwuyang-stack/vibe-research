@@ -1,0 +1,308 @@
+/* ===============================================================
+   VIBERESEARCH SHELL v3 — Client-facing product polish
+   Replaces the developer-tool aesthetic without breaking pages.
+
+   Key fixes:
+   - Font stack: Chinese-first (Inter → system-ui fallback)
+   - Nav active: filled pill — no side-stripe border (absolute ban)
+   - Nav labels: subtle dividers, not ALL-CAPS tracked eyebrows
+   - Brand mark: gradient, not plain letter block
+   - Topbar: 64px compact, cleaner project switcher
+   - Route nav: pill buttons, not tab underlines
+   =============================================================== */
+
+/* ── Font stack — Chinese-first ─────────────────────────────── */
+:root {
+  --vr-font: "Microsoft YaHei UI", "PingFang SC", -apple-system,
+    BlinkMacSystemFont, system-ui, sans-serif;
+  --vr-font-display: "Microsoft YaHei UI", "PingFang SC", system-ui, sans-serif;
+  --shell-nav-pill-bg: rgba(0, 169, 157, 0.13);
+  --shell-nav-pill-text: #4ddac8;
+  --shell-nav-hover-bg: rgba(255, 255, 255, 0.07);
+  --shell-nav-hover-text: #c5d9e6;
+  --shell-border: rgba(255, 255, 255, 0.06);
+  --topbar-h: 64px;
+}
+
+/* ── Brand ─────────────────────────────────────────────────── */
+.brand {
+  padding: 18px 12px 20px;
+  border-bottom: 1px solid var(--shell-border);
+  margin-bottom: 6px;
+}
+
+/* Gradient mark — drops the plain block color */
+.brand-mark {
+  background: linear-gradient(145deg, #00c4b4 0%, #0090b2 100%) !important;
+  border-radius: 9px !important;
+  font-size: 15px !important;
+  font-family: var(--vr-font-display) !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.03em !important;
+  box-shadow: 0 2px 8px rgba(0, 169, 157, 0.35) !important;
+}
+
+.brand b {
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.025em !important;
+  color: #e8f4f8 !important;
+}
+
+.brand small {
+  font-size: 10.5px !important;
+  color: #4a6880 !important;
+  letter-spacing: 0.01em !important;
+}
+
+/* ── Navigation — group labels ─────────────────────────────── */
+/* Remove ALL-CAPS uppercase + heavy tracking (eyebrow ban) */
+.nav-group {
+  margin-bottom: 2px !important;
+}
+
+.nav-label {
+  padding: 10px 12px 3px !important;
+  color: #354f63 !important;       /* Near-invisible on dark; divides without shouting */
+  font-size: 10.5px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.01em !important;  /* Minimal — not the tracked eyebrow look */
+  text-transform: none !important;    /* No uppercase */
+}
+
+/* ── Navigation — buttons ──────────────────────────────────── */
+nav button,
+.voice {
+  padding: 8px 12px !important;
+  border-radius: 7px !important;
+  font-size: 13px !important;
+  color: #6e8fa8 !important;
+  gap: 9px !important;
+  transition: background 0.1s, color 0.1s !important;
+}
+
+nav button:hover {
+  background: var(--shell-nav-hover-bg) !important;
+  color: var(--shell-nav-hover-text) !important;
+}
+
+/* Filled pill active — replaces the banned left-stripe inset box-shadow */
+nav button.active {
+  background: var(--shell-nav-pill-bg) !important;
+  color: var(--shell-nav-pill-text) !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;  /* Explicitly remove the inset left-stripe */
+}
+
+.nav-icon {
+  font-size: 13px !important;
+  width: 15px !important;
+  text-align: center !important;
+  flex-shrink: 0 !important;
+  opacity: 0.9 !important;
+}
+
+/* ── Sidebar footer ─────────────────────────────────────────── */
+.sidebar-footer {
+  border-top: 1px solid var(--shell-border) !important;
+  padding: 12px 12px 0 !important;
+  font-size: 11px !important;
+}
+
+/* ── Topbar — compact ───────────────────────────────────────── */
+.topbar {
+  min-height: var(--topbar-h) !important;
+  border-bottom: 1px solid var(--vr-border) !important;
+  background: var(--vr-surface) !important;
+  padding: 0 !important;
+}
+
+/* Breadcrumb: inline row, not stacked */
+.topbar > div:first-child {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.breadcrumb {
+  display: flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  color: var(--vr-ink-3) !important;
+  font-size: 12px !important;
+}
+
+/* Breadcrumb home button — inherit text look */
+.breadcrumb-home {
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--vr-ink-3) !important;
+  padding: 0 !important;
+  font-size: 12px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0 !important;
+  box-shadow: none !important;
+  cursor: pointer;
+}
+
+.breadcrumb-home:hover {
+  color: var(--vr-accent) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Page title */
+.topbar h2 {
+  margin: 0 !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.2 !important;
+  color: var(--vr-ink) !important;
+}
+
+/* Project switcher: horizontal pill row */
+.project-switcher {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+.project-switcher label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  font-size: 12px !important;
+  color: var(--vr-ink-3) !important;
+  font-weight: 400 !important;
+}
+
+.project-switcher label span {
+  white-space: nowrap !important;
+}
+
+.project-switcher select {
+  width: auto !important;
+  min-width: 140px !important;
+  max-width: 220px !important;
+  padding: 6px 10px !important;
+  font-size: 13px !important;
+  border-radius: 7px !important;
+  border-color: var(--vr-border) !important;
+}
+
+/* ── Route navigation (secondary tab bar) ──────────────────── */
+.route-navigation {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--vr-border-2);
+  overflow-x: auto;
+  scrollbar-width: none;
+  flex-wrap: nowrap;
+}
+
+.route-navigation::-webkit-scrollbar {
+  display: none;
+}
+
+/* Route buttons styled as pills, not as action buttons */
+.route-navigation button {
+  border: 0 !important;
+  background: transparent !important;
+  color: var(--vr-ink-3) !important;
+  padding: 5px 11px !important;
+  border-radius: 6px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+  letter-spacing: 0 !important;
+  box-shadow: none !important;
+  transition: background 0.1s, color 0.1s !important;
+}
+
+.route-navigation button:hover {
+  background: rgba(0, 169, 157, 0.08) !important;
+  color: var(--vr-accent-dk) !important;
+  box-shadow: none !important;
+}
+
+.route-navigation button.active {
+  background: rgba(0, 169, 157, 0.1) !important;
+  color: var(--vr-accent-dk) !important;
+  font-weight: 600 !important;
+  box-shadow: none !important;
+}
+
+/* ── Content area padding ───────────────────────────────────── */
+.content {
+  padding: 0 48px 80px !important;
+}
+
+@media (max-width: 1280px) {
+  .content {
+    padding: 0 32px 64px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .content {
+    padding: 0 20px 48px !important;
+  }
+}
+
+/* ── App shell: sidebar width ───────────────────────────────── */
+.app-shell {
+  grid-template-columns: 228px minmax(0, 1fr) !important;
+}
+
+@media (max-width: 1024px) {
+  .app-shell {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* ── Alert ─────────────────────────────────────────────────── */
+.alert {
+  border-left: 0 !important;              /* Remove side stripe */
+  border: 1px solid #fca5a5 !important;
+  border-radius: 8px !important;
+  background: #fef2f2 !important;
+  padding: 12px 16px !important;
+  color: #991b1b !important;
+  margin: 16px 0 !important;
+}
+
+/* ── Panel / section headers ────────────────────────────────── */
+.section-header h1 {
+  font-family: var(--vr-font-display) !important;
+  font-size: 30px !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.25 !important;
+}
+
+.section-header p {
+  font-size: 14px !important;
+  color: var(--vr-ink-2) !important;
+  line-height: 1.75 !important;
+  max-width: 64ch !important;
+}
+
+/* ── Status badges ──────────────────────────────────────────── */
+.status {
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  padding: 4px 9px !important;
+  border-radius: 99px !important;
+}
+
+/* ── Reduced motion ─────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  nav button,
+  .brand-mark,
+  .route-navigation button {
+    transition: none !important;
+  }
+}

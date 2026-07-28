@@ -1,6 +1,7 @@
 /// <reference types="vitest/config" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import { fileURLToPath, URL } from 'url';
 
 // Keep the browser on the Vite origin while forwarding API calls to the
 // source-mode FastAPI process during local development. Without this, Vite's
@@ -8,6 +9,11 @@ import react from '@vitejs/plugin-react';
 // rejects as a non-JSON response.
 export default defineConfig({
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
   server: {
     proxy: {
       '/api': {

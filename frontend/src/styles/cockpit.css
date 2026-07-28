@@ -1,0 +1,385 @@
+/* ===============================================================
+   COCKPIT v3 — Research dashboard redesign
+   6-card command center: purposeful layout, not identical grid.
+   =============================================================== */
+
+/* ── Cockpit container ──────────────────────────────────────── */
+.research-cockpit {
+  padding: 32px 0 64px;
+}
+
+/* ── Header ─────────────────────────────────────────────────── */
+.cockpit-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 28px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--vr-border-2);
+}
+
+/* Remove English eyebrow "Research Cockpit" */
+.cockpit-header .eyebrow {
+  display: none;
+}
+
+.cockpit-header h1 {
+  margin: 0 0 6px;
+  font-size: 24px;
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  color: var(--vr-ink);
+  font-family: var(--vr-font-display);
+}
+
+.cockpit-sub {
+  margin: 0;
+  font-size: 13px;
+  color: var(--vr-ink-3);
+  line-height: 1.6;
+  max-width: 56ch;
+}
+
+/* Connection status */
+.cockpit-connection {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 12px;
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: 99px;
+  font-size: 11.5px;
+  color: var(--vr-ink-3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #e5e7eb; /* Default: disconnected */
+  flex-shrink: 0;
+}
+
+.live-dot.on {
+  background: #22c55e;
+  box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.18);
+}
+
+.live-dot.off {
+  background: #f59e0b;
+}
+
+/* ── Cockpit grid — purposeful layout, not identical cards ─── */
+.cockpit-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-areas:
+    "project next blockers"
+    "evidence runs manuscript";
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+.cockpit-project   { grid-area: project; }
+.cockpit-next      { grid-area: next; }
+.cockpit-blockers  { grid-area: blockers; }
+.cockpit-evidence  { grid-area: evidence; }
+.cockpit-runs      { grid-area: runs; }
+.cockpit-manuscript { grid-area: manuscript; }
+
+/* ── Cockpit cards — shared base ────────────────────────────── */
+.cockpit-card {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: 10px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: var(--vr-shadow-s);
+  min-height: 148px;
+}
+
+.cockpit-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.cockpit-card h2 {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--vr-ink-3);
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* Muted secondary text */
+.cockpit-muted {
+  font-size: 12.5px;
+  color: var(--vr-ink-3);
+  line-height: 1.6;
+  margin: 0;
+  flex: 1;
+}
+
+/* Count badge */
+.cockpit-count {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--vr-ink);
+  background: var(--vr-bg);
+  border: 1px solid var(--vr-border);
+  border-radius: 6px;
+  padding: 2px 7px;
+}
+
+/* ── Project card ───────────────────────────────────────────── */
+.cockpit-project-title {
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--vr-ink);
+  line-height: 1.3;
+  margin: 0;
+  flex: 1;
+}
+
+/* ── Next action card ───────────────────────────────────────── */
+.cockpit-next {
+  background: linear-gradient(145deg, #f0fdfa 0%, var(--vr-surface) 100%);
+  border-color: rgba(0, 169, 157, 0.25);
+}
+
+.cockpit-next-label {
+  font-size: 15px;
+  font-weight: 650;
+  color: var(--vr-ink);
+  line-height: 1.4;
+  margin: 0;
+  flex: 1;
+}
+
+/* ── Blockers card ──────────────────────────────────────────── */
+.cockpit-blockers {
+  background: #fffbf0;
+  border-color: #fde68a;
+}
+
+.cockpit-blocker-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+  flex: 1;
+}
+
+.cockpit-blocker-list > li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cockpit-blocker-list b {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--vr-ink);
+  line-height: 1.3;
+}
+
+.cockpit-blocker-list small {
+  display: block;
+  font-size: 11px;
+  color: var(--vr-ink-3);
+  margin-top: 1px;
+}
+
+/* No blockers: subtle success tint */
+.cockpit-blockers:has(.cockpit-muted) {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+/* ── Evidence card ──────────────────────────────────────────── */
+.cockpit-evidence .cockpit-count {
+  color: var(--vr-accent-dk);
+  background: var(--vr-accent-bg);
+  border-color: rgba(0, 169, 157, 0.2);
+}
+
+.cockpit-evidence > p {
+  font-size: 12.5px;
+  color: var(--vr-ink-2);
+  margin: 0;
+}
+
+.cockpit-evidence > p b {
+  font-weight: 700;
+  color: var(--vr-ink);
+}
+
+/* Progress meter */
+.cockpit-meter {
+  height: 5px;
+  background: var(--vr-border-2);
+  border-radius: 99px;
+  overflow: hidden;
+}
+
+.cockpit-meter > span {
+  display: block;
+  height: 100%;
+  background: var(--vr-accent);
+  border-radius: inherit;
+  transition: width 0.4s ease;
+}
+
+/* ── Runs card ──────────────────────────────────────────────── */
+.cockpit-run-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 7px;
+  flex: 1;
+}
+
+.cockpit-run-list > li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.cockpit-run-list b {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--vr-ink);
+  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 180px;
+}
+
+.cockpit-run-list small {
+  display: block;
+  font-size: 11px;
+  color: var(--vr-ink-3);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Status chips ───────────────────────────────────────────── */
+.status-chip {
+  padding: 3px 8px;
+  border-radius: 99px;
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.status-chip.status-produced,
+.status-chip.status-verified {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.status-chip.status-running,
+.status-chip.status-active,
+.status-chip.status-verifying {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+
+.status-chip.status-queued,
+.status-chip.status-pending {
+  background: var(--vr-bg);
+  color: var(--vr-ink-3);
+  border: 1px solid var(--vr-border);
+}
+
+.status-chip.status-blocked,
+.status-chip.status-failed {
+  background: #fef9c3;
+  color: #854d0e;
+}
+
+/* ── Feature nav ────────────────────────────────────────────── */
+.cockpit-feature-nav {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  padding-top: 20px;
+  border-top: 1px solid var(--vr-border-2);
+}
+
+.cockpit-feature-nav > button {
+  border-color: var(--vr-border) !important;
+  background: var(--vr-surface) !important;
+  color: var(--vr-ink-2) !important;
+  font-size: 12px !important;
+  padding: 7px 12px !important;
+  border-radius: 7px !important;
+  box-shadow: none !important;
+  transition: border-color 0.1s, color 0.1s, background 0.1s !important;
+}
+
+.cockpit-feature-nav > button:hover {
+  border-color: var(--vr-accent) !important;
+  color: var(--vr-accent-dk) !important;
+  background: var(--vr-accent-bg) !important;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 1100px) {
+  .cockpit-grid {
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-areas:
+      "project next"
+      "blockers evidence"
+      "runs manuscript";
+  }
+}
+
+@media (max-width: 680px) {
+  .cockpit-grid {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "next"
+      "project"
+      "blockers"
+      "evidence"
+      "runs"
+      "manuscript";
+  }
+
+  .cockpit-header {
+    flex-direction: column;
+  }
+
+  .cockpit-feature-nav {
+    gap: 4px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cockpit-meter > span {
+    transition: none;
+  }
+}

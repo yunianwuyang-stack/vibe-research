@@ -13,9 +13,8 @@ export function Panel({
   return (
     <section className="panel">
       <header className="section-header">
-        <p className="eyebrow">研究流程</p>
         <h1>{title}</h1>
-        <p>{detail}</p>
+        {detail && <p>{detail}</p>}
       </header>
       {children}
     </section>
@@ -25,7 +24,6 @@ export function Panel({
 export function Empty({ text }: { text: string }) {
   return (
     <div className="empty">
-      <b>尚无可展示数据</b>
       <p>{text}</p>
     </div>
   );

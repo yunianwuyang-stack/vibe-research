@@ -1,0 +1,347 @@
+/* Responsive overrides — media queries for all breakpoints */
+
+/* ── Responsive overrides ────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+  .sidebar {
+    position: static;
+    height: auto;
+    padding: 14px 14px 10px;
+    overflow-y: visible;
+  }
+  .brand {
+    padding-bottom: 14px;
+  }
+  /* Switch nav groups to flex so flex-direction actually works */
+  nav {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    overflow-x: auto;
+    gap: 4px;
+    scrollbar-width: thin;
+  }
+  .nav-group {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 3px;
+    margin-bottom: 0;
+  }
+  .nav-label {
+    display: none;
+  }
+  .sidebar-footer {
+    display: none;
+  }
+  .content {
+    padding: 0 24px 48px;
+  }
+}
+@media (max-width: 600px) {
+  nav {
+    flex-wrap: nowrap;
+    padding-bottom: 6px;
+  }
+  nav button {
+    flex: 0 0 auto;
+    min-width: max-content;
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  .content {
+    padding: 0 16px 36px;
+  }
+  .topbar {
+    min-height: 80px;
+  }
+  .hero-copy h1 {
+    font-size: 36px !important;
+  }
+}
+
+/* P9 route chrome: compact, keyboard-friendly navigation context. */
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  color: #80919a;
+  font-size: 11px;
+  letter-spacing: 0.04em;
+}
+.breadcrumb-home {
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #3d7774 !important;
+  font-size: 11px !important;
+  font-weight: 750 !important;
+  cursor: pointer;
+}
+.breadcrumb-home:hover {
+  text-decoration: underline;
+}
+.route-navigation {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 0 0 28px;
+  padding: 0 0 18px;
+  border-bottom: 1px solid var(--line);
+}
+.route-navigation button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 6px !important;
+  background: var(--surface) !important;
+  color: #55717b !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+}
+.route-navigation button:hover,
+.route-navigation button.active {
+  border-color: #9ed8d2 !important;
+  background: #eaf8f6 !important;
+  color: #147b75 !important;
+}
+.route-navigation button.active {
+  box-shadow: inset 0 -2px 0 var(--teal);
+}
+@media (max-width: 600px) {
+  .breadcrumb {
+    font-size: 10px;
+  }
+  .route-navigation {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    padding-bottom: 12px;
+  }
+  .route-navigation button {
+    flex: 0 0 auto;
+  }
+}
+
+/* P9 research cockpit */
+.research-cockpit {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0 24px;
+}
+.cockpit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+}
+.cockpit-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 650;
+  letter-spacing: -0.02em;
+}
+.cockpit-sub {
+  margin: 6px 0 0;
+  max-width: 52rem;
+  color: color-mix(in srgb, var(--ink) 72%, transparent);
+  font-size: 0.95rem;
+}
+.cockpit-connection {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  border-radius: 8px;
+  background: var(--surface, #fff);
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+.cockpit-connection .live-dot.on {
+  background: #2e7d32;
+}
+.cockpit-connection .live-dot.off {
+  background: #b45309;
+}
+.cockpit-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 12px;
+}
+.cockpit-card {
+  grid-column: span 4;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 16px;
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  border-radius: 8px;
+  background: var(--surface, #fff);
+  min-height: 140px;
+}
+.cockpit-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.cockpit-card h2 {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.cockpit-project-title,
+.cockpit-next-label {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+.cockpit-muted {
+  margin: 0;
+  color: color-mix(in srgb, var(--ink) 65%, transparent);
+  font-size: 0.88rem;
+  line-height: 1.45;
+}
+.cockpit-count {
+  font-variant-numeric: tabular-nums;
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--ink) 70%, transparent);
+}
+.cockpit-blocker-list,
+.cockpit-run-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cockpit-blocker-list li,
+.cockpit-run-list li {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.cockpit-blocker-list b,
+.cockpit-run-list b {
+  display: block;
+  font-size: 0.9rem;
+}
+.cockpit-blocker-list small,
+.cockpit-run-list small {
+  display: block;
+  color: color-mix(in srgb, var(--ink) 62%, transparent);
+  margin-top: 2px;
+}
+.cockpit-meter {
+  height: 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ink) 10%, transparent);
+  overflow: hidden;
+}
+.cockpit-meter > span {
+  display: block;
+  height: 100%;
+  background: var(--teal, #2e7d32);
+  border-radius: inherit;
+}
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  border: 1px solid color-mix(in srgb, var(--ink) 14%, transparent);
+  background: color-mix(in srgb, var(--canvas, #f6f8fa) 70%, white);
+}
+.status-chip.status-blocked,
+.status-chip.status-failed {
+  border-color: color-mix(in srgb, #b42318 35%, transparent);
+  color: #b42318;
+}
+.status-chip.status-accepted,
+.status-chip.status-produced {
+  border-color: color-mix(in srgb, #027a48 35%, transparent);
+  color: #027a48;
+}
+.status-chip.status-running,
+.status-chip.status-verifying {
+  border-color: color-mix(in srgb, #b54708 35%, transparent);
+  color: #b54708;
+}
+.cockpit-feature-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 4px;
+}
+.cockpit-next button {
+  align-self: flex-start;
+}
+@media (max-width: 1100px) {
+  .cockpit-card {
+    grid-column: span 6;
+  }
+}
+@media (max-width: 720px) {
+  .cockpit-header {
+    flex-direction: column;
+  }
+  .cockpit-card {
+    grid-column: span 12;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .research-cockpit * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* P9.1 research map */
+.research-map {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.research-map-status {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.research-map-status h2 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 650;
+}
+.research-map-question {
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent);
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--canvas, #f6f8fa) 55%, white);
+}
+.research-map-question h3 {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+}
+.research-map-question p {
+  margin: 0;
+  line-height: 1.5;
+}
+.research-map-blockers {
+  margin: 0;
+  padding-left: 1.2rem;
+  color: #b42318;
+  font-size: 0.9rem;
+}
+.research-map-blockers li {
+  margin: 0.2rem 0;
+}

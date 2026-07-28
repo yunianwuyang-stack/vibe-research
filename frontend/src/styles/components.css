@@ -1,0 +1,480 @@
+/* Reusable UI components */
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+button:not(.card):not(nav button):not(.voice):not(.operations-run):not(.operations-tabs button):not(
+    .theme-option
+  ) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid var(--vr-accent-dk);
+  background: var(--vr-accent);
+  color: #fff;
+  border-radius: var(--vr-radius-s);
+  padding: 9px 15px;
+  font: 600 13px/1 var(--vr-font);
+  cursor: pointer;
+  transition:
+    background 0.12s,
+    box-shadow 0.12s,
+    opacity 0.12s;
+  white-space: nowrap;
+  letter-spacing: -0.005em;
+}
+button:not(.card):not(nav button):not(.voice):not(.operations-run):not(.operations-tabs button):not(
+    .theme-option
+  ):hover {
+  background: var(--vr-accent-dk);
+  box-shadow: var(--vr-shadow-s);
+}
+button.quiet:not(nav button) {
+  background: var(--vr-surface) !important;
+  color: var(--vr-ink-2) !important;
+  border-color: var(--vr-border) !important;
+}
+button.quiet:not(nav button):hover {
+  background: var(--vr-bg) !important;
+  border-color: #c0c8d4 !important;
+}
+button.danger {
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+  border-color: #fca5a5 !important;
+}
+button.danger:hover {
+  background: #fee2e2 !important;
+}
+button:disabled {
+  opacity: 0.42 !important;
+  cursor: not-allowed !important;
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 2px solid var(--vr-accent);
+  outline-offset: 3px;
+}
+
+/* ── Form controls ───────────────────────────────────────────── */
+input,
+textarea,
+select {
+  width: 100%;
+  border: 1px solid var(--vr-border);
+  background: var(--vr-surface);
+  color: var(--vr-ink);
+  border-radius: var(--vr-radius-s);
+  padding: 10px 12px;
+  font: 14px/1.5 var(--vr-font);
+  transition:
+    border-color 0.12s,
+    box-shadow 0.12s;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--vr-accent);
+  box-shadow: 0 0 0 3px rgba(0, 169, 157, 0.15);
+}
+label {
+  display: grid;
+  gap: 6px;
+  color: var(--vr-ink-2);
+  font-size: 13px;
+  font-weight: 600;
+}
+textarea {
+  min-height: 88px;
+  resize: vertical;
+}
+
+/* ── Cards ───────────────────────────────────────────────────── */
+.card {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius-l);
+  box-shadow: var(--vr-shadow-s);
+  transition:
+    transform 0.15s var(--vr-t-ease),
+    box-shadow 0.15s var(--vr-t-ease);
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--vr-shadow);
+}
+.card span {
+  color: var(--vr-ink);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.card p {
+  color: var(--vr-ink-3);
+  font-size: 13px;
+  line-height: 1.65;
+}
+.card em {
+  color: var(--vr-accent-dk);
+  font-style: normal;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* ── Section headers ─────────────────────────────────────────── */
+.section-header h1,
+.hero h1 {
+  font-family: var(--vr-font);
+  color: var(--vr-ink);
+  font-weight: 750;
+  letter-spacing: -0.03em;
+  line-height: 1.12;
+}
+.hero p:not(.eyebrow),
+.section-header p {
+  color: var(--vr-ink-2);
+}
+
+/* ── Panel / form area ───────────────────────────────────────── */
+.form-grid {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius);
+  box-shadow: var(--vr-shadow-s);
+}
+
+/* ── Project card ────────────────────────────────────────────── */
+.project-card {
+  background: linear-gradient(135deg, #f0fdfc 0%, #e8fbf8 100%);
+  border: 1px solid #bde8e3;
+  border-radius: var(--vr-radius);
+  box-shadow: var(--vr-shadow-s);
+}
+.project-card dl div {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius-s);
+}
+
+/* ── Workflow items ──────────────────────────────────────────── */
+.template,
+.workflow {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius);
+  box-shadow: var(--vr-shadow-s);
+}
+.template:hover,
+.workflow:hover {
+  box-shadow: var(--vr-shadow);
+}
+.workflow.selected {
+  border-color: var(--vr-accent);
+  box-shadow: 0 0 0 3px rgba(0, 169, 157, 0.16);
+}
+.template h3,
+.workflow h3 {
+  color: var(--vr-ink);
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+.template p,
+.workflow p {
+  color: var(--vr-ink-3);
+  font-size: 13px;
+}
+
+/* ── Badges ──────────────────────────────────────────────────── */
+.badge {
+  border-radius: 99px;
+  padding: 4px 9px;
+  font-size: 11px;
+  font-weight: 700;
+  background: #f3f4f6;
+  color: #6b7280;
+  letter-spacing: 0.01em;
+}
+.badge.running {
+  background: #ecfdf5;
+  color: #065f46;
+}
+.badge.completed {
+  background: #eff6ff;
+  color: #1e40af;
+}
+.badge.failed {
+  background: #fff1f2;
+  color: #9f1239;
+}
+.badge.paused {
+  background: #f5f3ff;
+  color: #5b21b6;
+}
+.badge.pending {
+  background: #fffbeb;
+  color: #92400e;
+}
+
+/* ── Alert ───────────────────────────────────────────────────── */
+.alert {
+  padding: 12px 14px;
+  border-left: 3px solid var(--vr-accent);
+  background: var(--vr-accent-bg);
+  color: var(--vr-accent-dk);
+  border-radius: 4px;
+}
+
+/* ── Editor & diagnostics ────────────────────────────────────── */
+.editor-layout {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius);
+}
+.editor-layout aside {
+  background: var(--vr-bg);
+  border-color: var(--vr-border);
+}
+.diagnostics article {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius);
+}
+.json-card {
+  background: #0d1117;
+  color: #c9d1d9;
+  border-radius: var(--vr-radius-s);
+}
+
+/* ── Hero workspace ──────────────────────────────────────────── */
+.hero-copy h1 {
+  font-family: var(--vr-font);
+  font-weight: 780;
+  color: var(--vr-ink);
+  letter-spacing: -0.04em;
+}
+.hero-copy p:not(.eyebrow) {
+  color: var(--vr-ink-2);
+  line-height: 1.8;
+}
+.hero-panel {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius);
+  box-shadow: var(--vr-shadow);
+}
+.hero-panel strong {
+  color: var(--vr-accent-dk);
+}
+.workspace-stats > div {
+  border-color: var(--vr-border);
+}
+.workspace-stats span {
+  color: var(--vr-ink-3);
+}
+.workspace-stats b {
+  color: var(--vr-ink);
+}
+
+/* coverage & activity */
+.coverage-panel,
+.activity-panel {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius);
+  box-shadow: var(--vr-shadow-s);
+}
+.coverage-bar {
+  background: #eef0f5;
+}
+.mini-bars span {
+  background: #d1e8e6;
+}
+.mini-bars span:nth-child(4),
+.mini-bars span:nth-child(6) {
+  background: var(--vr-accent);
+}
+.activity-list li {
+  border-color: var(--vr-border-2);
+}
+.activity-icon.teal {
+  background: var(--vr-accent-bg);
+  color: var(--vr-accent-dk);
+}
+
+/* ── Workflow config ─────────────────────────────────────────── */
+.workflow-config-section {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius);
+  box-shadow: var(--vr-shadow-s);
+}
+.workflow-config-heading h2 {
+  color: var(--vr-ink);
+  letter-spacing: -0.025em;
+}
+.workflow-config-heading {
+  border-color: var(--vr-border);
+}
+.workflow-config-section > header {
+  border-color: var(--vr-border-2);
+}
+.workflow-config-section > header h3 {
+  color: var(--vr-ink);
+}
+.workflow-config-actions {
+  background: linear-gradient(180deg, transparent 0, var(--vr-bg) 32%);
+}
+.workflow-toggle {
+  background: var(--vr-bg);
+  border-color: var(--vr-border);
+}
+.workflow-toggle strong {
+  color: var(--vr-ink-2);
+}
+.workflow-toggle input {
+  background: #dde3ec;
+  border-color: #bcc5d3;
+}
+.workflow-toggle input:checked {
+  background: var(--vr-accent);
+  border-color: var(--vr-accent-dk);
+}
+.workflow-file-drop {
+  border-color: #a8c5c2;
+  background: var(--vr-bg);
+  color: var(--vr-accent-dk);
+}
+.workflow-file-drop:hover,
+.workflow-file-drop.drag-active {
+  background: var(--vr-accent-bg);
+  border-color: var(--vr-accent);
+}
+.workflow-file-list > span {
+  border-color: #c0dcd9;
+  background: var(--vr-accent-bg);
+  color: #2d6b67;
+}
+
+/* ── Model profiles / settings ───────────────────────────────── */
+.model-profile {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius);
+  box-shadow: var(--vr-shadow-s);
+}
+.settings-extra-card {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius);
+  box-shadow: var(--vr-shadow-s);
+}
+.profile-key {
+  border-color: #e2c88f;
+  background: #fffbeb;
+  color: #92400e;
+}
+.profile-key.configured {
+  border-color: #a7d7c5;
+  background: #ecfdf5;
+  color: #065f46;
+}
+.profile-test {
+  border-color: #f87171;
+  background: #fff1f2;
+  color: #991b1b;
+}
+.profile-test.success {
+  border-color: #34d399;
+  background: #ecfdf5;
+  color: #065f46;
+}
+
+/* ── Review / assurance ──────────────────────────────────────── */
+.assurance-panel {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius);
+  box-shadow: var(--vr-shadow-s);
+}
+.review-list > li {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius-s);
+  box-shadow: var(--vr-shadow-s);
+}
+.assurance-gate {
+  border-radius: var(--vr-radius-s);
+}
+
+/* ── Search results ──────────────────────────────────────────── */
+.results li {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius-s);
+  box-shadow: var(--vr-shadow-s);
+  transition: box-shadow 0.12s;
+}
+.results li:hover {
+  box-shadow: var(--vr-shadow);
+}
+.results a {
+  color: var(--vr-accent-dk);
+}
+.results span {
+  color: var(--vr-ink-3);
+}
+
+/* ── Next-action / empty states ──────────────────────────────── */
+.next-action {
+  background: var(--vr-accent-bg);
+  border-left-color: var(--vr-accent);
+  color: var(--vr-ink-2);
+  border-radius: 4px;
+}
+.next-action b {
+  color: var(--vr-accent-dk);
+}
+.empty {
+  border: 1px dashed var(--vr-border);
+  background: var(--vr-bg);
+  color: var(--vr-ink-3);
+  border-radius: var(--vr-radius);
+}
+
+/* ── Global heading rhythm ───────────────────────────────────── */
+h1,
+h2,
+h3,
+h4 {
+  letter-spacing: -0.01em;
+}
+h4 {
+  color: var(--vr-ink);
+  font-size: 15px;
+  font-weight: 650;
+  margin: 0 0 10px;
+}
+
+/* ── Scrollbars (webkit) ─────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #d1d9e0;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b0bbc6;
+}
+
+/* ── Skip link / SR utilities ────────────────────────────────── */
+.skip-link {
+  background: var(--vr-surface);
+  color: var(--vr-ink);
+  border-color: var(--vr-accent);
+  border-radius: var(--vr-radius-s);
+}

@@ -1,0 +1,532 @@
+/* ===============================================================
+   PAGES v3 — Inner page layout polish
+   Covers: Panel, section-header, form-grid, empty states,
+   badges, alerts, action rows, workflow items, run logs.
+   =============================================================== */
+
+/* ── Panel ──────────────────────────────────────────────────── */
+.panel {
+  max-width: 1080px !important;
+  padding: 40px 0 80px !important;
+}
+
+.section-header {
+  margin-bottom: 28px !important;
+  padding-bottom: 20px !important;
+  border-bottom: 1px solid var(--vr-border-2) !important;
+}
+
+.section-header h1 {
+  margin: 0 0 8px !important;
+  font-size: 26px !important;
+  font-weight: 750 !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.25 !important;
+  color: var(--vr-ink) !important;
+  font-family: var(--vr-font-display) !important;
+}
+
+.section-header > p {
+  margin: 0 !important;
+  font-size: 14px !important;
+  color: var(--vr-ink-2) !important;
+  line-height: 1.72 !important;
+  max-width: 66ch !important;
+}
+
+/* ── Form grid ──────────────────────────────────────────────── */
+.form-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 16px !important;
+  padding: 22px !important;
+  background: var(--vr-surface) !important;
+  border: 1px solid var(--vr-border) !important;
+  border-radius: 10px !important;
+  box-shadow: var(--vr-shadow-s) !important;
+}
+
+.form-grid label {
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: var(--vr-ink-2) !important;
+  gap: 5px !important;
+}
+
+.form-grid input,
+.form-grid textarea,
+.form-grid select {
+  font-size: 13.5px !important;
+  border-radius: 7px !important;
+  padding: 9px 11px !important;
+}
+
+/* ── Actions row ────────────────────────────────────────────── */
+.actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  margin: 16px 0 !important;
+}
+
+/* ── Empty states ───────────────────────────────────────────── */
+.empty {
+  padding: 40px 24px !important;
+  background: var(--vr-surface) !important;
+  border: 1px dashed var(--vr-border) !important;
+  border-radius: 10px !important;
+  text-align: center !important;
+  color: var(--vr-ink-3) !important;
+}
+
+.empty p {
+  margin: 0 !important;
+  font-size: 13.5px !important;
+  line-height: 1.65 !important;
+}
+
+/* ── Badges ─────────────────────────────────────────────────── */
+.badge {
+  padding: 4px 9px !important;
+  border-radius: 99px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0 !important;
+}
+
+.badge.running {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+}
+
+.badge.completed {
+  background: #eff6ff !important;
+  color: #1d4ed8 !important;
+}
+
+.badge.failed {
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+}
+
+.badge.paused {
+  background: #faf5ff !important;
+  color: #7e22ce !important;
+}
+
+.badge.pending {
+  background: var(--vr-bg) !important;
+  color: var(--vr-ink-3) !important;
+}
+
+/* ── Workflow list ──────────────────────────────────────────── */
+.workflow {
+  background: var(--vr-surface) !important;
+  border: 1px solid var(--vr-border) !important;
+  border-radius: 9px !important;
+  padding: 16px !important;
+  transition: border-color 0.12s, box-shadow 0.12s !important;
+}
+
+.workflow:hover {
+  border-color: #b8c9d6 !important;
+  box-shadow: var(--vr-shadow-s) !important;
+}
+
+.workflow.selected {
+  border-color: var(--vr-accent) !important;
+  box-shadow: 0 0 0 3px rgba(0, 169, 157, 0.12) !important;
+}
+
+.workflow h3 {
+  font-size: 14px !important;
+  font-weight: 650 !important;
+  letter-spacing: -0.01em !important;
+  color: var(--vr-ink) !important;
+  margin: 0 0 3px !important;
+}
+
+.workflow p {
+  font-size: 12px !important;
+  color: var(--vr-ink-3) !important;
+  margin: 0 !important;
+}
+
+/* ── Toolbar ────────────────────────────────────────────────── */
+.toolbar {
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: wrap !important;
+  margin-bottom: 16px !important;
+}
+
+/* ── Results list ───────────────────────────────────────────── */
+.results {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: grid !important;
+  gap: 8px !important;
+}
+
+.results li {
+  padding: 14px 16px !important;
+  background: var(--vr-surface) !important;
+  border: 1px solid var(--vr-border) !important;
+  border-radius: 8px !important;
+}
+
+.results a {
+  color: var(--vr-accent-dk) !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  font-size: 13.5px !important;
+}
+
+.results a:hover {
+  text-decoration: underline !important;
+}
+
+.results span {
+  display: block !important;
+  margin-top: 5px !important;
+  color: var(--vr-ink-3) !important;
+  font-size: 11.5px !important;
+}
+
+/* ── Settings sections ──────────────────────────────────────── */
+.settings-section {
+  margin-bottom: 28px !important;
+}
+
+.settings-section > h3 {
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.015em !important;
+  color: var(--vr-ink) !important;
+  margin: 0 0 12px !important;
+}
+
+/* ── Section command header ─────────────────────────────────── */
+.section-command {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  margin-bottom: 14px !important;
+}
+
+.section-command h3 {
+  font-size: 17px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.015em !important;
+  color: var(--vr-ink) !important;
+  margin: 0 0 3px !important;
+}
+
+/* ── Project card ───────────────────────────────────────────── */
+.project-card {
+  display: flex !important;
+  justify-content: space-between !important;
+  gap: 24px !important;
+  margin: 20px 0 24px !important;
+  padding: 20px !important;
+  background: var(--vr-accent-bg) !important;
+  border: 1px solid rgba(0, 169, 157, 0.2) !important;
+  border-radius: 10px !important;
+}
+
+.project-card h3 {
+  margin: 4px 0 6px !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.02em !important;
+  color: var(--vr-ink) !important;
+}
+
+.project-card > div:first-child > p {
+  color: var(--vr-ink-2) !important;
+  font-size: 13.5px !important;
+  line-height: 1.65 !important;
+  max-width: 60ch !important;
+}
+
+.project-card dt {
+  font-size: 10.5px !important;
+  color: var(--vr-ink-3) !important;
+  font-weight: 500 !important;
+  margin-bottom: 2px !important;
+}
+
+.project-card dd {
+  margin: 0 !important;
+  font-size: 14px !important;
+  font-weight: 650 !important;
+  color: var(--vr-accent-dk) !important;
+}
+
+/* ── Next action / info boxes ───────────────────────────────── */
+.next-action {
+  padding: 14px 16px !important;
+  background: var(--vr-accent-bg) !important;
+  border: 1px solid rgba(0, 169, 157, 0.2) !important;
+  border-radius: 8px !important;
+  color: var(--vr-ink-2) !important;
+  font-size: 13.5px !important;
+  line-height: 1.6 !important;
+}
+
+.next-action b {
+  color: var(--vr-accent-dk) !important;
+}
+
+/* ── Alert ──────────────────────────────────────────────────── */
+.alert {
+  border-left: 0 !important;
+  border: 1px solid #fca5a5 !important;
+  background: #fef2f2 !important;
+  border-radius: 8px !important;
+  padding: 12px 16px !important;
+  color: #991b1b !important;
+  font-size: 13.5px !important;
+  line-height: 1.6 !important;
+  margin: 12px 0 !important;
+}
+
+/* ── Run DAG / logs ─────────────────────────────────────────── */
+.run-dag {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: grid !important;
+  gap: 6px !important;
+}
+
+.run-dag > li {
+  display: grid !important;
+  grid-template-columns: 1fr auto !important;
+  gap: 6px !important;
+  padding: 10px 12px !important;
+  border-radius: 7px !important;
+  background: var(--vr-bg) !important;
+  border: 1px solid var(--vr-border-2) !important;
+  font-size: 12.5px !important;
+}
+
+.run-dag > li.completed {
+  background: #f0fdf4 !important;
+  border-color: #bbf7d0 !important;
+}
+
+.run-dag > li.running {
+  background: #f0f9ff !important;
+  border-color: #bae6fd !important;
+}
+
+.run-dag > li.failed {
+  background: #fef2f2 !important;
+  border-color: #fecaca !important;
+}
+
+.run-dag > li b {
+  font-size: 12.5px !important;
+  font-weight: 600 !important;
+  color: var(--vr-ink) !important;
+}
+
+.run-dag > li span {
+  font-size: 11px !important;
+  color: var(--vr-ink-3) !important;
+  align-self: start !important;
+}
+
+.run-logs {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: grid !important;
+  gap: 2px !important;
+  max-height: 320px !important;
+  overflow-y: auto !important;
+}
+
+.run-logs > li {
+  display: grid !important;
+  grid-template-columns: 100px 100px 1fr !important;
+  gap: 8px !important;
+  padding: 6px 8px !important;
+  border-radius: 5px !important;
+  font-size: 11.5px !important;
+  line-height: 1.45 !important;
+}
+
+.run-logs > li:nth-child(odd) {
+  background: var(--vr-bg) !important;
+}
+
+.run-logs time {
+  color: var(--vr-ink-3) !important;
+  font-variant-numeric: tabular-nums !important;
+}
+
+.run-logs b {
+  color: var(--vr-ink-2) !important;
+  font-weight: 600 !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.run-logs .info {
+  color: var(--vr-ink-2) !important;
+}
+
+.run-logs .warn {
+  color: #b45309 !important;
+}
+
+.run-logs .error {
+  color: #b91c1c !important;
+}
+
+/* ── Graph gate status banners ──────────────────────────────── */
+.graph-gate {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  flex-wrap: wrap !important;
+  padding: 11px 14px !important;
+  border: 1px solid var(--vr-border) !important;
+  background: var(--vr-bg) !important;
+  border-radius: 8px !important;
+  margin: 14px 0 !important;
+  font-size: 13px !important;
+}
+
+.graph-gate b {
+  color: var(--vr-ink) !important;
+}
+
+.graph-gate span {
+  color: var(--vr-ink-2) !important;
+  font-size: 12px !important;
+}
+
+.graph-gate code {
+  font-size: 11px !important;
+  font-family: var(--vr-font-mono) !important;
+  color: var(--vr-ink-3) !important;
+  background: var(--vr-surface) !important;
+  padding: 2px 5px !important;
+  border-radius: 4px !important;
+  border: 1px solid var(--vr-border) !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.graph-gate.passed {
+  border-color: #bbf7d0 !important;
+  background: #f0fdf4 !important;
+}
+
+.graph-gate.passed b {
+  color: #15803d !important;
+}
+
+.graph-gate.blocked {
+  border-color: #fecaca !important;
+  background: #fef2f2 !important;
+}
+
+.graph-gate.blocked b {
+  color: #b91c1c !important;
+}
+
+/* ── JSON card ──────────────────────────────────────────────── */
+.json-card {
+  padding: 14px 16px !important;
+  background: #0f172a !important;
+  color: #94a3b8 !important;
+  border-radius: 8px !important;
+  font: 11.5px/1.6 var(--vr-font-mono) !important;
+  overflow: auto !important;
+  white-space: pre-wrap !important;
+  word-break: break-word !important;
+  max-height: 380px !important;
+}
+
+/* ── Review / audit list ────────────────────────────────────── */
+.review-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: grid !important;
+  gap: 10px !important;
+}
+
+.review-list > li {
+  padding: 16px !important;
+  background: var(--vr-surface) !important;
+  border: 1px solid var(--vr-border) !important;
+  border-radius: 9px !important;
+  display: grid !important;
+  gap: 10px !important;
+}
+
+.review-verdict {
+  padding: 3px 8px !important;
+  border-radius: 5px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  text-transform: uppercase !important; /* Verdict status labels: this IS a deliberate status vocabulary */
+}
+
+.review-verdict.pass {
+  background: #dcfce7 !important;
+  color: #15803d !important;
+  border: 1px solid #bbf7d0 !important;
+}
+
+.review-verdict.block,
+.review-verdict.error,
+.review-verdict.failed,
+.review-verdict.interrupted {
+  background: #fef2f2 !important;
+  color: #b91c1c !important;
+  border: 1px solid #fecaca !important;
+}
+
+/* ── Inline actions ─────────────────────────────────────────── */
+.inline-actions {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+}
+
+/* ── Run center layout ──────────────────────────────────────── */
+.run-center-layout {
+  display: grid !important;
+  grid-template-columns: 280px minmax(0, 1fr) !important;
+  gap: 20px !important;
+  align-items: start !important;
+}
+
+@media (max-width: 900px) {
+  .run-center-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .project-card {
+    flex-direction: column !important;
+    gap: 16px !important;
+  }
+}

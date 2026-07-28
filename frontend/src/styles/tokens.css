@@ -1,0 +1,28 @@
+/* Design tokens — CSS custom properties, single source of truth */
+
+/* ── Design tokens ─────────────────────────────────────────── */
+:root {
+  --vr-bg: #f7f8fa;
+  --vr-surface: #ffffff;
+  --vr-border: #e4e7ed;
+  --vr-border-2: #eef0f5;
+  --vr-ink: #0e1623;
+  --vr-ink-2: #4a5568;
+  --vr-ink-3: #8a95a8;
+  --vr-accent: #00a99d;
+  --vr-accent-dk: #007f79;
+  --vr-accent-bg: #f0fdfc;
+  --vr-sidebar: #0d1117;
+  --vr-sidebar-2: #161b22;
+  --vr-sidebar-t: #c9d1d9;
+  --vr-sidebar-t2: #8b949e;
+  --vr-radius-s: 6px;
+  --vr-radius: 10px;
+  --vr-radius-l: 14px;
+  --vr-shadow-s: 0 1px 3px rgba(14, 22, 35, 0.07), 0 1px 2px rgba(14, 22, 35, 0.05);
+  --vr-shadow: 0 4px 12px rgba(14, 22, 35, 0.08), 0 2px 4px rgba(14, 22, 35, 0.05);
+  --vr-shadow-l: 0 16px 40px rgba(14, 22, 35, 0.12), 0 4px 12px rgba(14, 22, 35, 0.06);
+  --vr-font: "Inter", "SF Pro Text", -apple-system, "PingFang SC", "Microsoft YaHei UI", sans-serif;
+  --vr-font-mono: "SF Mono", "Fira Code", ui-monospace, Consolas, monospace;
+  --vr-t-ease: cubic-bezier(0.22, 0.68, 0, 1.1);
+}
