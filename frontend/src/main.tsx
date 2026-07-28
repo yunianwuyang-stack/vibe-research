@@ -593,7 +593,15 @@ export function App() {
     document.title = "Vibe Research";
     restoreLocalTheme();
     localSessionToken()
-      .then((t) => setConnected(Boolean(t)))
+      .then((t) => {
+        // In desktop mode a real token means connected; in web/dev mode,
+        // fall back to a health-check so the UI doesn't show "disconnected"
+        // just because localStorage has no token.
+        if (t) { setConnected(true); return; }
+        return fetch("/api/health")
+          .then((r) => setConnected(r.ok))
+          .catch(() => setConnected(false));
+      })
       .catch(() => setConnected(false));
     runSafe(async () => {
       const [templateData, projectItems] = await Promise.all([
