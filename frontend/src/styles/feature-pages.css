@@ -260,9 +260,57 @@
    ============================================================ */
 
 .research-map {
-  max-width: 900px;
-  padding: 32px 0 64px;
+  max-width: 100%;
+  padding: 16px 0 32px;
 }
+
+/* ── Two-column canvas ──────────────────────────────────────── */
+.rm-canvas {
+  display: grid;
+  grid-template-columns: 3fr 2fr;
+  gap: 14px;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.rm-right {
+  display: grid;
+  gap: 10px;
+}
+
+/* 3-column boundary grid inside left column */
+.rm-boundary-grid {
+  grid-template-columns: 1fr 1fr 1fr !important;
+}
+
+/* Prevent .wide from spanning all 3 cols in boundary grid */
+.rm-boundary-grid label.wide {
+  grid-column: auto !important;
+}
+
+/* Constrain textarea heights so content fits on one screen */
+.research-map .form-grid textarea {
+  min-height: 80px !important;
+  max-height: 120px !important;
+  resize: vertical !important;
+}
+
+.rm-boundary-grid textarea {
+  min-height: 68px !important;
+  max-height: 100px !important;
+}
+
+.rm-right textarea {
+  min-height: 72px !important;
+  max-height: 110px !important;
+}
+
+@media (max-width: 860px) {
+  .rm-canvas {
+    grid-template-columns: 1fr;
+  }
+}
+
 
 /* Header: remove English "Research Map" eyebrow */
 .research-map-status .eyebrow {
