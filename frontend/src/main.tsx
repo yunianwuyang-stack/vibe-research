@@ -19,6 +19,7 @@ import {
   createClaimExperimentLink,
   createHypothesis,
   createProject,
+  deleteProject,
   download,
   executeExperiment,
   generateDraft,
@@ -105,7 +106,7 @@ import {
   researchStepLabel,
   statusText,
 } from "./research-helpers";
-import { Field, Panel, Empty, Card } from "./ui";
+import { Field, Panel, Empty, Card, ConceptTip } from "./ui";
 import {
   pageFromFeatureRoute,
   featureRouteForPage as featureRouteForShellPage,
@@ -728,6 +729,20 @@ export function App() {
     runSafe(async () => {
       const value = await api<Project>(`/api/research-projects/${projectId}`);
       await loadProjectContext(value);
+    });
+  const deleteContract = (projectId: string) =>
+    runSafe(async () => {
+      if (!window.confirm("确认删除该研究项目及所有相关数据（证据卡、假设、事件日志）？此操作不可撤销。")) return;
+      await deleteProject(projectId);
+      setProjects((items) => items.filter((item) => item.id !== projectId));
+      if (project?.id === projectId) {
+        setProject(undefined);
+        setDraft("");
+        setDraftHash("");
+        setAdversarialReviews([]);
+        setAssurance(undefined);
+        setInnovationCheck(undefined);
+      }
     });
   const search = () =>
     runSafe(async () => {
@@ -1413,6 +1428,26 @@ export function App() {
           title="研究项目"
           detail="先界定问题、证据边界与作者责任，再开始自动化工作。"
         >
+          {/* ── 概念引导区 ────────────────────────────────────────── */}
+          <div className="concept-guide" role="note">
+            <p className="concept-guide-title">📖 新手引导 — 核心概念速查</p>
+            <ul className="concept-guide-list">
+              <li>
+                <strong>研究合同</strong> — 项目的"承诺书"。在正式开始前锁定研究问题与纳入标准，防止后期随意改变研究范围。合同批准后不可修改。
+              </li>
+              <li>
+                <strong>可证伪假设注册表</strong> — 预先登记你认为成立的命题，并写明"什么结果会推翻它"。这是防止事后解读数据、保证科研诚信的预注册实践。
+              </li>
+              <li>
+                <strong>证据卡</strong> — 每篇参考文献的核验记录，需分别通过机器引用检查和人工主张支持审查两道关卡。
+              </li>
+              <li>
+                <strong>纳入标准</strong> — 预先约定"什么样的文献算有效证据"，避免检索时随意扩大或缩小范围。
+              </li>
+            </ul>
+          </div>
+
+          {/* ── 创建新项目 ───────────────────────────────────────── */}
           <div className="form-grid">
             <Field
               label="项目名称"
@@ -1425,14 +1460,14 @@ export function App() {
               value={question}
               set={setQuestion}
               area
-              placeholder="以可检验的问题描述研究目标"
+              placeholder="以可检验的问题描述研究目标，例如：深度学习在皮肤病变分类中能否达到皮肤科医生水平？"
             />
             <Field
               label="纳入与排除标准"
               value={criteria}
               set={setCriteria}
               area
-              placeholder="明确检索、数据与证据筛选边界"
+              placeholder="例如：仅接受2018年后、有对照组、样本量>100的临床研究；排除综述、预印本和无法访问全文的文献"
             />
           </div>
           <div className="actions">
@@ -1450,6 +1485,55 @@ export function App() {
               先检索文献
             </button>
           </div>
+
+          {/* ── 已有项目列表（含删除按钮）───────────────────────── */}
+          {projects.length > 0 && (
+            <section className="project-list-section" aria-label="已有研究项目">
+              <h3 className="project-list-heading">
+                已有项目（{projects.length}）
+                <ConceptTip title="如何切换项目？">
+                  <p>点击「切换至此项目」可把某个项目设为当前工作项目。点击「删除」会永久移除项目及所有证据卡、假设和日志，不可撤销。</p>
+                </ConceptTip>
+              </h3>
+              <ul className="project-list">
+                {projects.map((item) => (
+                  <li key={item.id} className={`project-list-item${project?.id === item.id ? " project-list-item--active" : ""}`}>
+                    <div className="project-list-info">
+                      <span className="project-list-title">{item.title}</span>
+                      <span className={`status-chip status-${item.status || "queued"}`}>
+                        {statusText(item.status)}
+                      </span>
+                    </div>
+                    <div className="project-list-actions">
+                      {project?.id !== item.id && (
+                        <button
+                          type="button"
+                          className="quiet compact-action"
+                          disabled={busy}
+                          onClick={() => selectProject(item.id)}
+                        >
+                          切换至此项目
+                        </button>
+                      )}
+                      {project?.id === item.id && (
+                        <span className="project-list-current">当前项目</span>
+                      )}
+                      <button
+                        type="button"
+                        className="quiet compact-action danger"
+                        disabled={busy}
+                        onClick={() => deleteContract(item.id)}
+                        aria-label={`删除项目：${item.title}`}
+                      >
+                        删除
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
           {project && (
             <>
               <ProjectCard project={project} />
@@ -3741,7 +3825,13 @@ function ProjectCard({ project }: { project: Project }) {
           <dd>{project.events.length}</dd>
         </div>
         <div>
-          <dt>冻结假设</dt>
+          <dt>
+            冻结假设
+            <ConceptTip title="可证伪假设注册表">
+              <p>假设需提前登记"陈述→机制→可测量预测→证伪标准→边界条件"五要素，并在进入实验前<strong>冻结</strong>（锁定）。冻结后不可修改，以防事后调整假设来拟合数据。</p>
+              <p>当前显示已冻结（可进入实验）的假设数量。</p>
+            </ConceptTip>
+          </dt>
           <dd>{project.hypothesis_readiness?.frozen_count || 0}</dd>
         </div>
       </dl>

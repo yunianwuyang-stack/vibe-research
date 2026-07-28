@@ -141,6 +141,8 @@ async def falsify_hypothesis(project_id: str, version_id: str, body: HypothesisT
     return await _transition_hypothesis(project_id, version_id, "falsify", body)
 @router.get("/{project_id}")
 async def get(project_id: str): return await research_contracts.get_contract(project_id)
+@router.delete("/{project_id}")
+async def delete_project(project_id: str): return await research_contracts.delete_contract(project_id)
 @router.post("/{project_id}/evidence")
 async def evidence(project_id: str, body: Evidence): return await research_contracts.add_evidence(project_id, **body.model_dump())
 @router.post("/{project_id}/provider-evidence")

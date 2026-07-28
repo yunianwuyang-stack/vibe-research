@@ -1,5 +1,40 @@
 /** Shared presentational primitives extracted from main.tsx (P9.2 strangler). */
-import React from "react";
+import React, { useState } from "react";
+
+/**
+ * 核心概念解释提示。
+ * 点击 ⓘ 图标展开/收起一段简短说明，帮助不熟悉学术科研流程的用户理解界面术语。
+ */
+export function ConceptTip({ title, children }: { title: string; children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <span className="concept-tip">
+      <button
+        type="button"
+        className="concept-tip-trigger"
+        aria-expanded={open}
+        aria-label={`查看「${title}」说明`}
+        onClick={() => setOpen((v) => !v)}
+      >
+        ⓘ
+      </button>
+      {open && (
+        <span className="concept-tip-popover" role="tooltip">
+          <strong>{title}</strong>
+          {children}
+          <button
+            type="button"
+            className="concept-tip-close"
+            aria-label="关闭说明"
+            onClick={() => setOpen(false)}
+          >
+            ✕
+          </button>
+        </span>
+      )}
+    </span>
+  );
+}
 
 export function Panel({
   title,

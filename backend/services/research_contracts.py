@@ -158,6 +158,31 @@ async def approve(project_id: str, actor: str, approved: bool, reason: str) -> d
 
 async def get_contract(project_id: str) -> dict[str, Any]: return await _project(project_id)
 
+async def delete_contract(project_id: str) -> dict[str, Any]:
+    """Delete a research project and all its associated data.
+
+    Cascades through evidence_provenance → evidence_cards → research_artifacts
+    → research_events → research_projects in dependency order.
+    """
+    db = await get_db()
+    try:
+        row = await (await db.execute("SELECT id FROM research_projects WHERE id=?", (project_id,))).fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Research project not found")
+        # Remove evidence provenance first (FK child of evidence_cards)
+        await db.execute(
+            "DELETE FROM evidence_provenance WHERE evidence_card_id IN (SELECT id FROM evidence_cards WHERE project_id=?)",
+            (project_id,),
+        )
+        await db.execute("DELETE FROM evidence_cards WHERE project_id=?", (project_id,))
+        await db.execute("DELETE FROM research_artifacts WHERE project_id=?", (project_id,))
+        await db.execute("DELETE FROM research_events WHERE project_id=?", (project_id,))
+        await db.execute("DELETE FROM research_projects WHERE id=?", (project_id,))
+        await db.commit()
+    finally:
+        await db.close()
+    return {"deleted": True, "id": project_id}
+
 async def save_provider_evidence(project_id: str, provider: str, query: str, source_url: str, snapshot_sha256: str | None = None) -> dict[str, Any]:
     """Persist one card from the exact integrity-checked search snapshot."""
     client = LiteratureClient(HttpTransport(), WORKSPACES_DIR / "literature-cache", timeout_seconds=15)
