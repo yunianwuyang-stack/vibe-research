@@ -1,5 +1,5 @@
 /** Literature & evidence page extracted from main.tsx (P9.2 strangler). */
-import React from "react";
+import React, { useState, useEffect } from "react";
 import type { LiteratureRecord, Project } from "./api";
 import { Panel, Empty } from "./ui";
 import {
@@ -7,6 +7,25 @@ import {
   machineCitationLabel,
   statusText,
 } from "./research-helpers";
+
+const PAGE_SIZE = 8;
+
+/** Extract a usable URL from a provenance string like "openalex:https://..." or "openalex:10.1186/..." */
+function provenanceToUrl(provenance: string): string | null {
+  const colon = provenance.indexOf(":");
+  if (colon < 0) return null;
+  const after = provenance.slice(colon + 1);
+  if (after.startsWith("http://") || after.startsWith("https://")) return after;
+  // DOI-like: starts with digits and contains a slash
+  if (/^\d{2,}\./.test(after) && after.includes("/")) return `https://doi.org/${after}`;
+  return null;
+}
+
+/** Return just the provider prefix, e.g. "openalex" */
+function provenancePrefix(provenance: string): string {
+  const colon = provenance.indexOf(":");
+  return colon >= 0 ? provenance.slice(0, colon) : provenance;
+}
 
 export type EvidencePageProps = {
   busy: boolean;
@@ -70,6 +89,10 @@ export function EvidencePage({
   onReviewCard,
   onReviewSupport,
 }: EvidencePageProps) {
+  const [page, setPage] = useState(1);
+  // 每次新搜索结果回来重置到第一页
+  useEffect(() => { setPage(1); }, [records]);
+
   return (
       <Panel
         title="文献与证据库"
@@ -109,33 +132,60 @@ export function EvidencePage({
           </p>
         )}
         {records.length ? (
-          <ol className="results search-results">
-            {records.map((record, index) => {
-              const saved = savedRecordUrls.has(record.url);
-              return (
-                <li
-                  className={saved ? "saved-result" : ""}
-                  key={`${record.url}-${index}`}
-                >
-                  <a href={record.url} target="_blank" rel="noreferrer">
-                    {record.title}
-                  </a>
-                  <span>
-                    {record.year || "未知年份"} ·{" "}
-                    {saved ? "已保存，待核验" : statusText(record.status)} ·{" "}
-                    {record.provenance}
-                  </span>
-                  <button
-                    className={saved ? "quiet" : ""}
-                    disabled={busy || !project || saved}
-                    onClick={() => onSaveRecord(record)}
+          <>
+            <ol className="results search-results">
+              {records.slice(0, page * PAGE_SIZE).map((record, index) => {
+                const saved = savedRecordUrls.has(record.url);
+                const pUrl = provenanceToUrl(record.provenance);
+                const pPrefix = provenancePrefix(record.provenance);
+                return (
+                  <li
+                    className={saved ? "saved-result" : ""}
+                    key={`${record.url}-${index}`}
                   >
-                    {saved ? "已保存，待核验" : "保存为证据卡"}
-                  </button>
-                </li>
-              );
-            })}
-          </ol>
+                    <a href={record.url} target="_blank" rel="noreferrer">
+                      {record.title}
+                    </a>
+                    <span className="result-meta">
+                      {record.year || "未知年份"} ·{" "}
+                      {saved ? "已保存，待核验" : statusText(record.status)} ·{" "}
+                      <span className="result-provenance">
+                        {pPrefix}:{" "}
+                        {pUrl ? (
+                          <a href={pUrl} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
+                            查看原始记录 ↗
+                          </a>
+                        ) : (
+                          record.provenance.slice(pPrefix.length + 1)
+                        )}
+                      </span>
+                    </span>
+                    <button
+                      className={saved ? "quiet" : ""}
+                      disabled={busy || !project || saved}
+                      title={!project ? "请先在左侧选择一个研究项目" : undefined}
+                      onClick={() => onSaveRecord(record)}
+                    >
+                      {saved ? "已保存" : !project ? "请先选择项目" : "保存为证据卡"}
+                    </button>
+                  </li>
+                );
+              })}
+            </ol>
+            {records.length > page * PAGE_SIZE && (
+              <button
+                className="quiet load-more"
+                onClick={() => setPage((p) => p + 1)}
+              >
+                查看更多结果（还有 {records.length - page * PAGE_SIZE} 条）
+              </button>
+            )}
+            {records.length > PAGE_SIZE && (
+              <p className="results-count">
+                显示 {Math.min(page * PAGE_SIZE, records.length)} / {records.length} 条
+              </p>
+            )}
+          </>
         ) : (
           <Empty text="尚无检索记录。输入至少三个字符后开始查询。" />
         )}

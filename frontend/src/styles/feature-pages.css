@@ -182,6 +182,69 @@
   margin: 0 !important;
 }
 
+/* ── Provenance link ────────────────────────────────────────── */
+.result-meta {
+  display: flex !important;
+  align-items: center !important;
+  gap: 3px !important;
+  flex-wrap: wrap !important;
+  font-size: 11.5px !important;
+  color: var(--vr-ink-3) !important;
+  margin-top: 5px !important;
+}
+
+.result-provenance {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.result-provenance a {
+  color: var(--vr-accent) !important;
+  text-decoration: none !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+}
+
+.result-provenance a:hover {
+  text-decoration: underline !important;
+}
+
+/* ── Load more / results count ──────────────────────────────── */
+.load-more {
+  display: block !important;
+  width: 100% !important;
+  margin-top: 6px !important;
+  padding: 10px 16px !important;
+  text-align: center !important;
+  font-size: 13px !important;
+  color: var(--vr-ink-2) !important;
+  background: transparent !important;
+  border: 1px dashed var(--vr-border) !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: background 0.15s, border-style 0.15s !important;
+}
+
+.load-more:hover {
+  background: var(--vr-bg) !important;
+  border-style: solid !important;
+}
+
+.results-count {
+  margin: 6px 0 0 !important;
+  font-size: 11.5px !important;
+  color: var(--vr-ink-3) !important;
+  text-align: right !important;
+}
+
+/* Disabled save button: clearly non-interactive */
+.search-results li button:disabled {
+  opacity: 0.45 !important;
+  cursor: not-allowed !important;
+  pointer-events: auto !important; /* keep tooltip on hover */
+}
+
 /* Saved search result highlight */
 .search-results .saved-result {
   background: var(--vr-accent-bg) !important;
