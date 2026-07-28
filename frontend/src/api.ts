@@ -135,6 +135,7 @@ export async function download(path:string,filename:string,options:RequestInit={
 }
 
 export const createProject=(title:string,question:string,criteria:string)=>api<Project>('/api/research-projects',{method:'POST',body:JSON.stringify({title,research_question:question,inclusion_criteria:criteria})});
+export const deleteProject=(projectId:string)=>api<{deleted:boolean;id:string}>(`/api/research-projects/${projectId}`,{method:'DELETE'});
 export type HypothesisWrite=Pick<HypothesisVersion,'statement'|'mechanism'|'prediction'|'falsification_criteria'|'boundary_conditions'>;
 export const createHypothesis=(projectId:string,value:HypothesisWrite,changeReason:string)=>api<Project>(`/api/research-projects/${projectId}/hypotheses`,{method:'POST',body:JSON.stringify({...value,actor:'researcher',change_reason:changeReason})});
 export const reviseHypothesis=(projectId:string,versionId:string,value:HypothesisWrite,changeReason:string)=>api<Project>(`/api/research-projects/${projectId}/hypotheses/${versionId}/revisions`,{method:'POST',body:JSON.stringify({...value,actor:'researcher',change_reason:changeReason})});
