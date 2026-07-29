@@ -104,127 +104,109 @@ export function ResearchMapPage({
           <Empty text="先建立或选择研究项目，再编辑研究地图。" />
         ) : (
           <>
-            {/* ── 两列主网格 ─────────────────────── */}
-            <div className="rm-canvas">
+            <section className="rm-argument" aria-labelledby="argument-title">
+              <div className="rm-section-heading">
+                <div>
+                  <h2 id="argument-title">你的论证</h2>
+                  <p>先说明问题与解释，再为后续证据关联设定主张编号。</p>
+                </div>
+                <span>问题 → 解释 → 主张</span>
+              </div>
+              <div className="rm-argument-flow">
+                <div className="rm-flow-step">
+                  <Field
+                    label="文献争议与空白"
+                    hint="现有研究在哪里留下矛盾或未解答的问题？"
+                    value={narrative.tension}
+                    set={(v) => setField("tension", v)}
+                    area
+                    placeholder="例：现有研究对 X 因素的结论相互矛盾，且缺乏针对……的纵向追踪数据"
+                  />
+                </div>
+                <div className="rm-flow-step">
+                  <Field
+                    label="你的解释机制"
+                    hint="你认为什么原因或路径可以解释这个现象？"
+                    value={narrative.mechanism}
+                    set={(v) => setField("mechanism", v)}
+                    area
+                    placeholder="例：我们认为 Y 通过 Z 路径影响 X，具体表现为……"
+                  />
+                </div>
+                <div className="rm-claim-step">
+                  <p className="rm-step-label">核心主张</p>
+                  <p>给这条研究结论一个编号，后续用它关联证据。</p>
+                  <Field
+                    label="主张编号"
+                    hint="如 C1、C2"
+                    value={narrative.claims[0] || ""}
+                    set={(v) => setField("claims", [v])}
+                    placeholder="C1"
+                  />
+                </div>
+              </div>
+            </section>
 
-              {/* 左列：论点 + 论证边界 */}
-              <div className="rm-left">
-
-                {/* Section 1: 论点框架 */}
-                <section className="settings-section">
-                  <div className="section-command">
-                    <h3>论点框架</h3>
+            <div className="rm-support-grid">
+              <section className="rm-hypotheses" aria-labelledby="hypotheses-title">
+                <div className="rm-section-heading">
+                  <div>
+                    <h2 id="hypotheses-title">已确认假设</h2>
+                    <p>来自研究合同，已冻结，不可在此修改。</p>
                   </div>
-                  <p className="section-desc">说明你要解决的文献矛盾，以及你提出的解释方向。</p>
-                  <div className="form-grid">
-                    <Field
-                      label="文献争议与空白"
-                      hint="现有研究在哪里留下了矛盾或未解答的问题？"
-                      value={narrative.tension}
-                      set={(v) => setField("tension", v)}
-                      area
-                      placeholder="例：现有研究对X因素的结论相互矛盾，且缺乏针对……的纵向追踪数据"
-                    />
-                    <Field
-                      label="你的解释机制"
-                      hint="你认为什么原因或路径可以解释这个现象？"
-                      value={narrative.mechanism}
-                      set={(v) => setField("mechanism", v)}
-                      area
-                      placeholder="例：我们认为Y通过Z路径影响X，具体表现为……"
-                    />
+                  <button type="button" className="quiet" onClick={onOpenProjects}>
+                    管理假设
+                  </button>
+                </div>
+                <textarea
+                  className="rm-hypotheses-list"
+                  readOnly
+                  aria-label="已确认假设"
+                  value={
+                    frozenHypotheses.length
+                      ? frozenHypotheses
+                          .map((h) => {
+                            const hid = (h.hypothesis_id || h.id || "").slice(0, 8);
+                            return `H-${hid} v${h.version ?? "?"}: ${h.statement || ""}`;
+                          })
+                          .join("\n")
+                      : "暂无已冻结的假设"
+                  }
+                />
+              </section>
+
+              <section className="rm-boundaries" aria-labelledby="boundaries-title">
+                <div className="rm-section-heading">
+                  <div>
+                    <h2 id="boundaries-title">论证边界</h2>
+                    <p>记录替代解释、适用范围与已知局限。</p>
                   </div>
-                </section>
-
-                {/* Section 4: 论证边界（3列平铺） */}
-                <section className="settings-section">
-                  <div className="section-command">
-                    <h3>论证边界</h3>
-                  </div>
-                  <p className="section-desc">
-                    排除的替代解释、结论适用范围，以及已知不足。
-                  </p>
-                  <div className="form-grid rm-boundary-grid">
-                    <Field
-                      label="替代解释"
-                      hint="你排除了哪些其他解释，为什么？"
-                      value={narrative.competing_explanations[0] || ""}
-                      set={(v) => setField("competing_explanations", [v])}
-                      area
-                      placeholder="也可能是Z因素，但……"
-                    />
-                    <Field
-                      label="适用范围"
-                      hint="结论在哪些情境下有效？"
-                      value={narrative.boundaries[0] || ""}
-                      set={(v) => setField("boundaries", [v])}
-                      area
-                      placeholder="主要适用于……，不适用于……"
-                    />
-                    <Field
-                      label="已知局限"
-                      hint="这项研究有哪些不足？"
-                      value={narrative.limitations[0] || ""}
-                      set={(v) => setField("limitations", [v])}
-                      area
-                      placeholder="样本量有限；未控制……变量"
-                    />
-                  </div>
-                </section>
-
-              </div>{/* /rm-left */}
-
-              {/* 右列：假设 + 主张 */}
-              <div className="rm-right">
-
-                {/* Section 2: 已确认假设 */}
-                <section className="settings-section">
-                  <div className="section-command">
-                    <h3>已确认假设</h3>
-                  </div>
-                  <p className="section-desc">
-                    来自研究合同，已冻结不可修改。
-                    {frozenHypotheses.length === 0 && <> 请先到「管理假设」添加并冻结。</>}
-                  </p>
-                  <label className="wide">
-                    <textarea
-                      readOnly
-                      value={
-                        frozenHypotheses.length
-                          ? frozenHypotheses
-                              .map((h) => {
-                                const hid = (h.hypothesis_id || h.id || "").slice(0, 8);
-                                return `H-${hid} v${h.version ?? "?"}: ${h.statement || ""}`;
-                              })
-                              .join("\n")
-                          : "暂无已冻结的假设"
-                      }
-                    />
-                  </label>
-                </section>
-
-                {/* Section 3: 核心主张 */}
-                <section className="settings-section">
-                  <div className="section-command">
-                    <h3>核心主张</h3>
-                  </div>
-                  <p className="section-desc">
-                    给核心主张起一个短编号（如 C1），后续在「主张-证据图」关联证据时会用到。
-                  </p>
-                  <div className="form-grid">
-                    <Field
-                      label="主张编号"
-                      hint="如 C1、C2"
-                      value={narrative.claims[0] || ""}
-                      set={(v) => setField("claims", [v])}
-                      placeholder="C1"
-                    />
-                  </div>
-                </section>
-
-              </div>{/* /rm-right */}
-
-            </div>{/* /rm-canvas */}
+                </div>
+                <div className="rm-boundary-fields">
+                  <Field
+                    label="替代解释"
+                    value={narrative.competing_explanations[0] || ""}
+                    set={(v) => setField("competing_explanations", [v])}
+                    area
+                    placeholder="也可能是 Z 因素，但……"
+                  />
+                  <Field
+                    label="适用范围"
+                    value={narrative.boundaries[0] || ""}
+                    set={(v) => setField("boundaries", [v])}
+                    area
+                    placeholder="主要适用于……，不适用于……"
+                  />
+                  <Field
+                    label="已知局限"
+                    value={narrative.limitations[0] || ""}
+                    set={(v) => setField("limitations", [v])}
+                    area
+                    placeholder="样本量有限；未控制……变量"
+                  />
+                </div>
+              </section>
+            </div>
 
             {/* ── 阻断提示（全宽） ────────────────── */}
             {readiness.blockers.length > 0 && (
