@@ -53,6 +53,7 @@ function LegacyRunCenterPage({
   if (!project)
     return (
       <Panel
+        className="run-center-page"
         title="项目级运行中心"
         detail="研究项目是工作流、检查点、日志和产物的持久化边界。"
       >
@@ -64,6 +65,7 @@ function LegacyRunCenterPage({
   const active = selectedSnapshot?.workflow;
   return (
     <Panel
+      className="run-center-page"
       title="项目级运行中心"
       detail="每个工作流绑定当前 Research Contract；步骤、检查点、日志和产物都从同一持久化快照读取。"
     >
@@ -313,6 +315,7 @@ export function RunCenterPage({
   if (!project)
     return (
       <Panel
+        className="run-center-page"
         title="项目级运行中心"
         detail="研究项目是工作流、检查点、日志和产物的持久化边界。"
       >
@@ -327,6 +330,7 @@ export function RunCenterPage({
     : undefined;
   return (
     <Panel
+      className="run-center-page"
       title="项目级运行中心"
       detail="每个工作流均绑定当前研究合同；步骤、检查点、日志和产物均从同一持久化快照读取。"
     >
@@ -345,18 +349,22 @@ export function RunCenterPage({
               <article
                 className={selectedId === workflow.id ? "workflow selected" : "workflow"}
                 key={workflow.id}
-                onClick={() => onSelected(workflow.id)}
               >
-                <div>
+                <button
+                  type="button"
+                  className="workflow-select"
+                  aria-pressed={selectedId === workflow.id}
+                  onClick={() => onSelected(workflow.id)}
+                >
                   <h3>{workflow.title}</h3>
                   <p>
                     {workflowNames[workflow.template] || workflow.template} ·
                     当前：{workflow.current_step || "等待启动"}
                   </p>
-                </div>
                 <span className={`badge ${workflow.status}`}>
                   {statusText(workflow.status)}
                 </span>
+                </button>
                 <div className="inline-actions">
                   <button
                     disabled={busy || !["pending", "paused"].includes(workflow.status)}

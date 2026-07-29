@@ -139,38 +139,6 @@
   color: var(--vr-ink-3) !important;
 }
 
-/* ── Workflow list ──────────────────────────────────────────── */
-.workflow {
-  background: var(--vr-surface) !important;
-  border: 1px solid var(--vr-border) !important;
-  border-radius: 9px !important;
-  padding: 16px !important;
-  transition: border-color 0.12s, box-shadow 0.12s !important;
-}
-
-.workflow:hover {
-  border-color: #b8c9d6 !important;
-  box-shadow: var(--vr-shadow-s) !important;
-}
-
-.workflow.selected {
-  border-color: var(--vr-accent) !important;
-  box-shadow: 0 0 0 3px rgba(0, 169, 157, 0.12) !important;
-}
-
-.workflow h3 {
-  font-size: 14px !important;
-  font-weight: 650 !important;
-  letter-spacing: -0.01em !important;
-  color: var(--vr-ink) !important;
-  margin: 0 0 3px !important;
-}
-
-.workflow p {
-  font-size: 12px !important;
-  color: var(--vr-ink-3) !important;
-  margin: 0 !important;
-}
 
 /* ── Toolbar ────────────────────────────────────────────────── */
 .toolbar {
@@ -314,101 +282,6 @@
   margin: 12px 0 !important;
 }
 
-/* ── Run DAG / logs ─────────────────────────────────────────── */
-.run-dag {
-  list-style: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  display: grid !important;
-  gap: 6px !important;
-}
-
-.run-dag > li {
-  display: grid !important;
-  grid-template-columns: 1fr auto !important;
-  gap: 6px !important;
-  padding: 10px 12px !important;
-  border-radius: 7px !important;
-  background: var(--vr-bg) !important;
-  border: 1px solid var(--vr-border-2) !important;
-  font-size: 12.5px !important;
-}
-
-.run-dag > li.completed {
-  background: #f0fdf4 !important;
-  border-color: #bbf7d0 !important;
-}
-
-.run-dag > li.running {
-  background: #f0f9ff !important;
-  border-color: #bae6fd !important;
-}
-
-.run-dag > li.failed {
-  background: #fef2f2 !important;
-  border-color: #fecaca !important;
-}
-
-.run-dag > li b {
-  font-size: 12.5px !important;
-  font-weight: 600 !important;
-  color: var(--vr-ink) !important;
-}
-
-.run-dag > li span {
-  font-size: 11px !important;
-  color: var(--vr-ink-3) !important;
-  align-self: start !important;
-}
-
-.run-logs {
-  list-style: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  display: grid !important;
-  gap: 2px !important;
-  max-height: 320px !important;
-  overflow-y: auto !important;
-}
-
-.run-logs > li {
-  display: grid !important;
-  grid-template-columns: 100px 100px 1fr !important;
-  gap: 8px !important;
-  padding: 6px 8px !important;
-  border-radius: 5px !important;
-  font-size: 11.5px !important;
-  line-height: 1.45 !important;
-}
-
-.run-logs > li:nth-child(odd) {
-  background: var(--vr-bg) !important;
-}
-
-.run-logs time {
-  color: var(--vr-ink-3) !important;
-  font-variant-numeric: tabular-nums !important;
-}
-
-.run-logs b {
-  color: var(--vr-ink-2) !important;
-  font-weight: 600 !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
-}
-
-.run-logs .info {
-  color: var(--vr-ink-2) !important;
-}
-
-.run-logs .warn {
-  color: #b45309 !important;
-}
-
-.run-logs .error {
-  color: #b91c1c !important;
-}
 
 /* ── Graph gate status banners ──────────────────────────────── */
 .graph-gate {
@@ -596,18 +469,8 @@
 .card > p {
   color: var(--vr-ink-2) !important;  /* #4a5568 = 7.53:1 on white */
 }
-.run-center-layout {
-  display: grid !important;
-  grid-template-columns: 280px minmax(0, 1fr) !important;
-  gap: 20px !important;
-  align-items: start !important;
-}
 
 @media (max-width: 900px) {
-  .run-center-layout {
-    grid-template-columns: 1fr !important;
-  }
-
   .form-grid {
     grid-template-columns: 1fr !important;
   }

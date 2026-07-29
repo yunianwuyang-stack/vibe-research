@@ -5,13 +5,15 @@ export function Panel({
   title,
   detail,
   children,
+  className,
 }: {
   title: string;
   detail: string;
   children: React.ReactNode;
+  className?: string;
 }) {
   return (
-    <section className="panel">
+    <section className={className ? `panel ${className}` : "panel"}>
       <header className="section-header">
         <h1>{title}</h1>
         {detail && <p>{detail}</p>}

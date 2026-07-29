@@ -1,6 +1,6 @@
 /* Reusable interaction primitives. Feature styles may extend these states, not replace them. */
 
-button:not(.card):not(nav button):not(.voice):not(.operations-run):not(.operations-tabs button):not(.theme-option) {
+button:not(.card):not(nav button):not(.voice):not(.operations-run):not(.operations-tabs button):not(.theme-option):not(.workflow-select) {
   display: inline-flex;
   min-height: 34px;
   align-items: center;
@@ -18,7 +18,7 @@ button:not(.card):not(nav button):not(.voice):not(.operations-run):not(.operatio
   transition: background 160ms var(--vr-t-ease), border-color 160ms var(--vr-t-ease), box-shadow 160ms var(--vr-t-ease), color 160ms var(--vr-t-ease);
 }
 
-button:not(.card):not(nav button):not(.voice):not(.operations-run):not(.operations-tabs button):not(.theme-option):hover:not(:disabled) {
+button:not(.card):not(nav button):not(.voice):not(.operations-run):not(.operations-tabs button):not(.theme-option):not(.workflow-select):hover:not(:disabled) {
   border-color: var(--vr-accent-dk);
   background: var(--vr-accent-dk);
   box-shadow: var(--vr-shadow-s);

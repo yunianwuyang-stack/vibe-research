@@ -1,344 +1,440 @@
-/* ===============================================================
-   RUN CENTER — Clean execution view for non-technical users
-   Problems fixed:
-   - SHA256 hashes: hidden by default, monospace tiny
-   - Logs: compact, color-coded, [系统] messages de-emphasized
-   - DAG: visual timeline with clear status icons
-   - Checkpoint card: prominent, urgent visual treatment
-   =============================================================== */
+/* Execution view styles are deliberately owned by the run-center page. */
 
-/* ── Run center layout ──────────────────────────────────────── */
-.run-center-layout {
-  display: grid !important;
-  grid-template-columns: 260px minmax(0, 1fr) !important;
-  gap: 18px !important;
-  align-items: start !important;
+.run-center-page {
+  min-width: 0;
 }
 
-/* ── Workflow list panel ─────────────────────────────────────── */
-.workflow-list {
-  display: grid !important;
-  gap: 8px !important;
+.run-center-page .run-center-layout {
+  display: grid;
+  grid-template-columns: minmax(248px, 0.38fr) minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+  margin-top: 20px;
 }
 
-.workflow {
-  padding: 14px 16px !important;
-  cursor: pointer !important;
+.run-center-page .workflow-list {
+  display: grid;
+  gap: 10px;
 }
 
-.workflow h3 {
-  font-size: 13.5px !important;
-  font-weight: 650 !important;
-  letter-spacing: -0.01em !important;
-  color: var(--vr-ink) !important;
-  margin: 0 0 2px !important;
-  /* Truncate long titles */
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+.run-center-page .workflow {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  overflow: hidden;
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius);
+  background: var(--vr-surface);
+  box-shadow: var(--vr-shadow-s);
+  transition: border-color 160ms var(--vr-t-ease), box-shadow 160ms var(--vr-t-ease);
 }
 
-.workflow p {
-  font-size: 11.5px !important;
-  color: var(--vr-ink-3) !important;
-  margin: 0 !important;
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+.run-center-page .workflow:hover {
+  border-color: var(--vr-border-strong);
+  box-shadow: var(--vr-shadow);
 }
 
-/* ── Run snapshot section headings ──────────────────────────── */
-.run-snapshot > section > h4,
-.run-snapshot > div.section-command > h4 {
-  font-size: 13px !important;
-  font-weight: 650 !important;
-  color: var(--vr-ink-2) !important;
-  letter-spacing: -0.01em !important;
-  margin: 0 0 10px !important;
-  padding-top: 16px !important;
-  border-top: 1px solid var(--vr-border-2) !important;
+.run-center-page .workflow.selected {
+  border-color: var(--vr-accent);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--vr-accent) 16%, transparent);
 }
 
-/* ── DAG steps — visual timeline ────────────────────────────── */
-.run-dag {
-  list-style: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  display: grid !important;
-  gap: 0 !important;
-  position: relative !important;
+.run-center-page .workflow-select {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+  width: 100%;
+  min-width: 0;
+  padding: 14px 15px 10px;
+  border: 0;
+  border-radius: 0;
+  color: inherit;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition: background 160ms var(--vr-t-ease);
 }
 
-/* Vertical connector line */
-.run-dag::before {
-  content: "" !important;
-  position: absolute !important;
-  left: 15px !important;
-  top: 20px !important;
-  bottom: 20px !important;
-  width: 2px !important;
-  background: var(--vr-border) !important;
+.run-center-page .workflow-select:hover {
+  background: var(--vr-surface-muted);
 }
 
-.run-dag > li {
-  display: grid !important;
-  grid-template-columns: 32px minmax(0, 1fr) !important;
-  gap: 0 12px !important;
-  padding: 8px 0 !important;
-  border: 0 !important;
-  background: transparent !important;
-  position: relative !important;
-  align-items: start !important;
+.run-center-page .workflow.selected .workflow-select {
+  background: var(--vr-accent-bg);
 }
 
-/* Status dot (the timeline node) */
-.run-dag > li::before {
-  content: "" !important;
-  width: 12px !important;
-  height: 12px !important;
-  border-radius: 50% !important;
-  background: var(--vr-border) !important;
-  border: 2px solid var(--vr-surface) !important;
-  margin-top: 5px !important;
-  margin-left: 10px !important;
-  flex-shrink: 0 !important;
-  position: relative !important;
-  z-index: 1 !important;
+.run-center-page .workflow-select h3 {
+  margin: 0 0 3px;
+  overflow: hidden;
+  color: var(--vr-ink);
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.run-dag > li.completed::before {
-  background: var(--vr-accent) !important;
-  box-shadow: 0 0 0 3px rgba(0, 169, 157, 0.15) !important;
+.run-center-page .workflow-select p {
+  margin: 0;
+  overflow: hidden;
+  color: var(--vr-ink-3);
+  font-size: 12px;
+  line-height: 1.5;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
-.run-dag > li.running::before {
-  background: #3b82f6 !important;
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
-  animation: pulse-dot 1.5s ease-in-out infinite !important;
+.run-center-page .workflow .inline-actions {
+  grid-column: 1 / -1;
+  padding: 0 15px 14px;
 }
 
-.run-dag > li.failed::before {
-  background: #ef4444 !important;
+.run-center-page .workflow .inline-actions button {
+  min-height: 32px;
+  padding: 7px 9px;
+  font-size: 12px;
 }
 
-.run-dag > li.waiting_checkpoint::before {
-  background: #f59e0b !important;
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2) !important;
+.run-center-page .run-snapshot {
+  min-width: 0;
+  padding: 20px;
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius-l);
+  background: var(--vr-surface);
+  box-shadow: var(--vr-shadow-s);
 }
 
-@keyframes pulse-dot {
+.run-center-page .run-snapshot > .section-command {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 0;
+  padding: 0 0 16px;
+  border-bottom: 1px solid var(--vr-border);
+}
+
+.run-center-page .run-snapshot > .section-command h3 {
+  margin: 2px 0 0;
+  color: var(--vr-ink);
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+.run-center-page .run-snapshot > section {
+  padding: 18px 0;
+  border-bottom: 1px solid var(--vr-border-2);
+}
+
+.run-center-page .run-snapshot > section:last-child {
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+
+.run-center-page .run-snapshot h4 {
+  margin: 0 0 10px;
+  color: var(--vr-ink-2);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.run-center-page .workflow-inputs .section-command {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.run-center-page .workflow-inputs .section-command p {
+  max-width: 64ch;
+  margin: 4px 0 0;
+  color: var(--vr-ink-3);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.run-center-page .run-dag {
+  position: relative;
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.run-center-page .run-dag::before {
+  position: absolute;
+  top: 20px;
+  bottom: 20px;
+  left: 15px;
+  width: 2px;
+  background: var(--vr-border);
+  content: "";
+}
+
+.run-center-page .run-dag > li {
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 2px 12px;
+  align-items: start;
+  padding: 8px 0;
+}
+
+.run-center-page .run-dag > li::before {
+  z-index: 1;
+  width: 12px;
+  height: 12px;
+  margin-top: 5px;
+  margin-left: 10px;
+  border: 2px solid var(--vr-surface);
+  border-radius: 50%;
+  background: var(--vr-border-strong);
+  box-shadow: 0 0 0 2px var(--vr-surface);
+  content: "";
+}
+
+.run-center-page .run-dag > li.completed::before {
+  background: var(--vr-success);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--vr-success) 18%, transparent);
+}
+
+.run-center-page .run-dag > li.running::before {
+  background: var(--vr-accent);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--vr-accent) 18%, transparent);
+  animation: run-center-pulse 1.5s ease-in-out infinite;
+}
+
+.run-center-page .run-dag > li.failed::before {
+  background: var(--vr-danger);
+}
+
+.run-center-page .run-dag > li.waiting_checkpoint::before {
+  background: var(--vr-warning);
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--vr-warning) 19%, transparent);
+}
+
+.run-center-page .run-dag > li > div {
+  min-width: 0;
+}
+
+.run-center-page .run-dag > li b {
+  display: block;
+  color: var(--vr-ink);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.run-center-page .run-dag > li span,
+.run-center-page .run-dag > li small {
+  display: block;
+  margin-top: 2px;
+  color: var(--vr-ink-3);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.run-center-page .run-dag > li small {
+  grid-column: 2;
+  overflow-wrap: anywhere;
+}
+
+.run-center-page .checkpoint-card {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border: 1px solid color-mix(in oklch, var(--vr-warning) 52%, var(--vr-border));
+  border-radius: var(--vr-radius);
+  background: var(--vr-warning-bg);
+}
+
+.run-center-page .checkpoint-card .eyebrow,
+.run-center-page .checkpoint-card p {
+  color: oklch(0.42 0.09 74);
+}
+
+.run-center-page .checkpoint-card h4 {
+  margin-bottom: 2px;
+  color: oklch(0.35 0.085 70);
+}
+
+.run-center-page .checkpoint-card textarea {
+  min-height: 88px;
+  resize: vertical;
+  border-color: color-mix(in oklch, var(--vr-warning) 40%, var(--vr-border));
+  background: var(--vr-surface);
+}
+
+.run-center-page .run-artifacts {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.run-center-page .run-artifacts > li {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 4px 12px;
+  padding: 11px 12px;
+  border: 1px solid var(--vr-border-2);
+  border-radius: var(--vr-radius-s);
+  background: var(--vr-surface-muted);
+}
+
+.run-center-page .run-artifacts > li b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: var(--vr-ink);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.run-center-page .run-artifacts > li > span,
+.run-center-page .run-artifacts > li small {
+  grid-column: 1 / -1;
+  overflow: hidden;
+  color: var(--vr-ink-3);
+  font-family: var(--vr-font-mono);
+  font-size: 11px;
+  line-height: 1.45;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.run-center-page .run-artifacts > li small {
+  color: var(--vr-accent-dk);
+  font-family: var(--vr-font);
+}
+
+.run-center-page .run-logs {
+  display: grid;
+  gap: 1px;
+  max-height: 300px;
+  margin: 0;
+  padding: 8px;
+  overflow-y: auto;
+  border: 1px solid color-mix(in oklch, var(--vr-sidebar) 84%, var(--vr-border));
+  border-radius: var(--vr-radius-s);
+  background: var(--vr-sidebar);
+  list-style: none;
+}
+
+.run-center-page .run-logs > li {
+  display: grid;
+  grid-template-columns: 88px minmax(72px, 0.44fr) minmax(0, 1fr);
+  gap: 10px;
+  padding: 5px 6px;
+  border-radius: 4px;
+  color: var(--vr-sidebar-t);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.run-center-page .run-logs > li:hover {
+  background: color-mix(in oklch, var(--vr-sidebar-2) 78%, transparent);
+}
+
+.run-center-page .run-logs time {
+  color: var(--vr-sidebar-t2);
+  font-family: var(--vr-font-mono);
+  font-size: 10.5px;
+  font-variant-numeric: tabular-nums;
+}
+
+.run-center-page .run-logs b {
+  overflow: hidden;
+  color: var(--vr-sidebar-t);
+  font-family: var(--vr-font-mono);
+  font-size: 10.5px;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.run-center-page .run-logs .info {
+  color: var(--vr-sidebar-t);
+}
+
+.run-center-page .run-logs .warn {
+  color: oklch(0.78 0.14 82);
+}
+
+.run-center-page .run-logs .error {
+  color: oklch(0.72 0.16 28);
+}
+
+@keyframes run-center-pulse {
   0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+  50% { opacity: 0.55; }
 }
 
-/* Step content */
-.run-dag > li > div {
-  padding: 4px 0 !important;
-  border: 0 !important;
-  background: transparent !important;
-}
-
-.run-dag > li b {
-  display: block !important;
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  color: var(--vr-ink) !important;
-  line-height: 1.4 !important;
-}
-
-.run-dag > li span {
-  font-size: 11px !important;
-  color: var(--vr-ink-3) !important;
-}
-
-/* Output files — collapse them, show only count */
-.run-dag > li small:last-of-type {
-  font-size: 10.5px !important;
-  color: var(--vr-ink-3) !important;
-  display: block !important;
-  margin-top: 2px !important;
-}
-
-/* ── Checkpoint card — urgent, prominent ─────────────────────── */
-.checkpoint-card {
-  padding: 18px 20px !important;
-  background: #fffbeb !important;
-  border: 1.5px solid #fbbf24 !important;
-  border-radius: 10px !important;
-  margin: 16px 0 !important;
-  display: grid !important;
-  gap: 12px !important;
-}
-
-.checkpoint-card > div {
-  display: grid !important;
-  gap: 3px !important;
-}
-
-.checkpoint-card .eyebrow {
-  font-size: 10.5px !important;
-  font-weight: 700 !important;
-  color: #b45309 !important;
-  letter-spacing: 0.05em !important;
-  text-transform: uppercase !important;
-}
-
-.checkpoint-card h4 {
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  color: #92400e !important;
-  margin: 0 !important;
-}
-
-.checkpoint-card p {
-  font-size: 12.5px !important;
-  color: #b45309 !important;
-  margin: 0 !important;
-}
-
-.checkpoint-card textarea {
-  border-color: #fcd34d !important;
-  background: #fffdf5 !important;
-  font-size: 13px !important;
-  min-height: 72px !important;
-  resize: vertical !important;
-}
-
-.checkpoint-card .inline-actions {
-  gap: 8px !important;
-}
-
-/* ── Artifacts list — hide SHA256 by default ─────────────────── */
-.run-artifacts {
-  list-style: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  display: grid !important;
-  gap: 6px !important;
-}
-
-.run-artifacts > li {
-  display: grid !important;
-  grid-template-columns: minmax(0, 1fr) auto !important;
-  gap: 4px 12px !important;
-  padding: 10px 12px !important;
-  background: var(--vr-surface) !important;
-  border: 1px solid var(--vr-border) !important;
-  border-radius: 7px !important;
-}
-
-.run-artifacts > li b {
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  color: var(--vr-ink) !important;
-  overflow-wrap: anywhere !important;
-}
-
-/* SHA256 and size — make tiny, de-emphasize */
-.run-artifacts > li > span {
-  grid-column: 1 / -1 !important;
-  font-size: 10.5px !important;
-  color: var(--vr-ink-3) !important;
-  font-family: var(--vr-font-mono) !important;
-  /* Truncate the long SHA256 */
-  white-space: nowrap !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  max-width: 100% !important;
-}
-
-.run-artifacts > li small {
-  grid-column: 1 / -1 !important;
-  font-size: 10.5px !important;
-  color: var(--vr-accent-dk) !important;
-}
-
-/* ── Logs — compact, color-coded, system messages subtle ─────── */
-.run-logs {
-  list-style: none !important;
-  padding: 0 !important;
-  margin: 0 !important;
-  display: grid !important;
-  gap: 1px !important;
-  max-height: 260px !important;
-  overflow-y: auto !important;
-  background: #0f172a !important;
-  border-radius: 8px !important;
-  padding: 8px !important;
-}
-
-.run-logs > li {
-  display: grid !important;
-  grid-template-columns: 90px 80px minmax(0, 1fr) !important;
-  gap: 0 10px !important;
-  padding: 4px 6px !important;
-  border-radius: 4px !important;
-  font-size: 11px !important;
-  line-height: 1.5 !important;
-  background: transparent !important;
-}
-
-.run-logs > li:hover {
-  background: rgba(255, 255, 255, 0.04) !important;
-}
-
-.run-logs time {
-  color: #4a6080 !important;
-  font-variant-numeric: tabular-nums !important;
-  font-family: var(--vr-font-mono) !important;
-  font-size: 10.5px !important;
-}
-
-.run-logs b {
-  color: #7a96aa !important;
-  font-weight: 500 !important;
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
-  font-family: var(--vr-font-mono) !important;
-  font-size: 10.5px !important;
-}
-
-/* System messages: de-emphasized */
-.run-logs .info {
-  color: #5c7a8a !important;
-}
-
-/* Non-system messages: normal readability */
-.run-logs .warn {
-  color: #f59e0b !important;
-}
-
-.run-logs .error {
-  color: #f87171 !important;
-}
-
-/* ── Section command header in run snapshot ──────────────────── */
-.run-snapshot .section-command {
-  padding-top: 16px !important;
-  border-top: 1px solid var(--vr-border-2) !important;
-  margin-top: 4px !important;
-}
-
-.run-snapshot .section-command h4 {
-  font-size: 13px !important;
-  font-weight: 650 !important;
-  color: var(--vr-ink-2) !important;
-}
-
-/* ── Responsive ─────────────────────────────────────────────── */
-@media (max-width: 900px) {
-  .run-center-layout {
-    grid-template-columns: 1fr !important;
+@media (max-width: 960px) {
+  .run-center-page .run-center-layout {
+    grid-template-columns: 1fr;
   }
 
-  .run-dag::before {
-    display: none !important;
+  .run-center-page .workflow-list {
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .run-center-page .run-center-layout {
+    gap: 14px;
+    margin-top: 14px;
+  }
+
+  .run-center-page .workflow-list {
+    grid-template-columns: 1fr;
+  }
+
+  .run-center-page .run-snapshot {
+    padding: 16px;
+  }
+
+  .run-center-page .workflow-inputs .section-command {
+    flex-direction: column;
+  }
+
+  .run-center-page .run-dag::before {
+    display: none;
+  }
+
+  .run-center-page .run-dag > li {
+    grid-template-columns: 1fr;
+    padding-left: 0;
+  }
+
+  .run-center-page .run-dag > li::before {
+    display: none;
+  }
+
+  .run-center-page .run-dag > li small {
+    grid-column: 1;
+  }
+
+  .run-center-page .run-logs > li {
+    grid-template-columns: 74px minmax(0, 1fr);
+  }
+
+  .run-center-page .run-logs > li > span {
+    grid-column: 1 / -1;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  @keyframes pulse-dot {
-    from, to { opacity: 1; }
+  .run-center-page .workflow,
+  .run-center-page .workflow-select {
+    transition: none;
+  }
+
+  .run-center-page .run-dag > li.running::before {
+    animation: none;
   }
 }
