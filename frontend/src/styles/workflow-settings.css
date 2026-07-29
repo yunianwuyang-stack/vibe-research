@@ -3,613 +3,690 @@
    =============================================================== */
 
 /* ── Workflow config: heading ───────────────────────────────── */
-.workflow-config-heading {
-  display: grid !important;
-  grid-template-columns: auto minmax(0, 1fr) !important;
-  align-items: start !important;
-  gap: 20px !important;
-  margin-bottom: 28px !important;
-  padding-bottom: 24px !important;
-  border-bottom: 1px solid var(--vr-border) !important;
+.workflow-config-page .workflow-config-heading {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 20px;
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid var(--vr-border);
 }
 
-.workflow-config-heading > button {
-  margin-top: 4px !important;
+.workflow-config-page .workflow-config-heading > button {
+  margin-top: 4px;
 }
 
 /* Remove eyebrow above heading (it's repeated on every workflow config) */
-.workflow-config-heading .eyebrow {
-  display: none !important;
+.workflow-config-page .workflow-config-heading .eyebrow {
+  display: none;
 }
 
-.workflow-config-heading h2 {
-  margin: 0 0 6px !important;
-  font-size: 26px !important;
-  font-weight: 750 !important;
-  letter-spacing: -0.025em !important;
-  line-height: 1.2 !important;
-  color: var(--vr-ink) !important;
-  font-family: var(--vr-font-display) !important;
+.workflow-config-page .workflow-config-heading h2 {
+  margin: 0 0 6px;
+  font-size: 26px;
+  font-weight: 750;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+  color: var(--vr-ink);
+  font-family: var(--vr-font-display);
 }
 
-.workflow-config-heading > div > span {
-  display: block !important;
-  font-size: 13px !important;
-  color: var(--vr-ink-3) !important;
-  line-height: 1.6 !important;
+.workflow-config-page .workflow-config-heading > div > span {
+  display: block;
+  font-size: 13px;
+  color: var(--vr-ink-3);
+  line-height: 1.6;
 }
 
 /* ── Workflow config: sections ──────────────────────────────── */
-.workflow-config {
-  width: min(1080px, 100%) !important;
-  margin: 0 auto !important;
-  padding: 36px 0 80px !important;
+.workflow-config-page .workflow-config {
+  width: min(1080px, 100%);
+  margin: 0 auto;
+  padding: 36px 0 80px;
 }
 
-.workflow-config-section {
-  margin-bottom: 14px !important;
-  padding: 20px 22px !important;
-  background: var(--vr-surface) !important;
-  border: 1px solid var(--vr-border) !important;
-  border-radius: 10px !important;
-  box-shadow: var(--vr-shadow-s) !important;
+.workflow-config-page .workflow-config-section {
+  margin-bottom: 14px;
+  padding: 20px 22px;
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: 10px;
+  box-shadow: var(--vr-shadow-s);
 }
 
-.workflow-config-section > header {
-  display: flex !important;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
-  gap: 20px !important;
-  margin-bottom: 16px !important;
-  padding-bottom: 14px !important;
-  border-bottom: 1px solid var(--vr-border-2) !important;
+.workflow-config-page .workflow-config-section > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 16px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--vr-border-2);
 }
 
-.workflow-config-section > header h3 {
-  margin: 0 !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.01em !important;
-  color: var(--vr-ink) !important;
+.workflow-config-page .workflow-config-section > header h3 {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--vr-ink);
 }
 
-.workflow-config-section > header p {
-  max-width: 560px !important;
-  margin: 0 !important;
-  font-size: 12px !important;
-  color: var(--vr-ink-3) !important;
-  line-height: 1.55 !important;
-  text-align: right !important;
+.workflow-config-page .workflow-config-section > header p {
+  max-width: 560px;
+  margin: 0;
+  font-size: 12px;
+  color: var(--vr-ink-3);
+  line-height: 1.55;
+  text-align: right;
 }
 
 /* ── Workflow config: fields grid ───────────────────────────── */
-.workflow-config-fields {
-  display: grid !important;
-  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  gap: 14px 18px !important;
+.workflow-config-page .workflow-config-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px 18px;
 }
 
-.workflow-config-field {
-  min-width: 0 !important;
-  align-content: start !important;
-  display: grid !important;
-  gap: 5px !important;
+.workflow-config-page .workflow-config-field {
+  min-width: 0;
+  align-content: start;
+  display: grid;
+  gap: 5px;
 }
 
-.workflow-config-field > span {
-  font-size: 12.5px !important;
-  font-weight: 600 !important;
-  color: var(--vr-ink-2) !important;
+.workflow-config-page .workflow-config-field > span {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--vr-ink-2);
 }
 
-.workflow-config-wide {
-  grid-column: 1 / -1 !important;
+.workflow-config-page .workflow-config-wide {
+  grid-column: 1 / -1;
 }
 
 /* ── Toggle control ─────────────────────────────────────────── */
-.workflow-toggle {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  gap: 20px !important;
-  min-height: 52px !important;
-  padding: 12px 14px !important;
-  border: 1px solid var(--vr-border) !important;
-  border-radius: 8px !important;
-  background: var(--vr-bg) !important;
-  cursor: pointer !important;
-  transition: border-color 0.1s !important;
+.workflow-config-page .workflow-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  min-height: 52px;
+  padding: 12px 14px;
+  border: 1px solid var(--vr-border);
+  border-radius: 8px;
+  background: var(--vr-bg);
+  cursor: pointer;
+  transition: border-color 0.1s;
 }
 
-.workflow-toggle:hover {
-  border-color: #b0c0cc !important;
+.workflow-config-page .workflow-toggle:hover {
+  border-color: #b0c0cc;
 }
 
-.workflow-toggle > span {
-  display: grid !important;
-  gap: 3px !important;
-  min-width: 0 !important;
+.workflow-config-page .workflow-toggle > span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
 }
 
-.workflow-toggle strong {
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  color: var(--vr-ink) !important;
+.workflow-config-page .workflow-toggle strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vr-ink);
 }
 
-.workflow-toggle small {
-  font-size: 11.5px !important;
-  font-weight: 400 !important;
-  color: var(--vr-ink-3) !important;
-  line-height: 1.5 !important;
+.workflow-config-page .workflow-toggle small {
+  font-size: 11.5px;
+  font-weight: 400;
+  color: var(--vr-ink-3);
+  line-height: 1.5;
 }
 
 /* Toggle switch */
-.workflow-toggle input[type="checkbox"] {
-  flex: 0 0 auto !important;
-  appearance: none !important;
-  width: 40px !important;
-  height: 22px !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 1px solid var(--vr-border) !important;
-  border-radius: 999px !important;
-  background: #dde3e9 !important;
-  cursor: pointer !important;
-  transition: background 0.15s, border-color 0.15s !important;
-  position: relative !important;
+.workflow-config-page .workflow-toggle input[type="checkbox"] {
+  flex: 0 0 auto;
+  appearance: none;
+  width: 40px;
+  height: 22px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--vr-border);
+  border-radius: 999px;
+  background: #dde3e9;
+  cursor: pointer;
+  transition: background 0.15s, border-color 0.15s;
+  position: relative;
 }
 
-.workflow-toggle input[type="checkbox"]::before {
-  content: "" !important;
-  display: block !important;
-  width: 16px !important;
-  height: 16px !important;
-  margin: 2px !important;
-  border-radius: 50% !important;
-  background: #fff !important;
-  box-shadow: 0 1px 3px rgba(14, 22, 35, 0.2) !important;
-  transition: transform 0.15s !important;
+.workflow-config-page .workflow-toggle input[type="checkbox"]::before {
+  content: "";
+  display: block;
+  width: 16px;
+  height: 16px;
+  margin: 2px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(14, 22, 35, 0.2);
+  transition: transform 0.15s;
 }
 
-.workflow-toggle input[type="checkbox"]:checked {
-  background: var(--vr-accent) !important;
-  border-color: var(--vr-accent-dk) !important;
+.workflow-config-page .workflow-toggle input[type="checkbox"]:checked {
+  background: var(--vr-accent);
+  border-color: var(--vr-accent-dk);
 }
 
-.workflow-toggle input[type="checkbox"]:checked::before {
-  transform: translateX(18px) !important;
+.workflow-config-page .workflow-toggle input[type="checkbox"]:checked::before {
+  transform: translateX(18px);
 }
 
 /* ── File picker ────────────────────────────────────────────── */
-.workflow-file-picker {
-  display: grid !important;
-  gap: 10px !important;
+.workflow-config-page .workflow-file-picker {
+  display: grid;
+  gap: 10px;
 }
 
-.workflow-file-picker > div:first-child {
-  display: grid !important;
-  gap: 3px !important;
+.workflow-config-page .workflow-file-picker > div:first-child {
+  display: grid;
+  gap: 3px;
 }
 
-.workflow-file-picker > div:first-child strong {
-  font-size: 13px !important;
-  font-weight: 600 !important;
-  color: var(--vr-ink) !important;
+.workflow-config-page .workflow-file-picker > div:first-child strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--vr-ink);
 }
 
-.workflow-file-picker > div:first-child small {
-  font-size: 11.5px !important;
-  color: var(--vr-ink-3) !important;
-  line-height: 1.5 !important;
+.workflow-config-page .workflow-file-picker > div:first-child small {
+  font-size: 11.5px;
+  color: var(--vr-ink-3);
+  line-height: 1.5;
 }
 
-.workflow-file-drop {
-  display: grid !important;
-  place-items: center !important;
-  min-height: 70px !important;
-  padding: 14px !important;
-  border: 1px dashed var(--vr-border) !important;
-  border-radius: 8px !important;
-  background: var(--vr-bg) !important;
-  color: var(--vr-accent-dk) !important;
-  cursor: pointer !important;
-  transition: border-color 0.12s, background 0.12s !important;
+.workflow-config-page .workflow-file-drop {
+  display: grid;
+  place-items: center;
+  min-height: 70px;
+  padding: 14px;
+  border: 1px dashed var(--vr-border);
+  border-radius: 8px;
+  background: var(--vr-bg);
+  color: var(--vr-accent-dk);
+  cursor: pointer;
+  transition: border-color 0.12s, background 0.12s;
 }
 
-.workflow-file-drop:hover,
-.workflow-file-drop.drag-active {
-  border-color: var(--vr-accent) !important;
-  background: var(--vr-accent-bg) !important;
+.workflow-config-page .workflow-file-drop:hover,
+.workflow-config-page .workflow-file-drop.drag-active {
+  border-color: var(--vr-accent);
+  background: var(--vr-accent-bg);
 }
 
-.workflow-file-drop span {
-  font-size: 12px !important;
-  font-weight: 600 !important;
+.workflow-config-page .workflow-file-drop span {
+  font-size: 12px;
+  font-weight: 600;
 }
 
-.workflow-file-list {
-  display: flex !important;
-  flex-wrap: wrap !important;
-  gap: 6px !important;
+.workflow-config-page .workflow-file-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
 }
 
-.workflow-file-list > span {
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 6px !important;
-  padding: 4px 6px 4px 9px !important;
-  border: 1px solid rgba(0, 169, 157, 0.2) !important;
-  border-radius: 5px !important;
-  background: var(--vr-accent-bg) !important;
-  color: var(--vr-accent-dk) !important;
-  font-size: 11.5px !important;
-  overflow-wrap: anywhere !important;
+.workflow-config-page .workflow-file-list > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 6px 4px 9px;
+  border: 1px solid rgba(0, 169, 157, 0.2);
+  border-radius: 5px;
+  background: var(--vr-accent-bg);
+  color: var(--vr-accent-dk);
+  font-size: 11.5px;
+  overflow-wrap: anywhere;
 }
 
 /* ── Error message ──────────────────────────────────────────── */
-.workflow-config-error {
-  margin: 16px 0 !important;
-  padding: 12px 14px !important;
-  border: 1px solid #fca5a5 !important;
-  border-radius: 8px !important;
-  background: #fef2f2 !important;
-  color: #991b1b !important;
-  font-size: 13.5px !important;
-  line-height: 1.55 !important;
+.workflow-config-page .workflow-config-error {
+  margin: 16px 0;
+  padding: 12px 14px;
+  border: 1px solid #fca5a5;
+  border-radius: 8px;
+  background: #fef2f2;
+  color: #991b1b;
+  font-size: 13.5px;
+  line-height: 1.55;
 }
 
 /* ── Sticky action bar ──────────────────────────────────────── */
-.workflow-config-actions {
-  position: sticky !important;
-  bottom: 0 !important;
-  z-index: 5 !important;
-  display: flex !important;
-  justify-content: flex-end !important;
-  gap: 10px !important;
-  margin-top: 20px !important;
-  padding: 14px 0 !important;
-  background: linear-gradient(180deg, transparent 0%, var(--vr-bg) 28%) !important;
+.workflow-config-page .workflow-config-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 5;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+  padding: 14px 0;
+  background: linear-gradient(180deg, transparent 0%, var(--vr-bg) 28%);
 }
 
 /* ── Template intro ─────────────────────────────────────────── */
-.template-intro {
-  display: flex !important;
-  align-items: flex-end !important;
-  justify-content: space-between !important;
-  gap: 20px !important;
-  margin: 0 0 20px !important;
-  padding-bottom: 16px !important;
-  border-bottom: 1px solid var(--vr-border) !important;
+.workflow-template-page .template-intro {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  margin: 0 0 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--vr-border);
 }
 
-.template-intro h3 {
-  margin: 3px 0 5px !important;
-  font-size: 19px !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.02em !important;
-  color: var(--vr-ink) !important;
+.workflow-template-page .template-intro h3 {
+  margin: 3px 0 5px;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--vr-ink);
 }
 
-.template-intro span {
-  font-size: 12.5px !important;
-  color: var(--vr-ink-3) !important;
-  line-height: 1.5 !important;
+.workflow-template-page .template-intro span {
+  font-size: 12.5px;
+  color: var(--vr-ink-3);
+  line-height: 1.5;
 }
 
 /* ── Template cards ─────────────────────────────────────────── */
-.template-grid {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
-  gap: 12px !important;
+.workflow-template-page .template-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
 }
 
-.template {
-  background: var(--vr-surface) !important;
-  border: 1px solid var(--vr-border) !important;
-  border-radius: 9px !important;
-  padding: 16px !important;
-  display: flex !important;
-  flex-direction: column !important;
-  min-height: 200px !important;
-  transition: border-color 0.12s, box-shadow 0.12s !important;
+.workflow-template-page .template {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: 9px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  min-height: 200px;
+  transition: border-color 0.12s, box-shadow 0.12s;
 }
 
-.template:hover {
-  border-color: #b0c4d0 !important;
-  box-shadow: var(--vr-shadow-s) !important;
+.workflow-template-page .template:hover {
+  border-color: #b0c4d0;
+  box-shadow: var(--vr-shadow-s);
 }
 
-.template h3 {
-  margin: 0 0 8px !important;
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.01em !important;
-  color: var(--vr-ink) !important;
+.workflow-template-page .template h3 {
+  margin: 0 0 8px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--vr-ink);
 }
 
-.template p {
-  font-size: 12.5px !important;
-  color: var(--vr-ink-2) !important;
-  line-height: 1.6 !important;
-  flex: 1 !important;
+.workflow-template-page .template p {
+  font-size: 12.5px;
+  color: var(--vr-ink-2);
+  line-height: 1.6;
+  flex: 1;
 }
 
-.template ul {
-  font-size: 11.5px !important;
-  color: var(--vr-ink-3) !important;
-  line-height: 1.65 !important;
-  padding-left: 16px !important;
-  margin: 4px 0 14px !important;
+.workflow-template-page .template ul {
+  font-size: 11.5px;
+  color: var(--vr-ink-3);
+  line-height: 1.65;
+  padding-left: 16px;
+  margin: 4px 0 14px;
 }
 
-.template button {
-  margin-top: auto !important;
+.workflow-template-page .template button {
+  margin-top: auto;
 }
 
-.featured-template {
-  border-color: rgba(0, 169, 157, 0.25) !important;
-  background: linear-gradient(145deg, var(--vr-accent-bg) 0%, var(--vr-surface) 100%) !important;
+.workflow-template-page .featured-template {
+  border-color: rgba(0, 169, 157, 0.25);
+  background: linear-gradient(145deg, var(--vr-accent-bg) 0%, var(--vr-surface) 100%);
 }
 
-.featured-template > small {
-  display: block !important;
-  margin-bottom: 14px !important;
-  font-size: 10.5px !important;
-  font-weight: 700 !important;
-  color: var(--vr-accent-dk) !important;
-  letter-spacing: 0.04em !important;
-  text-transform: uppercase !important;
+.workflow-template-page .featured-template > small {
+  display: block;
+  margin-bottom: 14px;
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--vr-accent-dk);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }
 
-.template-index {
-  font: 700 17px var(--vr-font-mono) !important;
-  color: var(--vr-accent) !important;
+.workflow-template-page .template-index {
+  font: 700 17px var(--vr-font-mono);
+  color: var(--vr-accent);
 }
 
-.template-category {
-  padding: 3px 7px !important;
-  border-radius: 4px !important;
-  background: var(--vr-accent-bg) !important;
-  color: var(--vr-accent-dk) !important;
-  font-size: 10px !important;
-  font-weight: 700 !important;
+.workflow-template-page .template-category {
+  padding: 3px 7px;
+  border-radius: 4px;
+  background: var(--vr-accent-bg);
+  color: var(--vr-accent-dk);
+  font-size: 10px;
+  font-weight: 700;
 }
 
 /* ── PRISMA / metric grid ───────────────────────────────────── */
-.metric-grid {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
-  gap: 10px !important;
-  margin: 12px 0 !important;
+.workflow-template-page .metric-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+  margin: 12px 0;
 }
 
-.metric-grid div {
-  padding: 14px !important;
-  background: var(--vr-surface) !important;
-  border: 1px solid var(--vr-border) !important;
-  border-radius: 8px !important;
-  text-align: center !important;
+.workflow-template-page .metric-grid div {
+  padding: 14px;
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: 8px;
+  text-align: center;
 }
 
-.metric-grid dt {
-  font-size: 11px !important;
-  color: var(--vr-ink-3) !important;
-  font-weight: 500 !important;
-  margin-bottom: 4px !important;
+.workflow-template-page .metric-grid dt {
+  font-size: 11px;
+  color: var(--vr-ink-3);
+  font-weight: 500;
+  margin-bottom: 4px;
 }
 
-.metric-grid dd {
-  margin: 0 !important;
-  font-size: 22px !important;
-  font-weight: 750 !important;
-  letter-spacing: -0.02em !important;
-  color: var(--vr-ink) !important;
+.workflow-template-page .metric-grid dd {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 750;
+  letter-spacing: -0.02em;
+  color: var(--vr-ink);
 }
 
 /* ── Model profile grid (settings) ─────────────────────────── */
-.model-profile-grid {
-  display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: 14px !important;
+.settings-page .model-profile-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
 }
 
-.model-profile {
-  background: var(--vr-surface) !important;
-  border: 1px solid var(--vr-border) !important;
-  border-radius: 9px !important;
-  padding: 16px !important;
-  display: grid !important;
-  align-content: start !important;
-  gap: 14px !important;
+.settings-page .model-profile {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: 9px;
+  padding: 16px;
+  display: grid;
+  align-content: start;
+  gap: 14px;
 }
 
-.model-profile header {
-  display: flex !important;
-  align-items: flex-start !important;
-  justify-content: space-between !important;
-  gap: 10px !important;
+.settings-page .model-profile header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
 }
 
-.model-profile h4 {
-  margin: 3px 0 0 !important;
-  font-size: 15px !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.01em !important;
-  color: var(--vr-ink) !important;
+.settings-page .model-profile h4 {
+  margin: 3px 0 0;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--vr-ink);
 }
 
-.profile-key {
-  flex: 0 0 auto !important;
-  padding: 3px 7px !important;
-  border-radius: 5px !important;
-  font-size: 10.5px !important;
-  font-weight: 700 !important;
-  background: var(--vr-bg) !important;
-  color: var(--vr-ink-3) !important;
-  border: 1px solid var(--vr-border) !important;
+.settings-page .profile-key {
+  flex: 0 0 auto;
+  padding: 3px 7px;
+  border-radius: 5px;
+  font-size: 10.5px;
+  font-weight: 700;
+  background: var(--vr-bg);
+  color: var(--vr-ink-3);
+  border: 1px solid var(--vr-border);
 }
 
-.profile-key.configured {
-  background: #f0fdf4 !important;
-  color: #15803d !important;
-  border-color: #bbf7d0 !important;
+.settings-page .profile-key.configured {
+  background: #f0fdf4;
+  color: #15803d;
+  border-color: #bbf7d0;
 }
 
-.profile-fields {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr !important;
-  gap: 10px !important;
+.settings-page .profile-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
 }
 
-.profile-fields > label:first-child {
-  grid-column: 1 / -1 !important;
+.settings-page .profile-fields > label:first-child {
+  grid-column: 1 / -1;
 }
 
-.profile-fields .wide {
-  grid-column: 1 / -1 !important;
+.settings-page .profile-fields .wide {
+  grid-column: 1 / -1;
 }
 
-.profile-test {
-  padding: 10px 12px !important;
-  border-radius: 7px !important;
-  border: 1px solid #fca5a5 !important;
-  background: #fef2f2 !important;
-  color: #991b1b !important;
-  font-size: 12px !important;
-  line-height: 1.5 !important;
+.settings-page .profile-test {
+  padding: 10px 12px;
+  border-radius: 7px;
+  border: 1px solid #fca5a5;
+  background: #fef2f2;
+  color: #991b1b;
+  font-size: 12px;
+  line-height: 1.5;
 }
 
-.profile-test.success {
-  border-color: #bbf7d0 !important;
-  background: #f0fdf4 !important;
-  color: #15803d !important;
+.settings-page .profile-test.success {
+  border-color: #bbf7d0;
+  background: #f0fdf4;
+  color: #15803d;
 }
 
 /* ── Settings extras (theme, CLI paths) ─────────────────────── */
-.settings-extra-grid {
-  display: grid !important;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)) !important;
-  gap: 12px !important;
-  margin-bottom: 16px !important;
+.settings-page .settings-extra-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
 }
 
-.settings-extra-card {
-  background: var(--vr-surface) !important;
-  border: 1px solid var(--vr-border) !important;
-  border-radius: 9px !important;
-  padding: 16px !important;
-  display: grid !important;
-  gap: 10px !important;
-  align-content: start !important;
+.settings-page .settings-extra-card {
+  background: var(--vr-surface);
+  border: 1px solid var(--vr-border);
+  border-radius: 9px;
+  padding: 16px;
+  display: grid;
+  gap: 10px;
+  align-content: start;
 }
 
-.settings-extra-card h4 {
-  margin: 0 !important;
-  font-size: 13px !important;
-  font-weight: 700 !important;
-  color: var(--vr-ink) !important;
-  letter-spacing: -0.01em !important;
+.settings-page .settings-extra-card h4 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--vr-ink);
+  letter-spacing: -0.01em;
 }
 
-.settings-extra-card small {
-  font-size: 11px !important;
-  color: var(--vr-ink-3) !important;
-  line-height: 1.55 !important;
+.settings-page .settings-extra-card small {
+  font-size: 11px;
+  color: var(--vr-ink-3);
+  line-height: 1.55;
 }
 
-.settings-message {
-  padding: 10px 14px !important;
-  border-radius: 7px !important;
-  font-size: 13px !important;
-  color: #991b1b !important;
-  background: #fef2f2 !important;
-  border: 1px solid #fca5a5 !important;
-  margin-bottom: 12px !important;
+.settings-page .settings-message {
+  padding: 10px 14px;
+  border-radius: 7px;
+  font-size: 13px;
+  color: #991b1b;
+  background: #fef2f2;
+  border: 1px solid #fca5a5;
+  margin-bottom: 12px;
 }
 
-.settings-message.success {
-  color: #15803d !important;
-  background: #f0fdf4 !important;
-  border-color: #bbf7d0 !important;
+.settings-page .settings-message.success {
+  color: #15803d;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
 }
 
 /* Theme options */
-.theme-options {
-  display: flex !important;
-  gap: 6px !important;
-  flex-wrap: wrap !important;
+.settings-page .theme-options {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.theme-option {
-  padding: 5px 12px !important;
-  font-size: 12px !important;
-  border-radius: 6px !important;
-  border: 1px solid var(--vr-border) !important;
-  color: var(--vr-ink-2) !important;
+.settings-page .theme-option {
+  padding: 5px 12px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid var(--vr-border);
+  color: var(--vr-ink-2);
 }
 
-.theme-option.selected {
-  border-color: var(--vr-accent) !important;
-  color: var(--vr-accent-dk) !important;
-  background: var(--vr-accent-bg) !important;
+.settings-page .theme-option.selected {
+  border-color: var(--vr-accent);
+  color: var(--vr-accent-dk);
+  background: var(--vr-accent-bg);
 }
 
-.theme-color-grid {
-  display: grid !important;
-  grid-template-columns: 1fr 1fr 1fr !important;
-  gap: 8px !important;
+.settings-page .theme-color-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
 }
 
-.theme-color-grid label {
-  font-size: 11px !important;
-  gap: 4px !important;
+.settings-page .theme-color-grid label {
+  font-size: 11px;
+  gap: 4px;
 }
 
-.theme-color-grid input[type="color"] {
-  width: 100% !important;
-  height: 32px !important;
-  padding: 2px !important;
-  border-radius: 5px !important;
-  cursor: pointer !important;
+.settings-page .theme-color-grid input[type="color"] {
+  width: 100%;
+  height: 32px;
+  padding: 2px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 /* ── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 900px) {
-  .workflow-config-heading {
-    grid-template-columns: 1fr !important;
+  .workflow-config-page .workflow-config-heading {
+    grid-template-columns: 1fr;
   }
 
-  .workflow-config-heading h2 {
-    font-size: 22px !important;
+  .workflow-config-page .workflow-config-heading h2 {
+    font-size: 22px;
   }
 
-  .workflow-config-section > header {
-    flex-direction: column !important;
-    gap: 6px !important;
+  .workflow-config-page .workflow-config-section > header {
+    flex-direction: column;
+    gap: 6px;
   }
 
-  .workflow-config-section > header p {
-    text-align: left !important;
+  .workflow-config-page .workflow-config-section > header p {
+    text-align: left;
   }
 
-  .workflow-config-fields {
-    grid-template-columns: 1fr !important;
+  .workflow-config-page .workflow-config-fields {
+    grid-template-columns: 1fr;
   }
 
-  .workflow-config-wide {
-    grid-column: 1 !important;
+  .workflow-config-page .workflow-config-wide {
+    grid-column: 1;
   }
 
-  .model-profile-grid {
-    grid-template-columns: 1fr !important;
+  .settings-page .model-profile-grid {
+    grid-template-columns: 1fr;
   }
 
-  .profile-fields {
-    grid-template-columns: 1fr !important;
+  .settings-page .profile-fields {
+    grid-template-columns: 1fr;
   }
 
-  .settings-extra-grid {
-    grid-template-columns: 1fr !important;
+  .settings-page .settings-extra-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Supporting controls that belong to the configuration flow only. */
+.workflow-config-page .workflow-file-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 10px;
+}
+
+.workflow-config-page .workflow-file-drop input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.workflow-config-page .workflow-directory-button {
+  min-width: 152px;
+}
+
+.workflow-config-page .workflow-file-list button {
+  display: inline-grid;
+  width: 18px;
+  min-height: 18px;
+  padding: 0;
+  border: 0;
+  border-radius: 4px;
+  color: var(--vr-ink-2);
+  background: transparent;
+  font-size: 15px;
+  line-height: 1;
+}
+
+.workflow-config-page .workflow-file-list button:hover:not(:disabled) {
+  color: oklch(0.42 0.13 28);
+  background: color-mix(in oklch, var(--vr-danger) 12%, transparent);
+  box-shadow: none;
+}
+
+.workflow-config-page .workflow-count-option {
+  display: grid;
+  gap: 10px;
+  padding: 13px 14px;
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius-s);
+  background: var(--vr-surface-muted);
+}
+
+.workflow-config-page .workflow-count-option > .workflow-toggle {
+  min-height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+@media (max-width: 900px) {
+  .workflow-config-page .workflow-file-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .workflow-config-page .workflow-directory-button {
+    min-width: 0;
+  }
+
+  .workflow-config-page .workflow-config-actions > button {
+    flex: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .workflow-config-page .workflow-toggle,
+  .workflow-config-page .workflow-toggle input[type="checkbox"],
+  .workflow-config-page .workflow-toggle input[type="checkbox"]::before,
+  .workflow-config-page .workflow-file-drop {
+    transition: none;
   }
 }

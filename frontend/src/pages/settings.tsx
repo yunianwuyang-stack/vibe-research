@@ -374,7 +374,9 @@ export function SettingsConnection({
   const collabGoalValue = collabGoal ?? "";
   const collaborationItems = collaborations ?? [];
   return (
-    <Panel title="设置与连接" detail="">
+    <Panel title="设置与连接" detail=""
+      className="settings-page"
+    >
       <section className="settings-section">
         <div className="section-command">
           <h3>模型档案</h3>

@@ -1518,6 +1518,7 @@ export function App() {
           <Panel
             title="新建工作流"
             detail="逐项配置输出、素材、模板、质量门与执行参数。"
+            className="workflow-config-page"
           >
             <WorkflowConfiguration
               key={configTemplate}
@@ -1540,6 +1541,7 @@ export function App() {
         <Panel
           title="智能工作流"
           detail="先选工作流大类，再选择具体模板。每个模板均创建真实持久化任务、执行 DAG、检查点与产物目录。"
+          className="workflow-template-page"
         >
           <div
             className="workflow-template-tabs"
