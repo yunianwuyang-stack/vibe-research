@@ -215,6 +215,16 @@ const navGroups: { label: string; items: Page[] }[] = [
 ];
 
 
+/** The compact rail is an orientation aid, not a second complete navigation tree. */
+const researchJourneyRoutes = [
+  "dashboard",
+  "research-map",
+  "evidence",
+  "experiments",
+  "claims",
+  "manuscript",
+] as const;
+
 const workflowNames: Record<string, string> = {
   idea_discovery: "选题与创新点",
   experiment_bridge: "实验方案",
@@ -2300,8 +2310,9 @@ export function App() {
             </span>
           </div>
         </header>
-        <nav className="route-navigation" aria-label="功能导航">
-          {(["dashboard", ...FEATURE_ROUTES] as const).map((route) => (
+        <nav className="route-navigation" aria-label={"功能导航"}>
+          <span className="route-navigation-label">{"研究路径"}</span>
+          {researchJourneyRoutes.map((route) => (
             <button
               key={route}
               className={featureRouteForPage(page) === route ? "active" : ""}

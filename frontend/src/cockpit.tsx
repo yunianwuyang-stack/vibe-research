@@ -3,11 +3,7 @@
  * Project · next action · blockers · evidence coverage · recent runs · manuscript.
  */
 import React from "react";
-import {
-  FEATURE_ROUTES,
-  ROUTE_LABELS,
-  type FeatureRoute,
-} from "./feature-routes";
+import { type FeatureRoute } from "./feature-routes";
 import {
   STATUS_LABEL,
   STATUS_REPAIR,
@@ -399,13 +395,6 @@ export function ResearchCockpit({
         </article>
       </div>
 
-      <nav className="cockpit-feature-nav" aria-label="功能路由">
-        {FEATURE_ROUTES.map((route) => (
-          <button key={route} type="button" className="quiet" onClick={() => onNavigate(route)}>
-            {ROUTE_LABELS[route]}
-          </button>
-        ))}
-      </nav>
     </section>
   );
 }
