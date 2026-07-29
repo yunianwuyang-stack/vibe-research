@@ -1,308 +1,385 @@
-/* ===============================================================
-   VIBERESEARCH SHELL v3 — Client-facing product polish
-   Replaces the developer-tool aesthetic without breaking pages.
-
-   Key fixes:
-   - Font stack: Chinese-first (Inter → system-ui fallback)
-   - Nav active: filled pill — no side-stripe border (absolute ban)
-   - Nav labels: subtle dividers, not ALL-CAPS tracked eyebrows
-   - Brand mark: gradient, not plain letter block
-   - Topbar: 64px compact, cleaner project switcher
-   - Route nav: pill buttons, not tab underlines
-   =============================================================== */
-
-/* ── Font stack — Chinese-first ─────────────────────────────── */
+﻿/* Shared application shell. The sidebar is the product map; page content stays quiet. */
 :root {
-  --vr-font: "Microsoft YaHei UI", "PingFang SC", -apple-system,
-    BlinkMacSystemFont, system-ui, sans-serif;
-  --vr-font-display: "Microsoft YaHei UI", "PingFang SC", system-ui, sans-serif;
-  --shell-nav-pill-bg: rgba(0, 169, 157, 0.13);
-  --shell-nav-pill-text: #4ddac8;
-  --shell-nav-hover-bg: rgba(255, 255, 255, 0.07);
-  --shell-nav-hover-text: #c5d9e6;
-  --shell-border: rgba(255, 255, 255, 0.06);
-  --topbar-h: 56px;
+  --topbar-h: 72px;
+  --shell-line: oklch(1 0 0 / 0.09);
+  --shell-hover: oklch(1 0 0 / 0.07);
+  --shell-selected: oklch(0.61 0.1 190 / 0.18);
 }
 
-/* ── Brand ─────────────────────────────────────────────────── */
+.app-shell {
+  display: grid;
+  grid-template-columns: 238px minmax(0, 1fr);
+  min-height: 100vh;
+  background: var(--vr-canvas);
+}
+
+.sidebar {
+  position: sticky;
+  top: 0;
+  display: flex;
+  height: 100vh;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 16px 12px;
+  color: var(--vr-sidebar-t);
+  background: var(--vr-sidebar);
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.44 0.02 230) transparent;
+}
+
 .brand {
-  padding: 12px 12px 14px;
-  border-bottom: 1px solid var(--shell-border);
-  margin-bottom: 4px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 6px 8px 18px;
+  border-bottom: 1px solid var(--shell-line);
 }
 
-/* Gradient mark — drops the plain block color */
 .brand-mark {
-  background: linear-gradient(145deg, #00c4b4 0%, #0090b2 100%) !important;
-  border-radius: 9px !important;
-  font-size: 15px !important;
-  font-family: var(--vr-font-display) !important;
-  font-weight: 800 !important;
-  letter-spacing: -0.03em !important;
-  box-shadow: 0 2px 8px rgba(0, 169, 157, 0.35) !important;
+  display: grid;
+  width: 30px;
+  height: 30px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid oklch(0.64 0.1 190 / 0.55);
+  border-radius: 8px;
+  color: oklch(0.92 0.03 190);
+  background: oklch(0.3 0.042 220);
+  font: 750 15px/1 var(--vr-font-display);
+  letter-spacing: -0.04em;
+}
+
+.brand b,
+.brand small {
+  display: block;
 }
 
 .brand b {
-  font-size: 14px !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.025em !important;
-  color: #e8f4f8 !important;
+  color: oklch(0.94 0.01 225);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 .brand small {
-  font-size: 10.5px !important;
-  color: #7a96aa !important;  /* was #4a6880 — lightened for 6.1:1 on sidebar (WCAG AA) */
-  letter-spacing: 0.01em !important;
+  margin-top: 2px;
+  color: var(--vr-sidebar-t2);
+  font-size: 11px;
 }
 
-/* ── Navigation — group labels ─────────────────────────────── */
-/* Remove ALL-CAPS uppercase + heavy tracking (eyebrow ban) */
-.nav-group {
-  margin-bottom: 2px !important;
-}
-
-.nav-label {
-  padding: 10px 12px 3px !important;
-  color: #6e8fa8 !important;  /* was #5e7e94 — 5.55:1 on sidebar (WCAG AA) */
-  font-size: 10.5px !important;
-  font-weight: 500 !important;
-  letter-spacing: 0.01em !important;
-  text-transform: none !important;
-}
-
-/* ── Navigation — buttons ──────────────────────────────────── */
-nav button,
-.voice {
-  padding: 6px 10px !important;
-  border-radius: 7px !important;
-  font-size: 13px !important;
-  color: #6e8fa8 !important;
-  gap: 9px !important;
-  transition: background 0.1s, color 0.1s !important;
-}
-
-nav button:hover {
-  background: var(--shell-nav-hover-bg) !important;
-  color: var(--shell-nav-hover-text) !important;
-}
-
-/* Filled pill active — replaces the banned left-stripe inset box-shadow */
-nav button.active {
-  background: var(--shell-nav-pill-bg) !important;
-  color: var(--shell-nav-pill-text) !important;
-  font-weight: 600 !important;
-  box-shadow: none !important;  /* Explicitly remove the inset left-stripe */
-}
-
-.nav-icon {
-  font-size: 13px !important;
-  width: 15px !important;
-  text-align: center !important;
-  flex-shrink: 0 !important;
-  opacity: 0.9 !important;
-}
-
-/* ── Sidebar footer ─────────────────────────────────────────── */
-.sidebar-footer {
-  border-top: 1px solid var(--shell-border) !important;
-  padding: 12px 12px 0 !important;
-  font-size: 11px !important;
-}
-
-/* ── Topbar — compact ───────────────────────────────────────── */
-.topbar {
-  min-height: var(--topbar-h) !important;
-  border-bottom: 1px solid var(--vr-border) !important;
-  background: var(--vr-surface) !important;
-  padding: 0 !important;
-}
-
-/* Breadcrumb: inline row, not stacked */
-.topbar > div:first-child {
-  display: flex;
-  align-items: baseline;
+.sidebar nav[aria-label="主导航"] {
+  display: grid;
   gap: 10px;
 }
 
-.breadcrumb {
-  display: flex !important;
-  align-items: center !important;
-  gap: 5px !important;
-  color: var(--vr-ink-3) !important;
-  font-size: 12px !important;
+.nav-group {
+  display: grid;
+  gap: 2px;
 }
 
-/* Breadcrumb home button — inherit text look */
+.nav-label {
+  padding: 3px 9px 5px;
+  color: oklch(0.62 0.02 225);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.sidebar nav button {
+  display: flex;
+  width: 100%;
+  min-height: 36px;
+  align-items: center;
+  gap: 9px;
+  border: 1px solid transparent;
+  border-radius: var(--vr-radius-s);
+  padding: 7px 9px;
+  color: var(--vr-sidebar-t2);
+  background: transparent;
+  font: 500 13px/1.3 var(--vr-font);
+  text-align: left;
+  cursor: pointer;
+  transition: background 160ms var(--vr-t-ease), color 160ms var(--vr-t-ease), border-color 160ms var(--vr-t-ease);
+}
+
+.sidebar nav button:hover {
+  color: var(--vr-sidebar-t);
+  background: var(--shell-hover);
+}
+
+.sidebar nav button.active {
+  border-color: oklch(0.62 0.1 190 / 0.24);
+  color: oklch(0.91 0.03 190);
+  background: var(--shell-selected);
+  font-weight: 650;
+}
+
+.nav-icon {
+  display: grid;
+  width: 16px;
+  flex: 0 0 16px;
+  place-items: center;
+  color: currentcolor;
+  font-size: 14px;
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  padding: 14px 8px 2px;
+  border-top: 1px solid var(--shell-line);
+  color: var(--vr-sidebar-t2);
+  font-size: 11px;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  margin-right: 6px;
+  background: var(--vr-warning);
+}
+
+.dot.online {
+  background: var(--vr-success);
+}
+
+.content {
+  min-width: 0;
+  padding: 0 40px 56px;
+}
+
+.topbar {
+  position: sticky;
+  z-index: 10;
+  top: 0;
+  display: flex;
+  min-height: var(--topbar-h);
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-bottom: 1px solid var(--vr-border);
+  background: color-mix(in oklch, var(--vr-canvas) 92%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.topbar > div:first-child {
+  min-width: 0;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 3px;
+  color: var(--vr-ink-3);
+  font-size: 12px;
+}
+
 .breadcrumb-home {
-  border: 0 !important;
-  background: transparent !important;
-  color: var(--vr-ink-3) !important;
-  padding: 0 !important;
-  font-size: 12px !important;
-  font-weight: 400 !important;
-  letter-spacing: 0 !important;
-  box-shadow: none !important;
+  border: 0;
+  padding: 0;
+  color: var(--vr-accent-dk);
+  background: transparent;
+  font: inherit;
   cursor: pointer;
 }
 
 .breadcrumb-home:hover {
-  color: var(--vr-accent) !important;
-  background: transparent !important;
-  box-shadow: none !important;
+  color: var(--vr-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
-/* Page title */
 .topbar h2 {
-  margin: 0 !important;
-  font-size: 18px !important;
-  font-weight: 700 !important;
-  letter-spacing: -0.02em !important;
-  line-height: 1.2 !important;
-  color: var(--vr-ink) !important;
+  margin: 0;
+  color: var(--vr-ink);
+  font-size: 19px;
+  font-weight: 720;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
 }
 
-/* Project switcher: horizontal pill row */
 .project-switcher {
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
 }
 
 .project-switcher label {
-  display: flex !important;
-  align-items: center !important;
-  gap: 8px !important;
-  font-size: 12px !important;
-  color: var(--vr-ink-3) !important;
-  font-weight: 400 !important;
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 8px;
+  color: var(--vr-ink-3);
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .project-switcher label span {
-  white-space: nowrap !important;
+  white-space: nowrap;
 }
 
 .project-switcher select {
-  width: auto !important;
-  min-width: 140px !important;
-  max-width: 220px !important;
-  padding: 6px 10px !important;
-  font-size: 13px !important;
-  border-radius: 7px !important;
-  border-color: var(--vr-border) !important;
+  width: min(260px, 22vw);
+  min-width: 150px;
+  padding: 7px 28px 7px 10px;
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius-s);
+  color: var(--vr-ink);
+  background: var(--vr-surface);
+  font: 500 13px/1.4 var(--vr-font);
 }
 
-/* ── Route navigation (secondary tab bar) ──────────────────── */
+.status {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--vr-border);
+  border-radius: 999px;
+  padding: 5px 9px;
+  color: var(--vr-ink-2);
+  background: var(--vr-surface-muted);
+  font-size: 11px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
 .route-navigation {
   display: flex;
   align-items: center;
-  gap: 2px;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--vr-border-2);
+  gap: 4px;
   overflow-x: auto;
-  scrollbar-width: none;
-  flex-wrap: nowrap;
+  margin: 14px 0 28px;
+  padding: 4px;
+  border: 1px solid var(--vr-border);
+  border-radius: var(--vr-radius);
+  background: var(--vr-surface-muted);
+  scrollbar-width: thin;
 }
 
-.route-navigation::-webkit-scrollbar {
-  display: none;
-}
-
-/* Route buttons styled as pills, not as action buttons */
 .route-navigation button {
-  border: 0 !important;
-  background: transparent !important;
-  color: var(--vr-ink-3) !important;
-  padding: 5px 11px !important;
-  border-radius: 6px !important;
-  font-size: 12px !important;
-  font-weight: 500 !important;
-  white-space: nowrap !important;
-  letter-spacing: 0 !important;
-  box-shadow: none !important;
-  transition: background 0.1s, color 0.1s !important;
+  flex: 0 0 auto;
+  border: 0;
+  border-radius: var(--vr-radius-s);
+  padding: 7px 10px;
+  color: var(--vr-ink-2);
+  background: transparent;
+  font: 600 12px/1.35 var(--vr-font);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: color 160ms var(--vr-t-ease), background 160ms var(--vr-t-ease);
 }
 
 .route-navigation button:hover {
-  background: rgba(0, 169, 157, 0.08) !important;
-  color: var(--vr-accent-dk) !important;
-  box-shadow: none !important;
+  color: var(--vr-ink);
+  background: var(--vr-surface);
 }
 
 .route-navigation button.active {
-  background: rgba(0, 169, 157, 0.1) !important;
-  color: var(--vr-accent-dk) !important;
-  font-weight: 600 !important;
-  box-shadow: none !important;
+  color: var(--vr-accent-dk);
+  background: var(--vr-surface);
+  box-shadow: var(--vr-shadow-s);
 }
 
-/* ── Content area padding ───────────────────────────────────── */
-.content {
-  padding: 0 36px 48px !important;
+.alert {
+  margin: 16px 0;
+  border: 1px solid color-mix(in oklch, var(--vr-danger) 35%, white);
+  border-radius: var(--vr-radius);
+  padding: 12px 14px;
+  color: oklch(0.38 0.12 28);
+  background: var(--vr-danger-bg);
+}
+
+.section-header h1 {
+  margin: 0;
+  color: var(--vr-ink);
+  font-size: 24px;
+  font-weight: 730;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
+}
+
+.section-header p {
+  max-width: 64ch;
+  margin: 7px 0 0;
+  color: var(--vr-ink-2);
+  font-size: 13px;
+  line-height: 1.65;
 }
 
 @media (max-width: 1280px) {
   .content {
-    padding: 0 24px 48px !important;
+    padding-inline: 28px;
   }
-}
-
-@media (max-width: 768px) {
-  .content {
-    padding: 0 16px 40px !important;
-  }
-}
-
-/* ── App shell: sidebar width ───────────────────────────────── */
-.app-shell {
-  grid-template-columns: 228px minmax(0, 1fr) !important;
 }
 
 @media (max-width: 1024px) {
   .app-shell {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    height: auto;
+    max-height: none;
+  }
+
+  .sidebar nav[aria-label="主导航"] {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px 8px;
+  }
+
+  .nav-group {
+    display: flex;
+    gap: 3px;
+  }
+
+  .nav-label,
+  .sidebar-footer {
+    display: none;
+  }
+
+  .sidebar nav button {
+    width: auto;
   }
 }
 
-/* ── Alert ─────────────────────────────────────────────────── */
-.alert {
-  border-left: 0 !important;              /* Remove side stripe */
-  border: 1px solid #fca5a5 !important;
-  border-radius: 8px !important;
-  background: #fef2f2 !important;
-  padding: 12px 16px !important;
-  color: #991b1b !important;
-  margin: 16px 0 !important;
+@media (max-width: 720px) {
+  .content {
+    padding: 0 16px 36px;
+  }
+
+  .topbar {
+    position: static;
+    min-height: auto;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 16px 0;
+  }
+
+  .project-switcher,
+  .project-switcher label {
+    width: 100%;
+  }
+
+  .project-switcher select {
+    flex: 1;
+    width: auto;
+  }
+
+  .status {
+    margin-left: auto;
+  }
+
+  .route-navigation {
+    margin-bottom: 20px;
+  }
 }
 
-/* ── Panel / section headers ────────────────────────────────── */
-.section-header h1 {
-  font-family: var(--vr-font-display) !important;
-  font-size: 24px !important;
-  font-weight: 750 !important;
-  letter-spacing: -0.025em !important;
-  line-height: 1.25 !important;
-}
-
-.section-header p {
-  font-size: 13px !important;
-  color: var(--vr-ink-2) !important;
-  line-height: 1.6 !important;
-  max-width: 64ch !important;
-}
-
-/* ── Status badges ──────────────────────────────────────────── */
-.status {
-  font-size: 11px !important;
-  font-weight: 600 !important;
-  padding: 4px 9px !important;
-  border-radius: 99px !important;
-}
-
-/* ── Reduced motion ─────────────────────────────────────────── */
 @media (prefers-reduced-motion: reduce) {
-  nav button,
-  .brand-mark,
+  .sidebar nav button,
   .route-navigation button {
-    transition: none !important;
+    transition: none;
   }
 }

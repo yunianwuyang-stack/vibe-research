@@ -1,28 +1,44 @@
-/* Design tokens — CSS custom properties, single source of truth */
-
-/* ── Design tokens ─────────────────────────────────────────── */
+﻿/* Design tokens: the single source of truth for Vibe Research surfaces and states. */
 :root {
-  --vr-bg: #f7f8fa;
-  --vr-surface: #ffffff;
-  --vr-border: #e4e7ed;
-  --vr-border-2: #eef0f5;
-  --vr-ink: #0e1623;
-  --vr-ink-2: #4a5568;
-  --vr-ink-3: #5c6a7a;  /* was #8a95a8 — darkened for 5.5:1 on white (WCAG AA) */
-  --vr-accent: #00a99d;
-  --vr-accent-dk: #007f79;
-  --vr-accent-bg: #f0fdfc;
-  --vr-sidebar: #0d1117;
-  --vr-sidebar-2: #161b22;
-  --vr-sidebar-t: #c9d1d9;
-  --vr-sidebar-t2: #8b949e;
+  --vr-canvas: oklch(0.975 0.006 235);
+  --vr-surface: oklch(0.995 0.002 235);
+  --vr-surface-muted: oklch(0.962 0.008 235);
+  --vr-surface-selected: oklch(0.947 0.024 190);
+  --vr-border: oklch(0.89 0.012 235);
+  --vr-border-strong: oklch(0.82 0.018 235);
+  --vr-border-2: oklch(0.93 0.008 235);
+
+  --vr-ink: oklch(0.24 0.024 240);
+  --vr-ink-2: oklch(0.43 0.023 240);
+  --vr-ink-3: oklch(0.53 0.02 240);
+
+  --vr-accent: oklch(0.58 0.105 190);
+  --vr-accent-dk: oklch(0.46 0.085 190);
+  --vr-accent-bg: oklch(0.955 0.028 190);
+  --vr-focus: oklch(0.61 0.12 190);
+
+  --vr-success: oklch(0.52 0.11 155);
+  --vr-success-bg: oklch(0.955 0.032 155);
+  --vr-warning: oklch(0.65 0.13 78);
+  --vr-warning-bg: oklch(0.97 0.04 88);
+  --vr-danger: oklch(0.54 0.16 28);
+  --vr-danger-bg: oklch(0.965 0.03 28);
+
+  --vr-sidebar: oklch(0.2 0.025 240);
+  --vr-sidebar-2: oklch(0.245 0.025 240);
+  --vr-sidebar-t: oklch(0.88 0.012 225);
+  --vr-sidebar-t2: oklch(0.68 0.018 225);
+
   --vr-radius-s: 6px;
   --vr-radius: 10px;
   --vr-radius-l: 14px;
-  --vr-shadow-s: 0 1px 3px rgba(14, 22, 35, 0.07), 0 1px 2px rgba(14, 22, 35, 0.05);
-  --vr-shadow: 0 4px 12px rgba(14, 22, 35, 0.08), 0 2px 4px rgba(14, 22, 35, 0.05);
-  --vr-shadow-l: 0 16px 40px rgba(14, 22, 35, 0.12), 0 4px 12px rgba(14, 22, 35, 0.06);
-  --vr-font: "Inter", "SF Pro Text", -apple-system, "PingFang SC", "Microsoft YaHei UI", sans-serif;
-  --vr-font-mono: "SF Mono", "Fira Code", ui-monospace, Consolas, monospace;
-  --vr-t-ease: cubic-bezier(0.22, 0.68, 0, 1.1);
+  --vr-shadow-s: 0 1px 2px oklch(0.2 0.02 240 / 0.06);
+  --vr-shadow: 0 8px 22px oklch(0.2 0.02 240 / 0.08);
+  --vr-shadow-l: 0 18px 44px oklch(0.2 0.02 240 / 0.12);
+
+  --vr-font: "Microsoft YaHei UI", "PingFang SC", -apple-system,
+    BlinkMacSystemFont, system-ui, sans-serif;
+  --vr-font-display: var(--vr-font);
+  --vr-font-mono: "SF Mono", "Cascadia Code", "Fira Code", ui-monospace, Consolas, monospace;
+  --vr-t-ease: cubic-bezier(0.2, 0, 0, 1);
 }
