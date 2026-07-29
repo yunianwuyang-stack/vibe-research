@@ -257,6 +257,17 @@
   scrollbar-width: thin;
 }
 
+.route-navigation-label {
+  flex: 0 0 auto;
+  padding: 0 9px 0 5px;
+  border-right: 1px solid var(--vr-border);
+  color: var(--vr-ink-3);
+  font-size: 11px;
+  font-weight: 650;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+
 .route-navigation button {
   flex: 0 0 auto;
   border: 0;
@@ -374,6 +385,10 @@
 
   .route-navigation {
     margin-bottom: 20px;
+  }
+
+  .route-navigation-label {
+    display: none;
   }
 }
 
