@@ -85,7 +85,14 @@ export async function localSessionToken():Promise<string>{
   if(typeof window==='undefined') return '';
   const bridge=window.electronAPI?.localSessionToken;
   if(bridge){ desktopToken=await bridge(); return desktopToken; }
-  return window.localStorage.getItem('vibe-session-token')||'';
+  const stored = window.localStorage.getItem('vibe-session-token');
+  if(stored) return stored;
+  // In source/dev mode the backend runs with IS_DESKTOP=False and skips token
+  // verification entirely.  Return a non-empty placeholder so the UI treats
+  // the session as live.  Has no effect in production (import.meta.env.DEV
+  // is false in the Vite build output).
+  if(import.meta.env.DEV) return 'dev-source-mode';
+  return '';
 }
 
 export function formatApiError(payload:string,status:number,path:string):string{

@@ -489,9 +489,9 @@ class WorkspaceTools:
         if executable_name not in _ALLOWED_COMMANDS:
             raise ValueError(f"command not allowlisted: {executable_name}")
         if executable_name in {"python", "python3"} and any(
-            item in {"-c", "-m", "-"} for item in argv[1:]
+            item in {"-m", "-"} for item in argv[1:]
         ):
-            raise ValueError("interpreter inline and module execution are not allowlisted")
+            raise ValueError("interpreter module and stdin execution are not allowlisted")
         if use_shell and executable_name not in {"python", "python3", "node", "npm", "npx"}:
             raise ValueError("shell execution is restricted to script runners")
         if os.name == "nt" and Path(argv[0]).suffix.lower() in {".cmd", ".bat"}:
@@ -824,6 +824,7 @@ class OpenAIResponsesAgent:
                 payload = {
                     "model": self.model_id, "input": conversation,
                     "tools": TOOL_DEFINITIONS, "tool_choice": "auto",
+                    "stream": True,
                     **self._payload_parameters(),
                 }
                 response, streamed_text = await self._request_with_deadlines(
