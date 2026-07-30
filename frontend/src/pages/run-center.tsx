@@ -197,6 +197,8 @@ export function RunCenterPage({
                 </div>
                 <span className={`badge ${active.status}`}>{statusText(active.status)}</span>
               </div>
+              <div className="run-detail-grid">
+                <div className="run-execution-column">
               <section className="workflow-inputs">
                 <div className="section-command">
                   <div>
@@ -228,7 +230,7 @@ export function RunCenterPage({
                   <Empty text="尚未上传输入资料；不依赖外部材料的工作流可以直接启动。" />
                 )}
               </section>
-              <section>
+              <section className="execution-dag">
                 <h4>执行 DAG</h4>
                 <ol className="run-dag">
                   {(active.steps || []).map((step) => (
@@ -243,6 +245,8 @@ export function RunCenterPage({
                   ))}
                 </ol>
               </section>
+                </div>
+                <div className="run-review-column">
               {checkpoint && (
                 <section className="checkpoint-card" aria-labelledby="checkpoint-title">
                   <header className="checkpoint-header">
@@ -382,7 +386,9 @@ export function RunCenterPage({
                   <Empty text="当前工作区还没有可交付产物。" />
                 )}
               </section>
-              <section>
+                </div>
+              </div>
+              <section className="execution-logs">
                 <h4>实时日志</h4>
                 {selectedSnapshot.logs.length ? (
                   <ol className="run-logs">

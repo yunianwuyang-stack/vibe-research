@@ -123,6 +123,29 @@
   padding: 12px 14px 12px 0;
 }
 
+/* Dense review layout: execution context on the left, decisions and deliverables on the right. */
+@media (min-width: 1080px) {
+  .run-center-page .single-workflow .run-detail-grid {
+    display: grid;
+    grid-template-columns: minmax(280px, 0.46fr) minmax(0, 0.54fr);
+    gap: 0 28px;
+    align-items: start;
+  }
+
+  .run-center-page .single-workflow .run-execution-column,
+  .run-center-page .single-workflow .run-review-column {
+    min-width: 0;
+  }
+
+  .run-center-page .single-workflow .workflow-inputs .section-command {
+    align-items: flex-start;
+  }
+
+  .run-center-page .single-workflow .workflow-inputs .section-command p {
+    max-width: 38ch;
+  }
+}
+
 .run-center-page .run-snapshot {
   min-width: 0;
   padding: 20px;
