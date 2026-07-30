@@ -245,28 +245,100 @@
 
 .run-center-page .checkpoint-card {
   display: grid;
-  gap: 12px;
-  padding: 16px;
-  border: 1px solid color-mix(in oklch, var(--vr-warning) 52%, var(--vr-border));
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid color-mix(in oklch, var(--vr-warning) 38%, var(--vr-border));
   border-radius: var(--vr-radius);
-  background: var(--vr-warning-bg);
+  background: var(--vr-surface);
 }
 
-.run-center-page .checkpoint-card .eyebrow,
-.run-center-page .checkpoint-card p {
-  color: oklch(0.42 0.09 74);
+.run-center-page .checkpoint-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.run-center-page .checkpoint-kicker {
+  margin: 0 0 5px;
+  color: oklch(0.48 0.105 74);
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.35;
 }
 
 .run-center-page .checkpoint-card h4 {
-  margin-bottom: 2px;
-  color: oklch(0.35 0.085 70);
+  margin: 0;
+  color: var(--vr-ink);
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.run-center-page .checkpoint-summary {
+  max-width: 62ch;
+  margin: 5px 0 0;
+  color: var(--vr-ink-2);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.run-center-page .checkpoint-status {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  border: 1px solid color-mix(in oklch, var(--vr-warning) 46%, var(--vr-border));
+  border-radius: 999px;
+  color: oklch(0.43 0.09 74);
+  background: var(--vr-warning-bg);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.run-center-page .checkpoint-source {
+  margin: -5px 0 0;
+  color: var(--vr-ink-3);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.run-center-page .checkpoint-source code {
+  color: var(--vr-ink-2);
+  font-family: var(--vr-font-mono);
+  font-size: 0.95em;
+}
+
+.run-center-page .checkpoint-feedback {
+  gap: 4px;
+}
+
+.run-center-page .checkpoint-feedback > span:first-child {
+  color: var(--vr-ink-2);
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .run-center-page .checkpoint-card textarea {
-  min-height: 88px;
+  min-height: 104px;
   resize: vertical;
-  border-color: color-mix(in oklch, var(--vr-warning) 40%, var(--vr-border));
-  background: var(--vr-surface);
+  border-color: var(--vr-border);
+  background: var(--vr-surface-muted);
+}
+
+.run-center-page .checkpoint-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 18px;
+  padding-top: 14px;
+  border-top: 1px solid var(--vr-border-2);
+}
+
+.run-center-page .checkpoint-actions small {
+  max-width: 48ch;
+  color: var(--vr-ink-3);
+  font-size: 11px;
+  line-height: 1.55;
+  text-align: right;
 }
 
 .run-center-page .run-artifacts {
@@ -400,6 +472,17 @@
 
   .run-center-page .workflow-inputs .section-command {
     flex-direction: column;
+  }
+
+  .run-center-page .checkpoint-header,
+  .run-center-page .checkpoint-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .run-center-page .checkpoint-actions small {
+    max-width: none;
+    text-align: left;
   }
 
   .run-center-page .run-dag::before {

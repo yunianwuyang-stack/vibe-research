@@ -265,7 +265,7 @@ textarea:focus {
 button {
   font: inherit;
 }
-button:not(.card):not(nav button):not(.voice) {
+button:where(:not(.card)):where(:not(nav button)):where(:not(.voice)) {
   border: 1px solid #2a704e;
   background: #287452;
   color: #fff;
@@ -754,7 +754,7 @@ body {
   background: #eef9f7;
   color: #256c68;
 }
-button:not(.card):not(nav button):not(.voice) {
+button:where(:not(.card)):where(:not(nav button)):where(:not(.voice)) {
   border-color: var(--teal);
   background: var(--teal);
   border-radius: 6px;

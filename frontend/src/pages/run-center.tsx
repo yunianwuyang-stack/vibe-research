@@ -69,6 +69,11 @@ export function RunCenterPage({
   const inputRequirement = active
     ? workflowInputRequirements[active.template]
     : undefined;
+  const checkpoint = selectedSnapshot?.checkpoint;
+  const checkpointStep = checkpoint
+    ? active?.steps?.find((step) => step.skill_name === checkpoint.step_name)
+    : undefined;
+  const checkpointNeedsFeedback = checkpoint?.checkpoint_type === "feedback";
   return (
     <Panel
       className="run-center-page"
@@ -188,21 +193,56 @@ export function RunCenterPage({
                   ))}
                 </ol>
               </section>
-              {selectedSnapshot.checkpoint && (
-                <section className="checkpoint-card">
-                  <div>
-                    <p className="eyebrow">需要人工决策</p>
-                    <h4>{selectedSnapshot.checkpoint.step_name}</h4>
-                    <p>{selectedSnapshot.checkpoint.checkpoint_type}</p>
-                  </div>
-                  <textarea aria-label="检查点反馈" value={feedback}
-                    onChange={(e) => onFeedback(e.target.value)}
-                    placeholder="给出可审计的修改意见；反馈将与检查点响应一并持久化。" />
-                  <div className="inline-actions">
-                    <button disabled={busy} onClick={() => onResolve("approve")}>批准继续</button>
-                    <button className="quiet" disabled={busy || !feedback.trim()} onClick={() => onResolve("feedback")}>提交反馈</button>
-                    <button className="danger" disabled={busy} onClick={() => onResolve("stop")}>停止工作流</button>
-                  </div>
+              {checkpoint && (
+                <section className="checkpoint-card" aria-labelledby="checkpoint-title">
+                  <header className="checkpoint-header">
+                    <div>
+                      <p className="checkpoint-kicker">需要人工决策</p>
+                      <h4 id="checkpoint-title">
+                        {checkpointStep?.display_name || checkpoint.step_name}
+                      </h4>
+                      <p className="checkpoint-summary">
+                        {checkpointNeedsFeedback
+                          ? "请审阅当前产物，留下可执行的修改意见后再继续。"
+                          : "请审阅当前产物；确认无误后可批准继续执行。"}
+                      </p>
+                    </div>
+                    <span className="checkpoint-status">
+                      {checkpointNeedsFeedback ? "待反馈" : "待批准"}
+                    </span>
+                  </header>
+                  <p className="checkpoint-source">
+                    检查点：<code>{checkpoint.step_name}</code>
+                  </p>
+                  <label className="checkpoint-feedback" htmlFor="checkpoint-feedback">
+                    <span>审阅意见</span>
+                    <span className="field-hint">可选；提交后将随本次检查点响应一并留档。</span>
+                    <textarea
+                      id="checkpoint-feedback"
+                      value={feedback}
+                      onChange={(e) => onFeedback(e.target.value)}
+                      placeholder="例如：补充样本选择依据，并明确实验的对照条件。"
+                    />
+                  </label>
+                  <footer className="checkpoint-actions">
+                    <div className="inline-actions">
+                      <button type="button" disabled={busy} onClick={() => onResolve("approve")}>
+                        批准并继续
+                      </button>
+                      <button
+                        type="button"
+                        className="quiet"
+                        disabled={busy || !feedback.trim()}
+                        onClick={() => onResolve("feedback")}
+                      >
+                        提交修改意见
+                      </button>
+                      <button type="button" className="danger" disabled={busy} onClick={() => onResolve("stop")}>
+                        终止工作流
+                      </button>
+                    </div>
+                    <small>批准将继续执行；终止不会删除已生成的产物与审计记录。</small>
+                  </footer>
                 </section>
               )}
               <section>
