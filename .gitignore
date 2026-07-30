@@ -45,3 +45,7 @@ split_manifest.json
 split_manifest.sha256
 electron_epipe_acceptance.json
 .p9-launch.json
+
+# Frontend test artifacts
+frontend/playwright-report/
+frontend/test-results/
