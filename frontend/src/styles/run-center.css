@@ -243,13 +243,18 @@
   overflow-wrap: anywhere;
 }
 
-.run-center-page .checkpoint-card {
+.run-center-page .run-snapshot > section.checkpoint-card {
   display: grid;
   gap: 14px;
-  padding: 18px;
+  padding: clamp(22px, 3vw, 36px);
   border: 1px solid color-mix(in oklch, var(--vr-warning) 38%, var(--vr-border));
   border-radius: var(--vr-radius);
   background: var(--vr-surface);
+}
+
+.run-center-page .checkpoint-card > * {
+  width: min(100%, 920px);
+  margin-inline: auto;
 }
 
 .run-center-page .checkpoint-header {
