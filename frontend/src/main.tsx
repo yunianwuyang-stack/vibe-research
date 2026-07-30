@@ -115,7 +115,7 @@ import {
 // ── Extracted page components ──
 import { EditorCompilePage, DrawioExportPanel, MermaidExportPanel } from "./pages/editor-compile";
 import { ScreeningPage } from "./pages/screening";
-import { RunCenterPage, LegacyRunCenterPage, ProjectCard, HypothesisWorkbench } from "./pages/run-center";
+import { RunCenterPage, ProjectCard, HypothesisWorkbench } from "./pages/run-center";
 import { AuditReviewPage } from "./pages/audit-review";
 import { SettingsConnection } from "./pages/settings";
 import { fmtTime } from "./lib/format";
