@@ -304,8 +304,8 @@ export function WorkflowOperationsPage({
           <span>定位运行</span>
           <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="项目、模板、当前节点或运行 ID" />
         </label>
-        <button className="quiet" disabled={loading} onClick={() => void refreshList()}>刷新快照</button>
-        <button onClick={onCreate}>新建工作流</button>
+        <button type="button" className="quiet" disabled={loading} onClick={() => void refreshList()}>刷新快照</button>
+        <button type="button" onClick={onCreate}>新建工作流</button>
       </div>
 
       {error ? <div className="operations-alert error" role="alert">{error}</div> : null}
@@ -352,8 +352,8 @@ export function WorkflowOperationsPage({
                 </div>
                 <div className="operations-heading-actions">
                   <span className={`ops-status ${selectedRun.status}`}>{statusText(selectedRun.status)}</span>
-                  <button className="quiet" onClick={() => onOpenRun(selectedRun.project_id, selectedRun.id)}>项目运行中心</button>
-                  <button className="quiet" onClick={() => onOpenEditor(selectedRun.project_id, selectedRun.id)}>打开产物编辑器</button>
+                  <button type="button" className="quiet" onClick={() => onOpenRun(selectedRun.project_id, selectedRun.id)}>项目运行中心</button>
+                  <button type="button" className="quiet" onClick={() => onOpenEditor(selectedRun.project_id, selectedRun.id)}>打开产物编辑器</button>
                 </div>
               </header>
 
@@ -367,7 +367,7 @@ export function WorkflowOperationsPage({
                   <span>恢复原因（写入审计）</span>
                   <input value={recoveryReason} onChange={(event) => setRecoveryReason(event.target.value)} />
                 </label>
-                <button
+                <button type="button"
                   disabled={!selectedRun.recoverable || Boolean(actionBusy)}
                   onClick={() => void runAction("recover", () => recoverWorkflow(selectedRun.id, recoveryReason))}
                 >
@@ -375,14 +375,22 @@ export function WorkflowOperationsPage({
                 </button>
               </section>
 
-              <div className="operations-tabs" role="tablist" aria-label="运行证据视图">
+              <div className="operations-tabs" role="group" aria-label="运行证据视图">
                 {([
                   ["dag", "执行 DAG"],
                   ["logs", `持久日志 ${detail?.logs.length ?? 0}`],
                   ["artifacts", `产物血缘 ${detail?.artifacts.length ?? selectedRun.artifact_count}`],
                   ["recovery", `尝试与恢复 ${(detail?.attempts.length || 0) + (detail?.recoveries.length || 0)}`],
                 ] as Array<[DetailTab, string]>).map(([key, label]) => (
-                  <button className={detailTab === key ? "active" : ""} aria-current={detailTab === key ? "page" : undefined} key={key} onClick={() => setDetailTab(key)}>{label}</button>
+                  <button
+                    type="button"
+                    className={detailTab === key ? "active" : ""}
+                    aria-pressed={detailTab === key}
+                    key={key}
+                    onClick={() => setDetailTab(key)}
+                  >
+                    {label}
+                  </button>
                 ))}
               </div>
 
@@ -435,7 +443,12 @@ function RunCard({
   onSelect: () => void;
 }) {
   return (
-    <button className={`operations-run ${selected ? "selected" : ""}`} onClick={onSelect}>
+    <button
+      type="button"
+      className={`operations-run ${selected ? "selected" : ""}`}
+      aria-pressed={selected}
+      onClick={onSelect}
+    >
       <span className="operations-run-project">{projectName}</span>
       <span className="operations-run-title">
         <b>{run.title}</b>
@@ -486,7 +499,7 @@ function DagView({
             {step.output_files.length ? <p className="operations-node-outputs">{step.output_files.join(" · ")}</p> : null}
             {step.error_message ? <p className="operations-node-error">{step.error_message}</p> : null}
             {step.status === "failed" || step.status === "interrupted" ? (
-              <button disabled={Boolean(busy)} onClick={() => onRetry(step.skill_name)}>
+              <button type="button" disabled={Boolean(busy)} onClick={() => onRetry(step.skill_name)}>
                 {busy === `retry:${step.skill_name}` ? "正在创建重试…" : "仅重试此失败节点"}
               </button>
             ) : null}
