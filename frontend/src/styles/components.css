@@ -422,6 +422,33 @@ textarea {
 }
 
 /* ── Review / assurance ──────────────────────────────────────── */
+/* Compact controls and review feedback */
+.icon-button {
+  display: grid;
+  flex: 0 0 36px;
+  place-items: center;
+  width: 36px;
+  min-height: 36px;
+  padding: 0;
+  font-size: 20px;
+  line-height: 1;
+}
+
+.compact-action {
+  min-height: 32px;
+  padding: 7px 10px;
+  font-size: 12px;
+}
+
+.review-failure {
+  margin: 0;
+  padding: 10px 11px;
+  border-left: 3px solid var(--vr-danger);
+  background: var(--vr-danger-bg);
+  color: var(--vr-danger);
+  overflow-wrap: anywhere;
+}
+
 .assurance-panel {
   background: var(--vr-surface);
   border: 1px solid var(--vr-border);

@@ -168,3 +168,15 @@ nav button.active {
   font-size: 11px;
   font-weight: 600;
 }
+
+/* Respect motion-reduction preferences across all UI layers. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

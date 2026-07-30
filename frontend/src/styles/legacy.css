@@ -900,14 +900,6 @@ button.quiet {
   font-size: 11px;
   overflow-wrap: anywhere;
 }
-.review-failure {
-  margin: 0;
-  padding: 10px 11px;
-  border-left: 3px solid #b34d47;
-  background: #fff5f4;
-  color: #8d342f;
-  overflow-wrap: anywhere;
-}
 .review-findings {
   display: grid;
   gap: 7px;
@@ -974,15 +966,6 @@ button.quiet {
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 13px;
-}
-.icon-button {
-  display: grid;
-  place-items: center !important;
-  width: 36px;
-  height: 36px;
-  padding: 0 !important;
-  font-size: 20px;
-  line-height: 1;
 }
 .model-profile-grid {
   display: grid;
@@ -1472,16 +1455,6 @@ button.danger {
   }
   .search select {
     width: 100%;
-  }
-}
-@media (prefers-reduced-motion: reduce) {
-  *,
-  *::before,
-  *::after {
-    scroll-behavior: auto !important;
-    transition-duration: 0.01ms !important;
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
   }
 }
 .claim-evidence-panel {
@@ -1986,10 +1959,6 @@ button.danger {
 .section-command h3 {
   margin-top: 5px;
   font-size: 22px;
-}
-.compact-action {
-  padding: 8px 11px !important;
-  font-size: 11px !important;
 }
 .card {
   position: relative;
@@ -2537,9 +2506,6 @@ button.danger {
 .eligibility-grid .fail {
   background: #fff0e4;
   color: #96501d;
-}
-.review-failure {
-  color: #a13d3d !important;
 }
 .code-editor[readonly],
 textarea[readonly] {
