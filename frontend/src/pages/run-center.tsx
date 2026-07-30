@@ -16,6 +16,35 @@ import { statusText, inputStatusText } from "../research-helpers";
 import { workflowNames, workflowInputRequirements } from "../lib/workflow-meta";
 import { fmtTime } from "../lib/format";
 
+const formatArtifactSize = (bytes: number) => {
+  if (bytes < 1024) return `${bytes.toLocaleString()} B`;
+  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+};
+
+const artifactType = (path: string) => {
+  const extension = path.split(".").pop()?.toUpperCase();
+  return extension && extension !== path.toUpperCase() ? extension.slice(0, 8) : "文件";
+};
+
+const compactHash = (hash: string) =>
+  hash.length > 22 ? `${hash.slice(0, 12)}…${hash.slice(-8)}` : hash;
+
+const artifactPresentation = (path: string) => {
+  const filename = path.split("/").pop() || path;
+  const knownArtifacts: Record<string, { title: string; detail: string }> = {
+    "IDEA_REPORT.md": { title: "研究构想报告", detail: "研究问题、机制与可检验方向的初步方案。" },
+    "LITERATURE_REVIEW.md": { title: "文献调研综述", detail: "已检索文献的主题脉络与核心发现。" },
+    "novelty_check_report.md": { title: "新颖性核验报告", detail: "与既有研究的差异与潜在贡献核查。" },
+    "papers_pool.md": { title: "候选论文池", detail: "待筛选与引用的相关文献集合。" },
+    "references.bib": { title: "引文库", detail: "可供论文写作与编译使用的参考文献条目。" },
+    "EXPERIMENT_PLAN.md": { title: "实验计划", detail: "实验设计、变量、对照与执行安排。" },
+    "FINAL_PROPOSAL.md": { title: "精炼研究方案", detail: "经方法精炼后的研究方案与后续行动依据。" },
+    "review_report.md": { title: "外部评审报告", detail: "对当前研究方案的独立审阅意见。" },
+  };
+  return knownArtifacts[filename] || { title: filename, detail: "本步骤生成的可交付研究文件。" };
+};
+
 export function RunCenterPage({
   project,
   workflows,
@@ -74,6 +103,27 @@ export function RunCenterPage({
     ? active?.steps?.find((step) => step.skill_name === checkpoint.step_name)
     : undefined;
   const checkpointNeedsFeedback = checkpoint?.checkpoint_type === "feedback";
+  const researchArtifacts = selectedSnapshot?.artifacts.filter(
+    (item) => !item.path.startsWith(".host_builds/"),
+  ) || [];
+  const systemArtifacts = selectedSnapshot?.artifacts.filter(
+    (item) => item.path.startsWith(".host_builds/"),
+  ) || [];
+  const artifactGroups = researchArtifacts.reduce(
+    (groups, item) => {
+      const producer = item.producer_step || "unattributed";
+      const group = groups.find((candidate) => candidate.producer === producer);
+      if (group) group.items.push(item);
+      else groups.push({ producer, items: [item] });
+      return groups;
+    },
+    [] as Array<{ producer: string; items: typeof researchArtifacts }>,
+  );
+  artifactGroups.sort(
+    (left, right) =>
+      (active?.steps?.find((step) => step.skill_name === left.producer)?.step_order ?? Number.MAX_SAFE_INTEGER) -
+      (active?.steps?.find((step) => step.skill_name === right.producer)?.step_order ?? Number.MAX_SAFE_INTEGER),
+  );
   return (
     <Panel
       className="run-center-page"
@@ -245,9 +295,15 @@ export function RunCenterPage({
                   </footer>
                 </section>
               )}
-              <section>
-                <div className="section-command">
-                  <h4>产物血缘快照</h4>
+              <section className="artifact-lineage">
+                <div className="section-command artifact-lineage-heading">
+                  <div>
+                    <h4>研究产物与血缘</h4>
+                    <p>按生成步骤组织当前工作流的研究文件；需要复核时再展开校验信息。</p>
+                  </div>
+                  {researchArtifacts.length > 0 && (
+                    <span className="artifact-count">{researchArtifacts.length} 份研究产物</span>
+                  )}
                   {active.status === "completed" && (
                     <button className="quiet compact-action" disabled={busy}
                       title="将本工作流的文献检索结果同步至当前项目的证据库"
@@ -256,16 +312,72 @@ export function RunCenterPage({
                     </button>
                   )}
                 </div>
-                {selectedSnapshot.artifacts.length ? (
-                  <ol className="run-artifacts">
-                    {selectedSnapshot.artifacts.map((item) => (
-                      <li key={item.path}>
-                        <b>{item.path}</b>
-                        <span>{item.size.toLocaleString()} bytes · SHA256 {item.sha256}</span>
-                        {item.producer_step && <small>生产步骤：{item.producer_step}</small>}
-                      </li>
-                    ))}
-                  </ol>
+                {researchArtifacts.length ? (
+                  <>
+                    <ol className="artifact-lineage-list">
+                      {artifactGroups.map((group) => {
+                        const producer = active.steps?.find(
+                          (step) => step.skill_name === group.producer,
+                        );
+                        return (
+                          <li className="artifact-lineage-stage" key={group.producer}>
+                            <header>
+                              <span className="artifact-stage-order">
+                                {producer ? producer.step_order + 1 : "—"}
+                              </span>
+                              <div>
+                                <h5>{producer?.display_name || "未关联步骤"}</h5>
+                                <p>{group.items.length} 份研究产物</p>
+                              </div>
+                            </header>
+                            <ul className="artifact-document-list">
+                              {group.items.map((item) => {
+                                const presentation = artifactPresentation(item.path);
+                                return (
+                                  <li key={item.path}>
+                                    <div className="artifact-document">
+                                      <span className="artifact-type" aria-hidden="true">
+                                        {artifactType(item.path)}
+                                      </span>
+                                      <div>
+                                        <h6>{presentation.title}</h6>
+                                        <p>{presentation.detail}</p>
+                                        <code>{item.path}</code>
+                                      </div>
+                                    </div>
+                                    <details className="artifact-audit">
+                                      <summary>校验信息</summary>
+                                      <dl>
+                                        <div><dt>文件大小</dt><dd>{formatArtifactSize(item.size)}</dd></div>
+                                        <div>
+                                          <dt>SHA256</dt>
+                                          <dd><code>{item.sha256}</code></dd>
+                                        </div>
+                                      </dl>
+                                    </details>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          </li>
+                        );
+                      })}
+                    </ol>
+                    {systemArtifacts.length > 0 && (
+                      <details className="system-artifact-records">
+                        <summary>系统审计记录（{systemArtifacts.length} 项）</summary>
+                        <p>内部构建记录默认折叠，不作为研究交付物展示。</p>
+                        <ul>
+                          {systemArtifacts.map((item) => (
+                            <li key={item.path}>
+                              <code>{item.path}</code>
+                              <span>{formatArtifactSize(item.size)} · SHA256 {compactHash(item.sha256)}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </details>
+                    )}
+                  </>
                 ) : (
                   <Empty text="当前工作区还没有可交付产物。" />
                 )}
