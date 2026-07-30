@@ -139,7 +139,7 @@ export function RunCenterPage({
         </button>
       </div>
       {workflows.length ? (
-        <div className="run-center-layout">
+        <div className={workflows.length === 1 ? "run-center-layout single-workflow" : "run-center-layout"}>
           <section className="workflow-list" aria-label="项目工作流">
             {workflows.map((workflow) => (
               <article
@@ -238,7 +238,7 @@ export function RunCenterPage({
                         <span>{statusText(step.status)}</span>
                       </div>
                       {step.error_message && <small>{step.error_message}</small>}
-                      {step.output_files.length ? <small>产出：{step.output_files.join("、")}</small> : null}
+                      {step.output_files.length ? <small>已登记 {step.output_files.length} 项产物；详情见下方血缘视图。</small> : null}
                     </li>
                   ))}
                 </ol>

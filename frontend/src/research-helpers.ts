@@ -14,6 +14,7 @@ export const statusText = (value?: string) =>
   ({
     pending: "等待开始",
     running: "执行中",
+    waiting_checkpoint: "等待审阅",
     paused: "已暂停",
     completed: "已完成",
     failed: "失败",

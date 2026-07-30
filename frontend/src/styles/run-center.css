@@ -96,6 +96,33 @@
   font-size: 12px;
 }
 
+/* A lone workflow should not reserve an empty sidebar for the entire run. */
+.run-center-page .single-workflow {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+
+.run-center-page .single-workflow .workflow-list {
+  display: block;
+}
+
+.run-center-page .single-workflow .workflow {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.run-center-page .single-workflow .workflow-select {
+  grid-column: auto;
+  align-self: stretch;
+  padding: 14px 16px;
+}
+
+.run-center-page .single-workflow .workflow .inline-actions {
+  grid-column: auto;
+  justify-content: flex-end;
+  padding: 12px 14px 12px 0;
+}
+
 .run-center-page .run-snapshot {
   min-width: 0;
   padding: 20px;
@@ -711,6 +738,20 @@
 
   .run-center-page .workflow-list {
     grid-template-columns: 1fr;
+  }
+
+  .run-center-page .single-workflow .workflow {
+    grid-template-columns: 1fr;
+  }
+
+  .run-center-page .single-workflow .workflow-select,
+  .run-center-page .single-workflow .workflow .inline-actions {
+    grid-column: 1 / -1;
+  }
+
+  .run-center-page .single-workflow .workflow .inline-actions {
+    justify-content: flex-start;
+    padding: 0 14px 14px;
   }
 
   .run-center-page .run-snapshot {
