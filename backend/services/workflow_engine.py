@@ -5318,6 +5318,8 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
     attempt_id: str | None = None
     attempt_cancelled = False
     attempt_unhandled_error: str | None = None
+    # Save CWD so the finally block can restore it even if no chdir is performed.
+    original_cwd = os.getcwd()
     try:
         db = await get_db()
         try:
@@ -5329,6 +5331,9 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
             return
 
         workspace_dir = Path(wf["workspace_dir"])
+        # Match run_workflow()'s CWD contract: relative paths inside skills and
+        # shared scripts (e.g. user_data/<file>) resolve to the workspace root.
+        os.chdir(str(workspace_dir))
         params = wf.get("params", {})
         template = wf["template"]
         try:
@@ -5702,6 +5707,9 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
         attempt_unhandled_error = str(exc)
         raise
     finally:
+        # Restore original CWD unconditionally so concurrent coroutines and
+        # subsequent workflow runs are not affected by this execution's chdir.
+        os.chdir(original_cwd)
         if attempt_id:
             try:
                 from services.workflow_operations import finish_step_attempt
@@ -5731,11 +5739,20 @@ async def run_workflow(workflow_id: str) -> None:
         steps_local = [dict(r) for r in await cursor.fetchall()]
         return wf_local, steps_local
 
+    # Save original CWD to restore later
+    original_cwd = os.getcwd()
+
     try:
         wf, steps = await _db_read(_load_initial)
         if not wf:
             log.error("Workflow not found: %s", workflow_id)
             return
+
+        # Change to workspace directory so relative paths like 'user_data/file.txt'
+        # resolve correctly throughout workflow execution
+        workspace_dir = Path(wf["workspace_dir"])
+        os.chdir(str(workspace_dir))
+        log.info("Changed CWD to workspace: %s", workspace_dir)
 
         template = wf["template"]
         try:
@@ -6261,6 +6278,10 @@ async def run_workflow(workflow_id: str) -> None:
         await _db_write(f"workflow_cancelled:{workflow_id}", _pause_cancelled)
         await _broadcast(workflow_id, {"type": "workflow_paused"})
         return
+    finally:
+        # Restore original CWD so concurrent workflows and other coroutines are
+        # not affected by the workspace chdir performed at startup.
+        os.chdir(original_cwd)
 
 
 async def wait_checkpoint(workflow_id: str, timeout: float | None = None) -> dict:
