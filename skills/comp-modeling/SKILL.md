@@ -11,11 +11,7 @@ allowed-tools: Bash(*), Read, Write, Edit, Grep, Glob, WebSearch, WebFetch, Agen
 
 ## ⚡ 快速模式检测（开头先跑）
 
-```bash
-FAST_MODE=0
-grep -q 'VIBE_FAST_MODE=1' CLAUDE.md 2>/dev/null && FAST_MODE=1
-echo "FAST_MODE=$FAST_MODE"
-```
+用 `search` 工具在 CLAUDE.md 中查找字符串 `VIBE_FAST_MODE=1`；找到则视为 FAST_MODE=1（速度优先），否则 FAST_MODE=0（默认）。
 
 **若 `FAST_MODE=1`（速度优先）：** 仍必须产出完整的 MODELING_REPORT.md（每个子问题都有数学模型/公式/求解思路、子问题全覆盖、结果预期范围表），但**跳过**：多方案对比择优的反复推敲、灵敏度深挖、发现小瑕疵后的反复重写打磨。一次成型、内容齐全即可。**若 `FAST_MODE=0`（默认）：** 后文审查环节照常。
 
@@ -47,18 +43,11 @@ echo "MIN_MODELS=${MIN_MODELS:-auto}"
 - 用 `Read` 工具带 offset/limit 范围读，或用 `Grep` 工具按关键词提取。
 - CLAUDE.md 已列出所有上传文件清单 + 字数，**优先用清单 + Read 局部，不要全量 cat**。
 
-⛔ **结束前必跑 PASS 阻断验证**（只 echo "❌" 不算，必须显式判定）：
-```bash
-PASS=true
-[ -f MODELING_REPORT.md ] && SZ=$(wc -c < MODELING_REPORT.md) || SZ=0
-if [ "$SZ" -ge 1500 ]; then
-    echo "✅ MODELING_REPORT.md ($SZ bytes)"
-else
-    echo "❌ MODELING_REPORT.md 缺失或过小 ($SZ bytes) — 立即用 Write 工具产出, 不要 end_turn"
-    PASS=false
-fi
-[ "$PASS" != true ] && echo "⛔ 验证未通过 — 必须修复后再结束本步骤"
+⛔ **结束前必跑 PASS 阻断验证**（只输出不算，必须显式判定）：
 ```
+python3 _utils/check_modeling.py MODELING_REPORT.md PROBLEM_ANALYSIS.md
+```
+若输出含 `ERROR` 则不得结束本步骤，必须先修复。
 
 ## 工作流程
 
@@ -79,18 +68,10 @@ fi
 
 **⛔ 执行步骤：**
 
-```bash
-echo "=== 审视赛题分析的升级结论 ==="
-echo ""
-echo "--- 标为⚠️/❌的覆盖度缺口（需要在建模中审视是否补上）---"
-grep -A 1 '⚠️\|❌' PROBLEM_ANALYSIS.md | head -40
-echo ""
-echo "--- 经典问题升级表（需要审视是否采用最终模型）---"
-sed -n '/经典问题升级/,/^##/p' PROBLEM_ANALYSIS.md | head -30
-echo ""
-echo "--- 反向对照的升级要求 ---"
-sed -n '/反向对照/,/^##/p' PROBLEM_ANALYSIS.md | head -30
-```
+用 `search` 工具在 PROBLEM_ANALYSIS.md 中依次搜索以下内容并阅读：
+1. 含 `⚠️` 或 `❌` 的行（覆盖度缺口，需在建模中审视是否补上）
+2. 含 `经典问题升级` 的段落（审视是否采用最终模型）
+3. 含 `反向对照` 的段落（升级要求）
 
 **⛔ 三段式决策流程（每个升级建议都必须走完）：**
 
@@ -183,7 +164,7 @@ sed -n '/反向对照/,/^##/p' PROBLEM_ANALYSIS.md | head -30
 3. **数学公式推导** — 完整严谨，使用 LaTeX 数学环境（目标函数+约束条件）
 4. **求解算法设计** — 伪代码或流程描述
 
-方法选择参考 `_references/methods_table.md`。
+方法选择参考 `.vibe-skills/comp-modeling/references/methods_table.md`。
 
 ### Step 4: 符号说明表
 
@@ -327,69 +308,25 @@ sed -n '/反向对照/,/^##/p' PROBLEM_ANALYSIS.md | head -30
 
 **⛔ MANDATORY: 输出前自检（写完 MODELING_REPORT.md 后必须逐项检查）：**
 
-```bash
-echo "=== 建模报告自检 ==="
-[ -f MODELING_REPORT.md ] || { echo "❌ MODELING_REPORT.md 不存在！"; exit 1; }
-
-# 1. 子问题覆盖度（统一口径：只数标题行声明的子问题，中文/阿拉伯/英文编号都支持，
-#    避免历史 bug：PROB_COUNT 用全文松匹配虚高、MODEL_SECTIONS 用标题匹配，两个口径比大小恒误报）
-PROB_COUNT=$(bash _utils/count_subproblems.sh PROBLEM_ANALYSIS.md)
-MODEL_SECTIONS=$(bash _utils/count_subproblems.sh MODELING_REPORT.md)
-echo "赛题子问题数: $PROB_COUNT, 建模报告覆盖: $MODEL_SECTIONS"
-[ "$MODEL_SECTIONS" -lt "$PROB_COUNT" ] && echo "❌ 有子问题未建模！"
-
-# 2. 每个子问题是否有目标函数或模型公式
-OBJ_COUNT=$(grep -c '目标函数\|min\|max\|最小化\|最大化\|objective\|模型公式\|数学模型' MODELING_REPORT.md 2>/dev/null || echo 0)
-echo "目标函数/模型公式出现次数: $OBJ_COUNT"
-[ "$OBJ_COUNT" -eq 0 ] && echo "❌ 未找到任何目标函数或模型公式！"
-
-# 3. 约束条件（优化类必须有）
-CONSTRAINT_COUNT=$(grep -c '约束\|s\.t\.\|subject to\|限制条件\|≤\|≥' MODELING_REPORT.md 2>/dev/null || echo 0)
-echo "约束条件出现次数: $CONSTRAINT_COUNT"
-
-# 4. 符号说明表是否存在
-grep -q '符号.*说明\|符号.*含义\|Symbol.*Description' MODELING_REPORT.md && echo "✅ 符号说明表存在" || echo "❌ 缺少符号说明表"
-
-# 5. 灵敏度分析方案是否存在
-grep -qi '灵敏度\|sensitivity\|鲁棒性\|robustness\|稳健性' MODELING_REPORT.md && echo "✅ 灵敏度/鲁棒性分析方案存在" || echo "⚠ 缺少灵敏度分析方案（评审加分项）"
-
-# 6. 图表预规划是否带入
-grep -qi '图表预规划\|fig_\|TABLE_\|DrawIO' MODELING_REPORT.md && echo "✅ 图表预规划已带入" || echo "❌ 缺少图表预规划（paper-figure 步骤需要）"
-
-# 7. 编程实现要点是否存在
-grep -qi '编程\|实现要点\|Python\|算法步骤\|伪代码' MODELING_REPORT.md && echo "✅ 编程实现要点存在" || echo "⚠ 缺少编程实现要点（comp-code 步骤需要）"
-
-# 8. 问题递进性检查（最关键）
-echo ""
-echo "=== 问题递进性检查 ==="
-echo "⛔ 人工审查：在你的模型下，每个问题的结果是否比前一个有明显变化？"
-echo "   如果某个后续问题的结果和前一个几乎相同，说明模型假设可能有问题。"
-echo "   特别检查：新增的变量/资源/约束是否对目标函数有边际效益？"
-echo "   如果没有 → 回到 PROBLEM_ANALYSIS.md 的假设预检重新审视。"
-
-# 9. 假设参数化检查
-PARAM_COUNT=$(grep -c '参数化:\|ALLOW_\|ENABLE_\|USE_\|开关变量' MODELING_REPORT.md 2>/dev/null || echo 0)
-echo "假设参数化标记数: $PARAM_COUNT"
-[ "$PARAM_COUNT" -eq 0 ] && echo "⚠ 未找到假设参数化标记——关键假设应该在代码中做成可切换参数"
+```
+python3 _utils/check_modeling.py MODELING_REPORT.md PROBLEM_ANALYSIS.md
 ```
 
-**如果有 ❌ 项，必须补充后再结束本步骤。⚠ 项建议补充但不强制。**
+**输出含 ERROR 的项必须修复后再结束本步骤；WARN 项建议修复但不强制。**
 
 **⛔⛔⛔ 参数密集型题目必跑（题面参数 ≥ 20 时）：**
 
-```bash
-# 1) 复审前置步骤的 facts/OCR 一致性（防 Step 1 通过后中途篡改）
-# 2) 新增审计 MODELING_REPORT.md 数字溯源 + rules 覆盖度
-python3 _utils/facts_audit.py --stage modeling 2>&1 | tee AUDIT_REPORT.md
-RC=$?
-if [ $RC -eq 1 ]; then
-    echo "⛔ Step 2 审计失败：MODELING_REPORT.md 含 facts 中找不到的数字（疑似建模凭印象），或 rules 段规则没体现在建模中。必须修复后重新跑，不要结束本步骤。"
-fi
+1. 运行审计，将完整输出写入 `AUDIT_REPORT.md`（用 `write` 工具）：
+   ```
+   python3 _utils/facts_audit.py --stage modeling
+   ```
+   若输出含"审计失败"（退出码 1），必须修复后重新跑，不要结束本步骤。
 
-# 在 MODELING_REPORT.md 末尾追加凭证（facts_traced = 报告中能溯源到 facts 的数字数；rules_covered = facts.rules[] 中已在 MODELING_REPORT 中体现的规则数）
-echo "" >> MODELING_REPORT.md
-echo "<!-- MODELING_OK facts_traced=N rules_covered=M source=PROBLEM_FACTS.json rechecked_at=$(date -Iseconds) -->" >> MODELING_REPORT.md
-```
+2. 在 MODELING_REPORT.md 末尾用 Edit/write 工具追加凭证行：
+   ```
+   <!-- MODELING_OK facts_traced=N rules_covered=M source=PROBLEM_FACTS.json rechecked_at=<ISO时间> -->
+   ```
+   其中 N=审计报告里能溯源的数字数，M=覆盖的规则数。
 
 **为什么 Step 2 也要跑审计**：MODELING_REPORT.md 引用 facts 数值时，AI 可能凭印象写错（例如把 facts.weapons[0].targets[0].p_detect=0.95 写成 0.9）。Step 2 不抓 = 错误数值流到 Step 3 建模实现，污染整个 code。
 
@@ -424,29 +361,10 @@ echo "<!-- MODELING_OK facts_traced=N rules_covered=M source=PROBLEM_FACTS.json 
     
     ```
   - **写完每段含公式的章节后必须自检**（在 heredoc 写入 MODELING_REPORT.md 之后立即跑）：
-    ```bash
-    # 扫描裸 LaTeX 命令（反斜杠开头）但当前行不在 $$ 块内
-    python3 - <<'PY'
-    import re
-    text = open("MODELING_REPORT.md", encoding="utf-8").read()
-    # 移除已正确包围的 $$...$$ 块和 $...$ 行内公式以及代码块
-    cleaned = re.sub(r'```.*?```', '', text, flags=re.DOTALL)
-    cleaned = re.sub(r'\$\$[\s\S]*?\$\$', '', cleaned)
-    cleaned = re.sub(r'\$[^\n$]+\$', '', cleaned)
-    # 在剩余文本里找 \tag{ / \sqrt / \hat / \frac / \dot / \begin{ 等典型 LaTeX 命令
-    bad = []
-    for i, line in enumerate(cleaned.split('\n'), 1):
-        if re.search(r'\\(tag|sqrt|hat|frac|tfrac|dot|begin|cdot|pm|in|exists|forall|big|cap)\b', line):
-            bad.append((i, line.strip()[:80]))
-    if bad:
-        print(f"❌ 发现 {len(bad)} 处裸 LaTeX（缺 $$ 包围）：")
-        for ln, s in bad[:10]:
-            print(f"  L{ln}: {s}")
-    else:
-        print("✓ 公式包围检查通过")
-    PY
     ```
-    **报告 ❌ = 必须立即用 Edit 工具把那几行包进 `$$...$$`，再继续往下写。**
+    python3 _utils/check_latex.py MODELING_REPORT.md
+    ```
+    **报告 ERROR = 必须立即用 Edit 工具把那几行包进 `$$...$$`，再继续往下写。**
 - 模型假设是评审重点：合理、必要、有说服力
 - 符号说明表必须完整
 - 灵敏度分析不能省（评审加分项）

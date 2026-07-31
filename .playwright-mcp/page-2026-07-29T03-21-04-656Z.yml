@@ -1,0 +1,337 @@
+- main [ref=e3]:
+  - link "跳到主要内容" [ref=e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - complementary [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]: V
+      - generic [ref=e8]:
+        - text: Vibe Research
+        - generic [ref=e9]: 研究证据工作台
+    - navigation "主导航" [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: 工作区
+        - button "工作台" [ref=e13] [cursor=pointer]:
+          - generic [ref=e14]: ⌂
+          - text: 工作台
+        - button "研究项目" [ref=e15] [cursor=pointer]:
+          - generic [ref=e16]: ◇
+          - text: 研究项目
+        - button "研究地图" [ref=e17] [cursor=pointer]:
+          - generic [ref=e18]: ◎
+          - text: 研究地图
+      - generic [ref=e19]:
+        - generic [ref=e20]: 流程与任务
+        - button "智能工作流" [ref=e21] [cursor=pointer]:
+          - generic [ref=e22]: ✦
+          - text: 智能工作流
+        - button "全局运营台" [ref=e23] [cursor=pointer]:
+          - generic [ref=e24]: ⌁
+          - text: 全局运营台
+        - button "执行与产物" [ref=e25] [cursor=pointer]:
+          - generic [ref=e26]: ▤
+          - text: 执行与产物
+        - button "编辑与编译" [ref=e27] [cursor=pointer]:
+          - generic [ref=e28]: ✎
+          - text: 编辑与编译
+      - generic [ref=e29]:
+        - generic [ref=e30]: 证据与质量
+        - button "文献与证据" [ref=e31] [cursor=pointer]:
+          - generic [ref=e32]: ◎
+          - text: 文献与证据
+        - button "筛选协议" [ref=e33] [cursor=pointer]:
+          - generic [ref=e34]: ✓
+          - text: 筛选协议
+        - button "实验与复现" [ref=e35] [cursor=pointer]:
+          - generic [ref=e36]: ◌
+          - text: 实验与复现
+        - button "科学写作" [ref=e37] [cursor=pointer]:
+          - generic [ref=e38]: ≡
+          - text: 科学写作
+        - button "审批与审计" [ref=e39] [cursor=pointer]:
+          - generic [ref=e40]: ▣
+          - text: 审批与审计
+      - generic [ref=e41]:
+        - generic [ref=e42]: 系统
+        - button "设置与连接" [active] [ref=e43] [cursor=pointer]:
+          - generic [ref=e44]: ⚙
+          - text: 设置与连接
+    - generic [ref=e45]: 桌面后端已连接
+  - generic [ref=e47]:
+    - generic [ref=e48]:
+      - generic [ref=e49]:
+        - navigation "面包屑" [ref=e50]:
+          - button "研究驾驶舱" [ref=e51] [cursor=pointer]
+          - generic [ref=e52]: /
+          - generic [ref=e53]: 设置与连接
+        - heading "设置与连接" [level=2] [ref=e131]
+      - generic [ref=e55]:
+        - generic [ref=e56]:
+          - generic [ref=e57]: 当前项目
+          - combobox "当前研究项目" [ref=e58]:
+            - option "选择研究项目" [disabled]
+            - option "数学建模" [selected]
+        - status [ref=e59]: 需要证据
+    - navigation "功能导航" [ref=e60]:
+      - button "研究驾驶舱" [ref=e61] [cursor=pointer]
+      - button "研究项目" [ref=e62] [cursor=pointer]
+      - button "研究地图" [ref=e63] [cursor=pointer]
+      - button "文献与证据" [ref=e64] [cursor=pointer]
+      - button "实验与复现" [ref=e65] [cursor=pointer]
+      - button "主张与门禁" [ref=e66] [cursor=pointer]
+      - button "科学写作" [ref=e67] [cursor=pointer]
+      - button "运行与产物" [ref=e68] [cursor=pointer]
+      - button "设置" [ref=e69] [cursor=pointer]
+    - generic [ref=e132]:
+      - generic [ref=e133]:
+        - paragraph [ref=e134]: 研究流程
+        - heading "设置与连接" [level=1] [ref=e135]
+        - paragraph
+      - generic [ref=e136]:
+        - generic [ref=e137]:
+          - heading "模型档案" [level=3] [ref=e138]
+          - button "重新读取模型档案" [ref=e139] [cursor=pointer]: ↻
+        - generic [ref=e140]:
+          - article [ref=e141]:
+            - generic [ref=e142]:
+              - generic [ref=e143]:
+                - paragraph [ref=e144]: 执行器
+                - heading "执行模型" [level=4] [ref=e145]
+              - generic [ref=e146]: 密钥已配置
+            - generic [ref=e147]:
+              - generic [ref=e148]:
+                - text: 服务商与协议
+                - combobox "执行器服务商与协议" [ref=e149]:
+                  - option "OpenAI 聊天补全"
+                  - option "OpenAI 响应协议" [selected]
+                  - option "Anthropic 消息协议"
+                  - option "Gemini 内容生成"
+              - generic [ref=e150]:
+                - text: 服务地址（Base URL）
+                - textbox "服务地址（Base URL）" [ref=e151]:
+                  - /placeholder: https://share-api.com/v1 或任意 OpenAI 兼容地址
+                  - text: https://a6api.com/v1
+              - generic [ref=e152]:
+                - text: 模型 ID
+                - textbox "模型 ID" [ref=e153]: gpt-5.6-sol
+              - generic [ref=e154]:
+                - text: 温度
+                - spinbutton "温度" [ref=e155]: "0.3"
+              - generic [ref=e156]:
+                - text: Top P
+                - spinbutton "Top P" [ref=e157]: "1"
+              - generic [ref=e158]:
+                - text: 最大输出 Token
+                - spinbutton "最大输出 Token" [ref=e159]: "8192"
+              - generic [ref=e160]:
+                - text: 推理强度
+                - combobox "推理强度" [ref=e161]:
+                  - option "不启用" [selected]
+                  - option "最低"
+                  - option "低"
+                  - option "中"
+                  - option "高"
+              - generic [ref=e162]:
+                - text: API 密钥
+                - textbox "API 密钥" [ref=e163]:
+                  - /placeholder: 已配置；留空保留
+              - generic [ref=e164]:
+                - checkbox "清除已保存密钥" [ref=e165]
+                - text: 清除已保存密钥
+            - generic [ref=e166]:
+              - button "保存档案" [ref=e167] [cursor=pointer]
+              - button "测试连接" [ref=e168] [cursor=pointer]
+          - article [ref=e169]:
+            - generic [ref=e170]:
+              - generic [ref=e171]:
+                - paragraph [ref=e172]: 独立审稿人
+                - heading "独立审稿模型" [level=4] [ref=e173]
+              - generic [ref=e174]: 密钥已配置
+            - generic [ref=e175]:
+              - generic [ref=e176]:
+                - text: 服务商与协议
+                - combobox "独立审稿人服务商与协议" [ref=e177]:
+                  - option "OpenAI 聊天补全"
+                  - option "OpenAI 响应协议" [selected]
+                  - option "Anthropic 消息协议"
+                  - option "Gemini 内容生成"
+              - generic [ref=e178]:
+                - text: 服务地址（Base URL）
+                - textbox "服务地址（Base URL）" [ref=e179]:
+                  - /placeholder: https://share-api.com/v1 或任意 OpenAI 兼容地址
+                  - text: https://a6api.com/v1
+              - generic [ref=e180]:
+                - text: 模型 ID
+                - textbox "模型 ID" [ref=e181]: gpt-5.6-sol
+              - generic [ref=e182]:
+                - text: 温度
+                - spinbutton "温度" [ref=e183]: "0.3"
+              - generic [ref=e184]:
+                - text: Top P
+                - spinbutton "Top P" [ref=e185]: "1"
+              - generic [ref=e186]:
+                - text: 最大输出 Token
+                - spinbutton "最大输出 Token" [ref=e187]: "8192"
+              - generic [ref=e188]:
+                - text: 推理强度
+                - combobox "推理强度" [ref=e189]:
+                  - option "不启用" [selected]
+                  - option "最低"
+                  - option "低"
+                  - option "中"
+                  - option "高"
+              - generic [ref=e190]:
+                - text: API 密钥
+                - textbox "API 密钥" [ref=e191]:
+                  - /placeholder: 已配置；留空保留
+              - generic [ref=e192]:
+                - checkbox "清除已保存密钥" [ref=e193]
+                - text: 清除已保存密钥
+            - generic [ref=e194]:
+              - button "保存档案" [ref=e195] [cursor=pointer]
+              - button "测试连接" [ref=e196] [cursor=pointer]
+          - article [ref=e197]:
+            - generic [ref=e198]:
+              - generic [ref=e199]:
+                - paragraph [ref=e200]: 科研编辑
+                - heading "科研编辑模型" [level=4] [ref=e201]
+              - generic [ref=e202]: 密钥已配置
+            - generic [ref=e203]:
+              - generic [ref=e204]:
+                - text: 服务商与协议
+                - combobox "科研编辑服务商与协议" [ref=e205]:
+                  - option "OpenAI 聊天补全"
+                  - option "OpenAI 响应协议" [selected]
+                  - option "Anthropic 消息协议"
+                  - option "Gemini 内容生成"
+              - generic [ref=e206]:
+                - text: 服务地址（Base URL）
+                - textbox "服务地址（Base URL）" [ref=e207]:
+                  - /placeholder: https://share-api.com/v1 或任意 OpenAI 兼容地址
+                  - text: https://a6api.com/v1
+              - generic [ref=e208]:
+                - text: 模型 ID
+                - textbox "模型 ID" [ref=e209]: gpt-5.6-sol
+              - generic [ref=e210]:
+                - text: 温度
+                - spinbutton "温度" [ref=e211]: "0.3"
+              - generic [ref=e212]:
+                - text: Top P
+                - spinbutton "Top P" [ref=e213]: "1"
+              - generic [ref=e214]:
+                - text: 最大输出 Token
+                - spinbutton "最大输出 Token" [ref=e215]: "8192"
+              - generic [ref=e216]:
+                - text: 推理强度
+                - combobox "推理强度" [ref=e217]:
+                  - option "不启用" [selected]
+                  - option "最低"
+                  - option "低"
+                  - option "中"
+                  - option "高"
+              - generic [ref=e218]:
+                - text: API 密钥
+                - textbox "API 密钥" [ref=e219]:
+                  - /placeholder: 已配置；留空保留
+              - generic [ref=e220]:
+                - checkbox "清除已保存密钥" [ref=e221]
+                - text: 清除已保存密钥
+            - generic [ref=e222]:
+              - button "保存档案" [ref=e223] [cursor=pointer]
+              - button "测试连接" [ref=e224] [cursor=pointer]
+      - generic [ref=e225]:
+        - generic [ref=e226]:
+          - generic [ref=e227]:
+            - paragraph [ref=e228]: 界面与本机能力
+            - heading "主题和其他配置" [level=3] [ref=e229]
+          - button "重新读取" [ref=e230] [cursor=pointer]
+        - generic [ref=e231]:
+          - article [ref=e232]:
+            - heading "主题" [level=4] [ref=e233]
+            - radiogroup "界面主题" [ref=e234]:
+              - radio "暖色" [ref=e235] [cursor=pointer]
+              - radio "亮白" [checked] [ref=e236] [cursor=pointer]
+              - radio "豆沙绿" [ref=e237] [cursor=pointer]
+              - radio "自定义" [ref=e238] [cursor=pointer]
+          - article [ref=e239]:
+            - heading "GPT Image" [level=4] [ref=e240]
+            - generic [ref=e241]:
+              - text: API Key
+              - textbox "API Key" [ref=e242]:
+                - /placeholder: sk-…
+            - generic [ref=e243]:
+              - text: Base URL
+              - textbox "Base URL" [ref=e244]: https://api.openai.com/v1
+            - generic [ref=e245]:
+              - text: Model ID
+              - textbox "Model ID" [ref=e246]: gpt-image-1.5
+          - article [ref=e247]:
+            - heading "Claude CLI" [level=4] [ref=e248]
+            - generic [ref=e249]:
+              - text: 可执行文件路径
+              - textbox "可执行文件路径" [ref=e250]:
+                - /placeholder: 自动探测或填写 claude.exe 路径
+            - button "自动探测" [ref=e251] [cursor=pointer]
+            - generic [ref=e252]: 执行者使用 Anthropic 消息协议时调用；Responses 协议使用内置工作区执行器。Claude Code 始终为可选的外部安装。
+          - article [ref=e253]:
+            - heading "Codex CLI" [level=4] [ref=e254]
+            - generic [ref=e255]:
+              - text: 可执行文件路径
+              - textbox "可执行文件路径" [ref=e256]:
+                - /placeholder: 自动探测或填写 codex.exe 路径
+            - button "自动探测" [ref=e257] [cursor=pointer]
+            - generic [ref=e258]: 覆盖主机/PATH 探测结果。安装版优先使用经清单校验的内置 Codex；此处用于源码态与自定义路径。
+          - article [ref=e259]:
+            - heading "数据存储位置" [level=4] [ref=e260]
+            - generic [ref=e261]:
+              - text: 目录
+              - textbox "目录" [ref=e262]:
+                - /placeholder: 使用桌面应用默认目录
+                - text: D:\toolbox\VibeResearch源码及构建版本\vibe-research\runtime
+            - button "选择新位置" [ref=e263] [cursor=pointer]
+            - generic [ref=e264]: 更改后需重启；旧工作流不会自动迁移，请手动复制 workspaces。
+        - button "保存配置" [ref=e266] [cursor=pointer]
+      - generic [ref=e267]:
+        - generic [ref=e268]:
+          - heading "环境诊断" [level=3] [ref=e269]
+          - button "重新检测环境" [ref=e270] [cursor=pointer]: ↻
+        - generic [ref=e271]:
+          - article [ref=e272]:
+            - generic [ref=e273]: "{ \"schema_version\": \"1.0\", \"platform\": \"Windows-11-10.0.26200-SP0\", \"project_root\": \"D:\\\\toolbox\\\\VibeResearch源码及构建版本\\\\vibe-research\", \"tools\": [ { \"id\": \"bundled_python\", \"status\": \"available\", \"path\": \"C:\\\\Users\\\\hp\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps\\\\python.EXE\", \"version\": \"Python 3.14.6\", \"auth_status\": \"not_applicable\", \"action\": { \"kind\": \"none\" } }, { \"id\": \"system_python\", \"status\": \"available\", \"path\": \"C:\\\\Users\\\\hp\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps\\\\python.EXE\", \"version\": \"Python 3.14.6\", \"auth_status\": \"not_applicable\", \"action\": { \"kind\": \"none\" } }, { \"id\": \"node\", \"status\": \"available\", \"path\": \"D:\\\\toolbox\\\\nodejs\\\\node.EXE\", \"version\": \"v24.15.0\", \"auth_status\": \"not_applicable\", \"action\": { \"kind\": \"none\" } }, { \"id\": \"git\", \"status\": \"available\", \"path\": \"C:\\\\Program Files\\\\Git\\\\mingw64\\\\bin\\\\git.EXE\", \"version\": \"git version 2.54.0.windows.1\", \"auth_status\": \"not_applicable\", \"action\": { \"kind\": \"none\" } }, { \"id\": \"pandoc\", \"status\": \"unavailable\", \"path\": null, \"version\": null, \"auth_status\": \"not_applicable\", \"action\": { \"kind\": \"install_or_configure\", \"command\": \"pandoc\" } }, { \"id\": \"latex\", \"status\": \"unavailable\", \"path\": \"C:\\\\Users\\\\hp\\\\AppData\\\\Local\\\\Programs\\\\MiKTeX\\\\miktex\\\\bin\\\\x64\\\\xelatex.EXE\", \"version\": null, \"auth_status\": \"not_applicable\", \"action\": { \"kind\": \"install_or_configure\", \"command\": \"xelatex\" } }, { \"id\": \"drawio\", \"status\": \"unavailable\", \"path\": null, \"version\": null, \"auth_status\": \"not_applicable\", \"action\": { \"kind\": \"install_or_configure\", \"command\": \"drawio\" } }, { \"id\": \"codex\", \"status\": \"unavailable\", \"path\": null, \"version\": null, \"auth_status\": \"unknown\", \"action\": { \"kind\": \"official_login\", \"url\": \"https://platform.openai.com/\" } }, { \"id\": \"claude\", \"status\": \"available\", \"path\": \"C:\\\\Users\\\\hp\\\\AppData\\\\Roaming\\\\npm\\\\claude.CMD\", \"version\": \"2.1.220 (Claude Code)\", \"auth_status\": \"unknown\", \"action\": { \"kind\": \"official_login\", \"url\": \"https://docs.anthropic.com/en/docs/claude-code/overview\", \"optional\": true } } ], \"capabilities\": { \"python\": { \"status\": \"available\", \"path\": \"C:\\\\Users\\\\hp\\\\AppData\\\\Local\\\\Python\\\\pythoncore-3.14-64\\\\python.exe\", \"version\": \"Python 3.14.6\", \"reason\": null, \"source\": \"configured\", \"kind\": \"executable\", \"hash\": \"03168c01b7b7491423350e82c26fee71f35b43694d1319d3c668bda6903a0c38\" }, \"node\": { \"status\": \"available\", \"path\": \"D:\\\\toolbox\\\\nodejs\\\\node.EXE\", \"version\": \"v24.15.0\", \"reason\": null, \"source\": \"path\", \"kind\": \"executable\", \"hash\": \"3331e1ffe19874215472217c5e94f5a0c6d8e18c4ac7111d3937aa0ad5e9b4a5\" }, \"git\": { \"status\": \"available\", \"path\": \"C:\\\\Program Files\\\\Git\\\\mingw64\\\\bin\\\\git.EXE\", \"version\": \"git version 2.54.0.windows.1\", \"reason\": null, \"source\": \"path\", \"kind\": \"executable\", \"hash\": \"cab4c4eea1d869cf9f7be73868dc9a90ad2df1b1b673e5f8c8714a576c25ea96\" }, \"pandoc\": { \"status\": \"blocked\", \"path\": null, \"version\": null, \"reason\": \"not_configured_or_not_found\", \"source\": null, \"kind\": \"executable\", \"hash\": null }, \"drawio\": { \"status\": \"blocked\", \"path\": null, \"version\": null, \"reason\": \"not_configured_or_not_found\", \"source\": null, \"kind\": \"executable\", \"hash\": null }, \"latex\": { \"status\": \"available\", \"path\": \"C:\\\\Users\\\\hp\\\\AppData\\\\Local\\\\Programs\\\\MiKTeX\\\\miktex\\\\bin\\\\x64\\\\xelatex.EXE\", \"version\": null, \"reason\": null, \"source\": \"path\", \"kind\": \"executable\", \"hash\": \"1c3628bc7c96ed4f52b1f0ab6494225fdd5ee7914d8d3db0e13b302e258f3326\" }, \"codex\": { \"status\": \"blocked\", \"path\": null, \"version\": null, \"reason\": \"not_configured_or_not_found\", \"source\": null, \"kind\": \"executable\", \"hash\": null }, \"claude\": { \"status\": \"available\", \"path\": \"C:\\\\Users\\\\hp\\\\AppData\\\\Roaming\\\\npm\\\\claude.CMD\", \"version\": \"2.1.220 (Claude Code)\", \"reason\": null, \"source\": \"configured\", \"kind\": \"executable\", \"hash\": \"7999fba95dbffe167d9e0a043f29057979a0518ebe89b60c4fcfc6401ea8c424\" }, \"reviewer\": { \"status\": \"available\", \"path\": \"D:\\\\toolbox\\\\VibeResearch源码及构建版本\\\\vibe-research\\\\tools\\\\reviewer_client.py\", \"version\": \"bundled-script\", \"reason\": null, \"source\": \"configured\", \"kind\": \"script\", \"hash\": \"4480a0ab2d96b98024cdf6d106cff374cb2cace74e0834ccc01602e13e2837cb\" }, \"scholar\": { \"status\": \"available\", \"path\": \"D:\\\\toolbox\\\\VibeResearch源码及构建版本\\\\vibe-research\\\\tools\\\\scholar_fetch.py\", \"version\": \"bundled-script\", \"reason\": null, \"source\": \"configured\", \"kind\": \"script\", \"hash\": \"f90e5720db603cc363987ce970af9995af168ecdc376494a03a1b4e9b2e3597b\" } }, \"skill_registry\": { \"schema_version\": \"1.0\", \"count\": 89 } }"
+          - article [ref=e274]:
+            - generic [ref=e275]:
+              - heading "智能体适配器" [level=3] [ref=e276]
+              - button "刷新智能体适配器" [ref=e277] [cursor=pointer]: ↻
+            - generic [ref=e278]: "{ \"schema_version\": \"2.0\", \"runtime_root\": null, \"bundle_manifest_status\": \"not_applicable\", \"adapters\": { \"codex\": { \"status\": \"unavailable\", \"reason\": \"executable_not_found_or_version_probe_failed\", \"executable\": null, \"version\": null, \"sha256\": null, \"bytes\": null, \"source\": null, \"bundled\": false, \"required\": true, \"integrity_status\": \"unavailable\", \"auth_status\": \"unknown\", \"redistribution\": \"not_bundled\", \"license\": \"Apache-2.0\", \"license_files\": [], \"package\": null, \"action\": { \"kind\": \"official_install\", \"url\": \"https://developers.openai.com/codex/cli/\" } }, \"claude\": { \"status\": \"available\", \"reason\": null, \"executable\": \"C:\\\\Users\\\\hp\\\\AppData\\\\Roaming\\\\npm\\\\claude.CMD\", \"version\": \"2.1.220 (Claude Code)\", \"sha256\": \"7999fba95dbffe167d9e0a043f29057979a0518ebe89b60c4fcfc6401ea8c424\", \"bytes\": 160, \"source\": \"path\", \"bundled\": false, \"required\": false, \"integrity_status\": \"observed\", \"auth_status\": \"unknown\", \"redistribution\": \"not_bundled\", \"license\": \"LicenseRef-Anthropic-Claude-Code-Legal-Agreements\", \"license_files\": [], \"package\": null, \"action\": { \"kind\": \"official_login\", \"url\": \"https://docs.anthropic.com/en/docs/claude-code/overview\", \"optional\": true } } }, \"embedded_binaries\": [] }"
+      - generic [ref=e279]:
+        - heading "智能体任务" [level=3] [ref=e280]
+        - generic [ref=e281]:
+          - generic [ref=e282]:
+            - text: 智能体运行器
+            - combobox "智能体运行器" [ref=e283]:
+              - option "Codex CLI" [selected]
+              - option "Claude Code"
+          - generic [ref=e284]:
+            - text: 任务要求
+            - textbox "任务要求" [ref=e285]:
+              - /placeholder: 描述一个只读、可审计的项目任务
+              - text: 只读检查当前项目，并用三条要点总结可验证的下一步。
+        - generic [ref=e286]:
+          - button "启动只读智能体任务" [ref=e287] [cursor=pointer]
+          - button "恢复任务历史" [ref=e288] [cursor=pointer]
+        - generic [ref=e289]:
+          - text: 尚无可展示数据
+          - paragraph [ref=e290]: 尚无智能体任务。
+      - generic [ref=e291]:
+        - heading "多 Agent 协作" [level=3] [ref=e292]
+        - paragraph [ref=e293]: 按执行模型 → 独立审稿模型 → 科研编辑模型顺序真实调用已配置的 Provider/CLI； 无密钥时诚实失败并持久化协作报告，不静默降级为成功。
+        - generic [ref=e295]:
+          - text: 协作目标
+          - textbox "协作目标" [ref=e296]:
+            - /placeholder: 描述需要多角色协作的研究目标
+            - text: 协调执行、独立审稿与编辑角色，产出可审计的多 Agent 协作报告。
+        - generic [ref=e297]:
+          - button "启动多 Agent 协作" [ref=e298] [cursor=pointer]
+          - button "刷新协作历史" [ref=e299] [cursor=pointer]
+        - generic [ref=e300]:
+          - text: 尚无可展示数据
+          - paragraph [ref=e301]: 尚无多 Agent 协作记录。

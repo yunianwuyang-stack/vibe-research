@@ -30,7 +30,7 @@ MAX_TOOL_OUTPUT_CHARS = 60_000
 MAX_COMMAND_OUTPUT_CHARS = 100_000
 MAX_RUN_STDOUT_CHARS = 250_000
 
-_ALLOWED_COMMANDS = {"python", "python3", "node", "npm", "npx", "pdflatex", "xelatex", "bibtex", "biber", "pandoc", "git", "pytest", "ruff", "mypy"}
+_ALLOWED_COMMANDS = {"python", "python3", "node", "npm", "npx", "pdflatex", "xelatex", "bibtex", "biber", "pandoc", "git", "pytest", "ruff", "mypy", "bash"}
 _SECRET_NAME = re.compile(r"(?i)(?:api[_-]?key|token|secret|password|credential|private[_-]?key)")
 _SECRET_VALUE = re.compile(r"(?i)(?:sk-[A-Za-z0-9_-]{12,}|(?:api[_-]?key|token|secret|password)\s*[=:]\s*)[^\s,;]+")
 _SAFE_ENV_NAMES = {"PATH", "SYSTEMROOT", "WINDIR", "TEMP", "TMP", "LANG", "LC_ALL", "PYTHONPATH", "NODE_PATH"}
@@ -446,6 +446,16 @@ class WorkspaceTools:
         env = dict(self.environment)
         env["VIBE_WORKSPACE"] = str(self.root)
         env["PWD"] = str(cwd)
+        # On Windows, filter out App Execution Alias stubs (Microsoft Store's python.exe
+        # reparse-point in WindowsApps) from PATH.  Those stubs cannot be launched by
+        # asyncio.create_subprocess_exec with CREATE_NO_WINDOW and raise NotImplementedError.
+        if os.name == "nt":
+            _clean_path = os.pathsep.join(
+                p for p in env.get("PATH", "").split(os.pathsep)
+                if "WindowsApps" not in p
+            )
+            if _clean_path:
+                env["PATH"] = _clean_path
         creationflags = 0
         kwargs: dict[str, Any] = {}
         if os.name == "nt":
@@ -465,9 +475,13 @@ class WorkspaceTools:
                     "powershell", path=env.get("PATH")
                 )
                 if bash:
-                    argv = [bash, "--noprofile", "--norc", "-lc", shell_text]
+                    # Use bare name so the absolute-path security check (line ~494) passes.
+                    # shutil.which() is only used to confirm bash exists in PATH; argv[0]
+                    # must stay a bare allowlisted name for create_subprocess_exec to resolve it.
+                    argv = ["bash", "--noprofile", "--norc", "-lc", shell_text]
                 elif powershell:
-                    argv = [powershell, "-NoProfile", "-NonInteractive", "-Command", shell_text]
+                    _ps_name = "pwsh" if shutil.which("pwsh", path=env.get("PATH")) else "powershell"
+                    argv = [_ps_name, "-NoProfile", "-NonInteractive", "-Command", shell_text]
                 else:
                     argv = [os.environ.get("COMSPEC", "cmd.exe"), "/d", "/s", "/c", shell_text]
             else:
@@ -489,10 +503,10 @@ class WorkspaceTools:
         if executable_name not in _ALLOWED_COMMANDS:
             raise ValueError(f"command not allowlisted: {executable_name}")
         if executable_name in {"python", "python3"} and any(
-            item in {"-m", "-"} for item in argv[1:]
+            item in {"-m", "-", "-c"} for item in argv[1:]
         ):
-            raise ValueError("interpreter module and stdin execution are not allowlisted")
-        if use_shell and executable_name not in {"python", "python3", "node", "npm", "npx"}:
+            raise ValueError("interpreter inline and module execution are not allowlisted")
+        if use_shell and executable_name not in {"python", "python3", "node", "npm", "npx", "bash"}:
             raise ValueError("shell execution is restricted to script runners")
         if os.name == "nt" and Path(argv[0]).suffix.lower() in {".cmd", ".bat"}:
             creationflags &= ~getattr(subprocess, "CREATE_NO_WINDOW", 0)

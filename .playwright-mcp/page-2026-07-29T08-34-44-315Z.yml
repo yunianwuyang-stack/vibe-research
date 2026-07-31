@@ -1,0 +1,173 @@
+- main [ref=e3]:
+  - link "跳到主要内容" [ref=e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - complementary [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]: V
+      - generic [ref=e8]:
+        - text: Vibe Research
+        - generic [ref=e9]: 研究证据工作台
+    - navigation "主导航" [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: 工作区
+        - button "工作台" [ref=e13] [cursor=pointer]:
+          - generic [ref=e14]: ⌂
+          - text: 工作台
+        - button "研究项目" [ref=e15] [cursor=pointer]:
+          - generic [ref=e16]: ◇
+          - text: 研究项目
+        - button "研究地图" [ref=e17] [cursor=pointer]:
+          - generic [ref=e18]: ◎
+          - text: 研究地图
+      - generic [ref=e19]:
+        - generic [ref=e20]: 流程与任务
+        - button "智能工作流" [active] [ref=e21] [cursor=pointer]:
+          - generic [ref=e22]: ✦
+          - text: 智能工作流
+        - button "全局运营台" [ref=e23] [cursor=pointer]:
+          - generic [ref=e24]: ⌁
+          - text: 全局运营台
+        - button "执行与产物" [ref=e25] [cursor=pointer]:
+          - generic [ref=e26]: ▤
+          - text: 执行与产物
+        - button "编辑与编译" [ref=e27] [cursor=pointer]:
+          - generic [ref=e28]: ✎
+          - text: 编辑与编译
+      - generic [ref=e29]:
+        - generic [ref=e30]: 证据与质量
+        - button "文献与证据" [ref=e31] [cursor=pointer]:
+          - generic [ref=e32]: ◎
+          - text: 文献与证据
+        - button "筛选协议" [ref=e33] [cursor=pointer]:
+          - generic [ref=e34]: ✓
+          - text: 筛选协议
+        - button "实验与复现" [ref=e35] [cursor=pointer]:
+          - generic [ref=e36]: ◌
+          - text: 实验与复现
+        - button "科学写作" [ref=e37] [cursor=pointer]:
+          - generic [ref=e38]: ≡
+          - text: 科学写作
+        - button "审批与审计" [ref=e39] [cursor=pointer]:
+          - generic [ref=e40]: ▣
+          - text: 审批与审计
+      - generic [ref=e41]:
+        - generic [ref=e42]: 系统
+        - button "设置与连接" [ref=e43] [cursor=pointer]:
+          - generic [ref=e44]: ⚙
+          - text: 设置与连接
+    - generic [ref=e45]: 桌面后端已连接
+  - generic [ref=e47]:
+    - generic [ref=e48]:
+      - generic [ref=e49]:
+        - navigation "面包屑" [ref=e50]:
+          - button "研究驾驶舱" [ref=e51] [cursor=pointer]
+          - generic [ref=e52]: /
+          - generic [ref=e53]: 智能工作流
+        - heading "智能工作流" [level=2] [ref=e131]
+      - generic [ref=e55]:
+        - generic [ref=e56]:
+          - generic [ref=e57]: 当前项目
+          - combobox "当前研究项目" [ref=e58]:
+            - option "选择研究项目" [disabled]
+            - option "数学建模" [selected]
+        - status [ref=e59]: 需要证据
+    - navigation "功能导航" [ref=e60]:
+      - button "研究驾驶舱" [ref=e61] [cursor=pointer]
+      - button "研究项目" [ref=e62] [cursor=pointer]
+      - button "研究地图" [ref=e63] [cursor=pointer]
+      - button "文献与证据" [ref=e64] [cursor=pointer]
+      - button "实验与复现" [ref=e65] [cursor=pointer]
+      - button "主张与门禁" [ref=e66] [cursor=pointer]
+      - button "科学写作" [ref=e67] [cursor=pointer]
+      - button "运行与产物" [ref=e68] [cursor=pointer]
+      - button "设置" [ref=e69] [cursor=pointer]
+    - generic [ref=e132]:
+      - generic [ref=e133]:
+        - paragraph [ref=e134]: 研究流程
+        - heading "智能工作流" [level=1] [ref=e135]
+        - paragraph [ref=e136]: 先选工作流大类，再选择具体模板。每个模板均创建真实持久化任务、执行 DAG、检查点与产物目录。
+      - tablist "工作流大类" [ref=e137]:
+        - tab "科研工作流4 个模板" [selected] [ref=e138] [cursor=pointer]:
+          - generic [ref=e139]: ✦
+          - generic [ref=e140]:
+            - strong [ref=e141]: 科研工作流
+            - generic [ref=e142]: 4 个模板
+        - tab "学术写作5 个模板" [ref=e143] [cursor=pointer]:
+          - generic [ref=e144]: ≡
+          - generic [ref=e145]:
+            - strong [ref=e146]: 学术写作
+            - generic [ref=e147]: 5 个模板
+        - tab "竞赛工作流22 个模板" [ref=e148] [cursor=pointer]:
+          - generic [ref=e149]: ◈
+          - generic [ref=e150]:
+            - strong [ref=e151]: 竞赛工作流
+            - generic [ref=e152]: 22 个模板
+        - tab "已有资料写论文1 个模板" [ref=e153] [cursor=pointer]:
+          - generic [ref=e154]: ▤
+          - generic [ref=e155]:
+            - strong [ref=e156]: 已有资料写论文
+            - generic [ref=e157]: 1 个模板
+        - tab "幻灯片 · 海报2 个模板" [ref=e158] [cursor=pointer]:
+          - generic [ref=e159]: ▣
+          - generic [ref=e160]:
+            - strong [ref=e161]: 幻灯片 · 海报
+            - generic [ref=e162]: 2 个模板
+        - tab "一句话生成项目1 个模板" [ref=e163] [cursor=pointer]:
+          - generic [ref=e164]: ➜
+          - generic [ref=e165]:
+            - strong [ref=e166]: 一句话生成项目
+            - generic [ref=e167]: 1 个模板
+        - tab "软著 · 专利3 个模板" [ref=e168] [cursor=pointer]:
+          - generic [ref=e169]: ▣
+          - generic [ref=e170]:
+            - strong [ref=e171]: 软著 · 专利
+            - generic [ref=e172]: 3 个模板
+      - generic [ref=e173]:
+        - generic [ref=e174]:
+          - paragraph [ref=e175]: 科研工作流
+          - heading "从选题、实验到审稿的完整研究闭环。" [level=3] [ref=e176]
+          - text: 当前项目：数学建模
+        - button "切换研究项目" [ref=e177] [cursor=pointer]
+      - generic [ref=e178]:
+        - article [ref=e179]:
+          - generic [ref=e180]:
+            - generic [ref=e181]: "01"
+            - generic [ref=e182]: 科研工作流
+          - heading "选题与创新点" [level=3] [ref=e183]
+          - paragraph [ref=e184]: 定位研究空白，形成可验证假设与实验计划。
+          - list [ref=e185]:
+            - listitem [ref=e186]: 文献调研
+            - listitem [ref=e187]: Idea 生成
+            - listitem [ref=e188]: 新颖性验证
+            - listitem [ref=e189]: 外部评审
+          - button "配置“选题与创新点”" [ref=e190] [cursor=pointer]
+        - article [ref=e191]:
+          - generic [ref=e192]:
+            - generic [ref=e193]: "02"
+            - generic [ref=e194]: 科研工作流
+          - heading "实验方案" [level=3] [ref=e195]
+          - paragraph [ref=e196]: 把实验方案连接到代码、结果和图表产物。
+          - list [ref=e197]:
+            - listitem [ref=e198]: 实验实现+部署+出图（需确认）
+          - button "配置“实验方案”" [ref=e199] [cursor=pointer]
+        - article [ref=e200]:
+          - generic [ref=e201]:
+            - generic [ref=e202]: "03"
+            - generic [ref=e203]: 科研工作流
+          - heading "多轮审稿" [level=3] [ref=e204]
+          - paragraph [ref=e205]: 运行多轮审稿、修改和质量复核。
+          - list [ref=e206]:
+            - listitem [ref=e207]: 自动审稿循环（需确认）
+          - button "配置“多轮审稿”" [ref=e208] [cursor=pointer]
+        - article [ref=e209]:
+          - generic [ref=e210]:
+            - generic [ref=e211]: "04"
+            - generic [ref=e212]: 科研工作流
+          - heading "完整科研流程" [level=3] [ref=e213]
+          - paragraph [ref=e214]: 文献、创新点、实验、写作、编译与改进循环。
+          - list [ref=e215]:
+            - listitem [ref=e216]: 文献调研
+            - listitem [ref=e217]: Idea 生成
+            - listitem [ref=e218]: 新颖性验证
+            - listitem [ref=e219]: 外部评审
+          - button "配置“完整科研流程”" [ref=e220] [cursor=pointer]

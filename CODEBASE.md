@@ -335,3 +335,261 @@ npm run build:release          # 打包 Windows 安装包
 | Electron 主进程 | `main.js` |
 | 会话令牌验证 | `backend/services/local_session.py` |
 
+---
+
+## 12. 工作流步骤 rc=1 故障诊断手册
+
+> 适用场景：某 workflow 步骤反复以 `rc=1` 失败并触发 auto-retry（日志显示 `auto-retry attempt N/8`），  
+> 而非业务逻辑返回失败（例如 AI 报告内容不合格）。
+
+---
+
+### 12.1 rc=1 的两种含义
+
+| 来源 | 含义 | 如何区分 |
+|---|---|---|
+| **工具调用被 sandbox 拒绝** | `run_command` 抛出 `ValueError`，agent 的工具返回 `{"ok":false,"error":"..."}` | 日志含 `command not allowlisted` / `not allowlisted` / `WorkspaceBoundaryError` |
+| **业务校验失败** | `check_*.py` 等脚本发现内容错误，正常退出码 1 | 日志含 `ERROR:` 前缀的校验输出行，无 allowlist 字样 |
+| **OS 层面进程创建失败** | `asyncio.create_subprocess_exec` 抛出底层异常，工具返回 `{"ok":false,"error":"NotImplementedError: "}` | 日志含 `NotImplementedError: `（消息为空），且 `python --version` 等最基础命令也同样失败 |
+
+**首先区分这三类**。本手册主要针对第一类（sandbox 拒绝）和第三类（OS 级别失败，见 12.8）。
+
+---
+
+### 12.2 Sandbox 限制速查（`WorkspaceTools`）
+
+核心类：`backend/services/openai_responses_agent.py` → `WorkspaceTools`
+
+#### 允许的命令（`_ALLOWED_COMMANDS`，约第 33 行）
+```python
+{"python", "python3", "node", "npm", "npx", "pdflatex", "xelatex",
+ "bibtex", "biber", "pandoc", "git", "pytest", "ruff", "mypy", "bash"}
+```
+**不在此集合内的命令一律报 `command not allowlisted: <name>`。**
+
+#### python/python3 额外限制（约第 491 行）
+```python
+if executable_name in {"python", "python3"} and any(
+    item in {"-m", "-", "-c"} for item in argv[1:]
+):
+    raise ValueError("interpreter inline and module execution are not allowlisted")
+```
+- **`-c`**（内联代码）、**`-m`**（模块）、**`-`**（stdin）均被禁止。
+- 只能用 `python3 <script.py> [args]` 形式运行 Python。
+
+#### bash 限制（约第 495 行）
+- `bash` 在 `_ALLOWED_COMMANDS` 中，允许 `bash -c "..."` 形式。
+- 其他命令若通过 bash 子进程调用（如 `grep`、`awk`），不受 allowlist 约束——bash 是 argv[0]，grep 是 bash 内部调用。
+
+#### Workspace 边界
+- 任何读写操作若路径解析到 workspace 根目录之外 → `WorkspaceBoundaryError`。
+- workspace 根 = 该步骤对应的运行时目录（如 `runtime/workspaces/<id>/`）。
+
+---
+
+### 12.3 SKILL.md 中的常见陷阱
+
+以下写法会导致 agent 调用失败（历史上已踩过的坑）：
+
+| 写法 | 错误原因 | 正确替代 |
+|---|---|---|
+| `` ```bash\nwc -c < file\n``` `` | `wc` 不在 allowlist | 用 `python3 _utils/check_*.py` |
+| `python3 - <<'PY'\n...\nPY` | stdin 模式 `-` 被禁止 | 把脚本存为 `.py` 文件，用 `python3 script.py` 调用 |
+| `python3 -c "import re; ..."` | `-c` 被禁止 | 同上，存为脚本文件 |
+| `cmd 2>&1 \| tee out.txt` | pipe 是 shell 语法，`run_command` 不经 shell 解释 | 分两步：先 `run_command` 捕获输出，再 `write` 写文件 |
+| `grep -c / grep -q` 作为顶层命令 | `grep` 不在 allowlist | 用 `python3 -` 脚本（存文件）或 `bash -c "grep ..."` |
+| 路径写 `.vibe-skills/<skill>/references/xxx.md` | 若文件实际在 `_utils/`，路径不符导致 `WorkspaceBoundaryError` | 核对挂载映射（见 12.4） |
+
+---
+
+### 12.4 workspace 目录挂载映射
+
+运行时 workspace 内的目录名 ↔ 源码目录：
+
+| workspace 内路径 | 源码目录 |
+|---|---|
+| `_utils/` | `skills/shared-scripts/` |
+| `.vibe-skills/<skill-name>/` | `skills/<skill-name>/` |
+| `PROBLEM_ANALYSIS.md` 等工件 | 上一步骤产出，位于 workspace 根 |
+
+**因此：**  
+- 跨 skill 的共享脚本放 `skills/shared-scripts/`，在 SKILL.md 里引用为 `_utils/<script>.py`。  
+- Skill 自身的私有文件（如 `methods_table.md`）在 SKILL.md 里引用为 `.vibe-skills/<skill-name>/references/<file>`，这是合法路径。
+
+---
+
+### 12.5 诊断步骤（遇到 rc=1 时的操作顺序）
+
+```
+1. 打开该步骤的完整日志（WorkspaceTools 日志 / SSE 事件流）
+   └─ 搜索关键词：allowlisted | WorkspaceBoundaryError | ERROR | rc=1
+
+2. 如果含 "not allowlisted"
+   ├─ 找出被拒绝的命令名（错误信息里的 <name>）
+   ├─ 在对应 SKILL.md 里全文搜索该命令
+   └─ 按 12.3 的映射表替换为合规写法
+
+3. 如果含 "WorkspaceBoundaryError"
+   ├─ 找出违规路径
+   ├─ 对照 12.4 的挂载映射，核对路径是否写错
+   └─ 修正为正确的 workspace 内相对路径
+
+4. 如果含 "interpreter inline and module execution are not allowlisted"
+   ├─ SKILL.md 里有 python3 -c / python3 -m / python3 - <<'PY' 写法
+   └─ 提取 heredoc/inline 代码，另存为 skills/shared-scripts/<name>.py，
+      在 SKILL.md 里改用 python3 _utils/<name>.py
+
+4b. 如果含 "NotImplementedError: "（错误消息为空字符串）
+   ├─ 特征：python --version、python3 script.py 等最基础命令全部失败
+   ├─ 原因：Windows PATH 中 Microsoft Store 的 python.exe stub（app execution alias）
+   │        排在真实 Python 之前；该 stub 在 CREATE_NO_WINDOW 模式下无法被
+   │        asyncio.create_subprocess_exec 启动，ProactorEventLoop 报 NotImplementedError
+   ├─ 立即修（无需重启后端）：
+   │        Windows 设置 → 应用 → 高级应用设置 → 应用执行别名
+   │        → 关闭 python.exe 和 python3.exe 的开关
+   │        关闭后 WindowsApps 目录中的 stub 文件被删除，subprocess 自动回落到
+   │        PATH 后续条目中的真实 Python（如 AppData\Local\Python\bin\python.exe）
+   └─ 代码修（重启后端后永久生效）：
+            openai_responses_agent.py 的 _run_command 方法已在构建 subprocess
+            环境变量时过滤掉 PATH 中所有含 "WindowsApps" 的条目（见 12.8）
+
+5. 如果日志只有业务 ERROR（check 脚本输出）而无 allowlist 字样
+   └─ 这是正常的内容质量门控，不是 sandbox 问题，应修复报告内容
+
+6. 修改 SKILL.md 后，若 backend 代码也有变动，重启 FastAPI（端口 18088）
+```
+
+---
+
+### 12.6 已知根因修复记录（2026-07-30）
+
+针对 `comp-modeling` / `comp-code` workflow 的 `rc=1` 循环，本次修复了以下问题：
+
+| 文件 | 修复内容 |
+|---|---|
+| `skills/comp-modeling/SKILL.md` | 4处 `error_prevention.md` 路径错误（`.vibe-skills/...` → `_utils/`）|
+| `skills/comp-modeling/SKILL.md` | PASS gate `wc -c` bash块 → `python3 _utils/check_modeling.py` |
+| `skills/comp-modeling/SKILL.md` | 大bash自检块（grep -c/q 等）→ `python3 _utils/check_modeling.py` |
+| `skills/comp-modeling/SKILL.md` | `facts_audit 2>&1 \| tee` pipe → 分步显式写入 |
+| `skills/comp-modeling/SKILL.md` | LaTeX扫描 `python3 - <<'PY'` heredoc → `python3 _utils/check_latex.py` |
+| `skills/shared-scripts/check_modeling.py` | 新增：替代全部bash校验逻辑的Python脚本 |
+| `skills/shared-scripts/check_latex.py` | 新增：替代heredoc的LaTeX裸命令扫描脚本 |
+| `backend/services/openai_responses_agent.py` | `-c` 加入python屏蔽集；错误消息与测试用例对齐 |
+| `backend/services/openai_responses_agent.py` | `_run_command` 中在构建子进程环境时过滤 PATH 里的 `WindowsApps` 条目，防止 Store python.exe stub 引发 `NotImplementedError`（见 12.8）|
+| `backend/services/openai_responses_agent.py` | `use_shell=True` 分支中 `argv[0]` 由 `shutil.which` 绝对路径改为裸名，防止安全检查自我误杀（见 12.9）|
+
+---
+
+### 12.8 Windows App Execution Alias 引发的 NotImplementedError
+
+#### 症状
+所有 `run_command` 工具调用——包括 `python --version` 这类最基础的命令——均返回：
+```json
+{"ok": false, "error": "NotImplementedError: "}
+```
+（注意错误消息为**空字符串**，区别于 `ValueError: command not allowlisted`）
+
+#### 根因
+Windows 在 `%APPDATA%\Local\Microsoft\WindowsApps\` 目录中放置了 Microsoft Store 的
+Python **app execution alias**（零字节 reparse point 文件 `python.exe` / `python3.exe`）。  
+该目录通常排在系统 PATH 的前列，真实 Python（如 `AppData\Local\Python\bin\`）排在其后。
+
+`_run_command` 使用 `asyncio.create_subprocess_exec` + `CREATE_NO_WINDOW` 标志创建子进程。
+在无窗口的非交互上下文中，Store stub 的 reparse point 重定向机制无法触发，
+`ProactorEventLoop` 内部的 Windows IOCP 调用返回错误，Python 将其暴露为 `NotImplementedError`（无消息）。
+
+#### 验证方法
+```
+where python
+```
+若第一行为 `...\WindowsApps\python.exe` → 即为此问题。
+
+#### 修复（二选一，或两者均做）
+
+**A. 系统级修复（立即生效，无需重启后端）**
+
+> Windows 设置 → 应用 → 高级应用设置 → 应用执行别名  
+> 将 **python.exe** 和 **python3.exe** 的开关关闭。
+
+关闭后 `WindowsApps\python.exe` 文件被移除，`CreateProcess` 解析 `python` 时自动跳至
+PATH 后续条目中的真实可执行文件。
+
+**B. 代码级修复（重启后端后永久生效）**
+
+`backend/services/openai_responses_agent.py` → `WorkspaceTools._run_command`，
+在构建 subprocess 环境变量字典之后、调用 `asyncio.create_subprocess_exec` 之前：
+
+```python
+if os.name == "nt":
+    _clean_path = os.pathsep.join(
+        p for p in env.get("PATH", "").split(os.pathsep)
+        if "WindowsApps" not in p
+    )
+    if _clean_path:
+        env["PATH"] = _clean_path
+```
+
+此段代码已于 2026-07-30 写入（约第 452 行）。重启 FastAPI 后对所有后续 workflow 均生效。
+
+---
+
+### 12.9 `shell=true` + `shutil.which` 绝对路径触发安全检查自我误杀
+
+#### 症状
+agent 调用 `run_command` 时设置 `"shell": true`（如环境检查或多命令 bash 脚本），返回：
+```json
+{"ok": false, "error": "ValueError: command path must be a bare allowlisted program name"}
+```
+命令本身是 `bash`（在白名单内），但仍报此错误。
+
+#### 根因
+`_run_command` 的 `use_shell=True` 分支（Windows 路径）调用 `shutil.which("bash")` 确认
+bash 是否存在，然后**将其返回的绝对路径直接用作 `argv[0]`**：
+
+```python
+# 有问题的原始代码
+bash = shutil.which("bash", path=env.get("PATH"))
+if bash:
+    argv = [bash, "--noprofile", "--norc", "-lc", shell_text]
+    #        ^^^^ 例如 "C:\Program Files\Git\usr\bin\bash.exe"
+```
+
+随后第 494 行的安全检查：
+```python
+if Path(raw_executable).is_absolute() or "/" in raw_executable or "\\" in raw_executable:
+    raise ValueError("command path must be a bare allowlisted program name")
+```
+绝对路径中含有 `\\`，触发异常——sandbox 的安全检查把自己逻辑误杀。
+
+#### 修复（2026-07-30，已写入）
+`shutil.which` 仅用于存在性探测，`argv[0]` 改为裸名，由 `create_subprocess_exec` 通过
+过滤后的 `env["PATH"]` 自行解析：
+
+```python
+if bash:
+    # Use bare name so the absolute-path security check passes.
+    argv = ["bash", "--noprofile", "--norc", "-lc", shell_text]
+elif powershell:
+    _ps_name = "pwsh" if shutil.which("pwsh", path=env.get("PATH")) else "powershell"
+    argv = [_ps_name, "-NoProfile", "-NonInteractive", "-Command", shell_text]
+```
+
+**重启后端后生效。** 配合 12.8 的 WindowsApps PATH 过滤，重启后两个问题均消除。
+
+---
+
+### 12.7 添加新命令到 allowlist
+
+若确实需要某命令（如 `jq`、`ffmpeg`），在 `backend/services/openai_responses_agent.py` 约第 33 行修改：
+
+```python
+_ALLOWED_COMMANDS = {
+    "python", "python3", "node", "npm", "npx",
+    "pdflatex", "xelatex", "bibtex", "biber",
+    "pandoc", "git", "pytest", "ruff", "mypy", "bash",
+    # 在此追加
+    "jq",
+}
+```
+
+修改后需重启后端。**不要在 SKILL.md 里写未在此集合中的命令名作为顶层调用。**

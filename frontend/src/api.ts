@@ -188,7 +188,16 @@ export const getWorkflowRunCenter=(workflowId:string)=>api<WorkflowRunCenter>(`/
 export const listWorkflowOperations=(filters:{project_id?:string;status?:string;limit?:number;offset?:number}={})=>{const query=new URLSearchParams(); if(filters.project_id)query.set('project_id',filters.project_id); if(filters.status)query.set('status',filters.status); query.set('limit',String(filters.limit??200)); query.set('offset',String(filters.offset??0)); return api<WorkflowOperationsSnapshot>(`/api/workflows/operations?${query.toString()}`)};
 export const getWorkflowOperationsDetail=(workflowId:string)=>api<WorkflowOperationsDetail>(`/api/workflows/operations/${encodeURIComponent(workflowId)}`);
 export const retryWorkflowStep=(workflowId:string,skillName:string,reason:string)=>api<{ok:boolean;operation_id:string;workflow_id:string;skill_name:string;status:'accepted'}>(`/api/workflows/${encodeURIComponent(workflowId)}/steps/${encodeURIComponent(skillName)}/retry`,{method:'POST',body:JSON.stringify({reason,requested_by:'researcher'})});
-export const recoverWorkflow=(workflowId:string,reason:string)=>api<{ok:boolean;operation_id:string;workflow_id:string;skill_name:string;status:'accepted'}>(`/api/workflows/${encodeURIComponent(workflowId)}/recover`,{method:'POST',body:JSON.stringify({reason,requested_by:'researcher'})});
+export const recoverWorkflow=async(workflowId:string,reason:string)=>{
+  for(let attempt=0;attempt<3;attempt++){
+    try{
+      return await api<{ok:boolean;operation_id:string;workflow_id:string;skill_name:string;status:'accepted'}>(`/api/workflows/${encodeURIComponent(workflowId)}/recover`,{method:'POST',body:JSON.stringify({reason,requested_by:'researcher'})});
+    }catch(e){
+      if(attempt<2) await new Promise(r=>setTimeout(r,1000*(attempt+1)));
+      else throw e;
+    }
+  }
+};
 export async function streamWorkflowOperationsEvents(filters:{after_id?:number;project_id?:string;workflow_id?:string},onEvent:(event:WorkflowOperationsEvent)=>void,signal:AbortSignal):Promise<void>{
   const query=new URLSearchParams();
   if(filters.after_id)query.set('after_id',String(filters.after_id));

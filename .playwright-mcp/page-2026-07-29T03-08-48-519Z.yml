@@ -1,0 +1,141 @@
+- main [ref=e3]:
+  - link "跳到主要内容" [ref=e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - complementary [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]: V
+      - generic [ref=e8]:
+        - text: Vibe Research
+        - generic [ref=e9]: 研究证据工作台
+    - navigation "主导航" [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: 工作区
+        - button "工作台" [ref=e13] [cursor=pointer]:
+          - generic [ref=e14]: ⌂
+          - text: 工作台
+        - button "研究项目" [ref=e15] [cursor=pointer]:
+          - generic [ref=e16]: ◇
+          - text: 研究项目
+        - button "研究地图" [ref=e17] [cursor=pointer]:
+          - generic [ref=e18]: ◎
+          - text: 研究地图
+      - generic [ref=e19]:
+        - generic [ref=e20]: 流程与任务
+        - button "智能工作流" [ref=e21] [cursor=pointer]:
+          - generic [ref=e22]: ✦
+          - text: 智能工作流
+        - button "全局运营台" [ref=e23] [cursor=pointer]:
+          - generic [ref=e24]: ⌁
+          - text: 全局运营台
+        - button "执行与产物" [ref=e25] [cursor=pointer]:
+          - generic [ref=e26]: ▤
+          - text: 执行与产物
+        - button "编辑与编译" [ref=e27] [cursor=pointer]:
+          - generic [ref=e28]: ✎
+          - text: 编辑与编译
+      - generic [ref=e29]:
+        - generic [ref=e30]: 证据与质量
+        - button "文献与证据" [ref=e31] [cursor=pointer]:
+          - generic [ref=e32]: ◎
+          - text: 文献与证据
+        - button "筛选协议" [ref=e33] [cursor=pointer]:
+          - generic [ref=e34]: ✓
+          - text: 筛选协议
+        - button "实验与复现" [ref=e35] [cursor=pointer]:
+          - generic [ref=e36]: ◌
+          - text: 实验与复现
+        - button "科学写作" [ref=e37] [cursor=pointer]:
+          - generic [ref=e38]: ≡
+          - text: 科学写作
+        - button "审批与审计" [ref=e39] [cursor=pointer]:
+          - generic [ref=e40]: ▣
+          - text: 审批与审计
+      - generic [ref=e41]:
+        - generic [ref=e42]: 系统
+        - button "设置与连接" [ref=e43] [cursor=pointer]:
+          - generic [ref=e44]: ⚙
+          - text: 设置与连接
+    - generic [ref=e45]: 桌面后端已连接
+  - generic [ref=e47]:
+    - generic [ref=e48]:
+      - generic [ref=e49]:
+        - navigation "面包屑" [ref=e50]:
+          - button "研究驾驶舱" [ref=e51] [cursor=pointer]
+          - generic [ref=e52]: /
+          - generic [ref=e53]: 工作台
+        - heading "工作台" [level=2] [ref=e54]
+      - generic [ref=e55]:
+        - generic [ref=e56]:
+          - generic [ref=e57]: 当前项目
+          - combobox "当前研究项目" [ref=e58]:
+            - option "选择研究项目" [disabled] [selected]
+        - status [ref=e59]: 需要建立项目
+    - navigation "功能导航" [ref=e60]:
+      - button "研究驾驶舱" [ref=e61] [cursor=pointer]
+      - button "研究项目" [ref=e62] [cursor=pointer]
+      - button "研究地图" [ref=e63] [cursor=pointer]
+      - button "文献与证据" [ref=e64] [cursor=pointer]
+      - button "实验与复现" [ref=e65] [cursor=pointer]
+      - button "主张与门禁" [ref=e66] [cursor=pointer]
+      - button "科学写作" [ref=e67] [cursor=pointer]
+      - button "运行与产物" [ref=e68] [cursor=pointer]
+      - button "设置" [ref=e69] [cursor=pointer]
+    - status [ref=e70]: 正在处理请求
+    - region "研究驾驶舱" [ref=e71]:
+      - generic [ref=e72]:
+        - generic [ref=e73]:
+          - paragraph [ref=e74]: Research Cockpit
+          - heading "研究驾驶舱" [level=1] [ref=e75]
+          - paragraph [ref=e76]: 项目、下一动作、阻断、证据覆盖、最近运行与稿件状态 — 一次看清。
+        - status [ref=e77]:
+          - generic [ref=e79]: 本地后端已连接
+      - generic [ref=e80]:
+        - article [ref=e81]:
+          - generic [ref=e82]:
+            - heading "当前项目" [level=2] [ref=e83]
+            - generic [ref=e84]: 未建立
+          - paragraph [ref=e85]: 未选择项目
+          - paragraph [ref=e86]: 尚未写入研究问题
+          - button "管理项目" [ref=e87] [cursor=pointer]
+        - article [ref=e88]:
+          - heading "下一研究动作" [level=2] [ref=e90]
+          - paragraph [ref=e91]: 建立或选择研究项目
+          - paragraph [ref=e92]: 等待依赖完成后启动
+          - button "执行下一动作" [ref=e93] [cursor=pointer]
+        - article [ref=e94]:
+          - generic [ref=e95]:
+            - heading "阻断" [level=2] [ref=e96]
+            - generic [ref=e97]: "1"
+          - list [ref=e98]:
+            - listitem [ref=e99]:
+              - generic [ref=e100]:
+                - generic [ref=e101]: 尚未选择或建立研究项目
+                - generic [ref=e102]: 建立研究合同或选择已有项目
+              - button "修复" [ref=e103] [cursor=pointer]
+        - article [ref=e104]:
+          - generic [ref=e105]:
+            - heading "证据覆盖" [level=2] [ref=e106]
+            - generic [ref=e107]: 0%
+          - paragraph [ref=e108]: 已核验 0 / 总计 0
+          - meter "证据覆盖率" [ref=e109]
+          - button "打开证据" [ref=e110] [cursor=pointer]
+        - article [ref=e111]:
+          - generic [ref=e112]:
+            - heading "最近运行" [level=2] [ref=e113]
+            - button "全部运行" [ref=e114] [cursor=pointer]
+          - paragraph [ref=e115]: 尚无运行记录
+        - article [ref=e116]:
+          - generic [ref=e117]:
+            - heading "稿件状态" [level=2] [ref=e118]
+            - generic [ref=e119]: 已阻断
+          - paragraph [ref=e120]: 查看阻断原因并补齐依赖
+          - button "打开稿件" [ref=e121] [cursor=pointer]
+      - navigation "功能路由" [ref=e122]:
+        - button "研究项目" [ref=e123] [cursor=pointer]
+        - button "研究地图" [ref=e124] [cursor=pointer]
+        - button "文献与证据" [ref=e125] [cursor=pointer]
+        - button "实验与复现" [ref=e126] [cursor=pointer]
+        - button "主张与门禁" [ref=e127] [cursor=pointer]
+        - button "科学写作" [ref=e128] [cursor=pointer]
+        - button "运行与产物" [ref=e129] [cursor=pointer]
+        - button "设置" [ref=e130] [cursor=pointer]

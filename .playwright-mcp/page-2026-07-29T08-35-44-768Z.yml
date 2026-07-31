@@ -1,0 +1,325 @@
+- main [ref=e3]:
+  - link "跳到主要内容" [ref=e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - complementary [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]: V
+      - generic [ref=e8]:
+        - text: Vibe Research
+        - generic [ref=e9]: 研究证据工作台
+    - navigation "主导航" [ref=e10]:
+      - generic [ref=e11]:
+        - generic [ref=e12]: 工作区
+        - button "工作台" [ref=e13] [cursor=pointer]:
+          - generic [ref=e14]: ⌂
+          - text: 工作台
+        - button "研究项目" [ref=e15] [cursor=pointer]:
+          - generic [ref=e16]: ◇
+          - text: 研究项目
+        - button "研究地图" [ref=e17] [cursor=pointer]:
+          - generic [ref=e18]: ◎
+          - text: 研究地图
+      - generic [ref=e19]:
+        - generic [ref=e20]: 流程与任务
+        - button "智能工作流" [ref=e21] [cursor=pointer]:
+          - generic [ref=e22]: ✦
+          - text: 智能工作流
+        - button "全局运营台" [active] [ref=e23] [cursor=pointer]:
+          - generic [ref=e24]: ⌁
+          - text: 全局运营台
+        - button "执行与产物" [ref=e25] [cursor=pointer]:
+          - generic [ref=e26]: ▤
+          - text: 执行与产物
+        - button "编辑与编译" [ref=e27] [cursor=pointer]:
+          - generic [ref=e28]: ✎
+          - text: 编辑与编译
+      - generic [ref=e29]:
+        - generic [ref=e30]: 证据与质量
+        - button "文献与证据" [ref=e31] [cursor=pointer]:
+          - generic [ref=e32]: ◎
+          - text: 文献与证据
+        - button "筛选协议" [ref=e33] [cursor=pointer]:
+          - generic [ref=e34]: ✓
+          - text: 筛选协议
+        - button "实验与复现" [ref=e35] [cursor=pointer]:
+          - generic [ref=e36]: ◌
+          - text: 实验与复现
+        - button "科学写作" [ref=e37] [cursor=pointer]:
+          - generic [ref=e38]: ≡
+          - text: 科学写作
+        - button "审批与审计" [ref=e39] [cursor=pointer]:
+          - generic [ref=e40]: ▣
+          - text: 审批与审计
+      - generic [ref=e41]:
+        - generic [ref=e42]: 系统
+        - button "设置与连接" [ref=e43] [cursor=pointer]:
+          - generic [ref=e44]: ⚙
+          - text: 设置与连接
+    - generic [ref=e45]: 桌面后端已连接
+  - generic [ref=e47]:
+    - generic [ref=e48]:
+      - generic [ref=e49]:
+        - navigation "面包屑" [ref=e50]:
+          - button "研究驾驶舱" [ref=e51] [cursor=pointer]
+          - generic [ref=e52]: /
+          - generic [ref=e53]: 全局运营台
+        - heading "全局运营台" [level=2] [ref=e221]
+      - generic [ref=e55]:
+        - generic [ref=e56]:
+          - generic [ref=e57]: 当前项目
+          - combobox "当前研究项目" [ref=e58]:
+            - option "选择研究项目" [disabled]
+            - option "数学建模" [selected]
+        - status [ref=e59]: 需要证据
+    - navigation "功能导航" [ref=e60]:
+      - button "研究驾驶舱" [ref=e61] [cursor=pointer]
+      - button "研究项目" [ref=e62] [cursor=pointer]
+      - button "研究地图" [ref=e63] [cursor=pointer]
+      - button "文献与证据" [ref=e64] [cursor=pointer]
+      - button "实验与复现" [ref=e65] [cursor=pointer]
+      - button "主张与门禁" [ref=e66] [cursor=pointer]
+      - button "科学写作" [ref=e67] [cursor=pointer]
+      - button "运行与产物" [ref=e68] [cursor=pointer]
+      - button "设置" [ref=e69] [cursor=pointer]
+    - region "跨项目工作流运营台" [ref=e222]:
+      - generic [ref=e223]:
+        - generic [ref=e224]:
+          - paragraph [ref=e225]: RESEARCH OPERATIONS / LIVE
+          - heading "全局工作流运营台" [level=1] [ref=e226]
+          - paragraph [ref=e227]: 跨项目观察执行 DAG、持久日志、节点尝试与产物血缘；恢复动作由真实执行器受理，而不是只改变界面状态。
+        - status [ref=e228]:
+          - generic [ref=e230]: 事件流已连接
+          - generic [ref=e231]: "事件 #838"
+      - generic "运行汇总" [ref=e232]:
+        - article [ref=e233]:
+          - generic [ref=e234]: 全部运行
+          - strong [ref=e235]: "1"
+          - generic [ref=e236]: 持久化工作流
+        - article [ref=e237]:
+          - generic [ref=e238]: 正在执行
+          - strong [ref=e239]: "1"
+          - generic [ref=e240]: 持久化工作流
+        - article [ref=e241]:
+          - generic [ref=e242]: 可恢复
+          - strong [ref=e243]: "0"
+          - generic [ref=e244]: 具有失败/中断恢复目标
+        - article [ref=e245]:
+          - generic [ref=e246]: 失败
+          - strong [ref=e247]: "0"
+          - generic [ref=e248]: 持久化工作流
+        - article [ref=e249]:
+          - generic [ref=e250]: 已暂停
+          - strong [ref=e251]: "0"
+          - generic [ref=e252]: 持久化工作流
+        - article [ref=e253]:
+          - generic [ref=e254]: 已完成
+          - strong [ref=e255]: "0"
+          - generic [ref=e256]: 持久化工作流
+      - generic [ref=e257]:
+        - generic [ref=e258]:
+          - generic [ref=e259]: 项目范围
+          - combobox "项目范围" [ref=e260]:
+            - option "全部研究项目" [selected]
+            - option "数学建模"
+        - generic [ref=e261]:
+          - generic [ref=e262]: 执行状态
+          - combobox "执行状态" [ref=e263]:
+            - option "全部状态" [selected]
+            - option "运行中"
+            - option "失败"
+            - option "已暂停"
+            - option "待启动"
+            - option "已完成"
+        - generic [ref=e264]:
+          - generic [ref=e265]: 定位运行
+          - textbox "定位运行" [ref=e266]:
+            - /placeholder: 项目、模板、当前节点或运行 ID
+        - button "刷新快照" [ref=e267] [cursor=pointer]
+        - button "新建工作流" [ref=e268] [cursor=pointer]
+      - generic [ref=e269]:
+        - complementary "跨项目运行队列" [ref=e270]:
+          - generic [ref=e271]:
+            - generic [ref=e272]:
+              - generic [ref=e273]: RUN QUEUE
+              - generic [ref=e274]: 1 / 1
+            - generic [ref=e275]: 按更新时间聚合
+          - button "数学建模 NIPT 的时点选择与胎儿的异常判定 运行中 comp-prob-analysis 完成度 0% 0/7 节点 46 个产物 2026/7/29 08:19:55 [RETRY] 步骤退出码 rc=1, 自动重试 (attempt 4/8)" [ref=e277] [cursor=pointer]:
+            - generic [ref=e278]: 数学建模
+            - generic [ref=e279]:
+              - generic [ref=e280]: NIPT 的时点选择与胎儿的异常判定
+              - emphasis [ref=e281]: 运行中
+            - generic [ref=e282]: comp-prob-analysis
+            - generic "完成度 0%" [ref=e283]
+            - generic [ref=e284]:
+              - generic [ref=e285]: 0/7 节点
+              - generic [ref=e286]: 46 个产物
+              - generic [ref=e287]: 2026/7/29 08:19:55
+            - generic [ref=e288]: "[RETRY] 步骤退出码 rc=1, 自动重试 (attempt 4/8)"
+        - main [ref=e289]:
+          - generic [ref=e290]:
+            - generic [ref=e291]:
+              - generic [ref=e292]:
+                - generic [ref=e293]: 数学建模
+                - generic [ref=e294]: /
+                - code [ref=e295]: 31daf498ab06
+              - heading "NIPT 的时点选择与胎儿的异常判定" [level=2] [ref=e296]
+              - paragraph [ref=e297]: comp_cumcm · 当前节点 comp-prob-analysis
+              - generic "传输执行保证状态" [ref=e298]:
+                - generic [ref=e299]:
+                  - generic [ref=e300]: 传输unknown
+                  - generic [ref=e301]: 执行in_progress
+                  - generic [ref=e302]: 保证blocked
+                - generic [ref=e303]: 根因：workflow_not_terminal · 修复动作：Wait for execution to finish; intermediate artifacts are not publishable.
+            - generic [ref=e304]:
+              - generic [ref=e305]: 运行中
+              - button "项目运行中心" [ref=e306] [cursor=pointer]
+              - button "打开产物编辑器" [ref=e307] [cursor=pointer]
+          - region "失败恢复控制" [ref=e308]:
+            - generic [ref=e309]:
+              - generic [ref=e310]: RECOVERY COMMAND
+              - generic [ref=e311]: 当前没有待恢复节点
+              - generic [ref=e312]: 每次恢复都会新建 attempt 和 recovery operation，旧日志与产物哈希保持不变。
+            - generic [ref=e313]:
+              - generic [ref=e314]: 恢复原因（写入审计）
+              - textbox "恢复原因（写入审计）" [ref=e315]: 研究者确认从最近失败节点恢复，并保留既有成功产物与审计记录。
+            - button "从失败点恢复" [disabled] [ref=e316]
+          - tablist "运行证据视图" [ref=e317]:
+            - button "执行 DAG" [ref=e318] [cursor=pointer]
+            - button "持久日志 743" [ref=e319] [cursor=pointer]
+            - button "产物血缘 46" [ref=e320] [cursor=pointer]
+            - button "尝试与恢复 10" [ref=e321] [cursor=pointer]
+          - region "持久化执行 DAG" [ref=e323]:
+            - article [ref=e324]:
+              - generic [ref=e326]: "01"
+              - generic [ref=e328]:
+                - generic [ref=e329]:
+                  - generic [ref=e330]:
+                    - code [ref=e331]: comp-prob-analysis
+                    - heading "赛题分析" [level=3] [ref=e332]
+                  - generic [ref=e333]: 运行中
+                - generic [ref=e334]:
+                  - generic [ref=e335]:
+                    - term [ref=e336]: 开始
+                    - definition [ref=e337]: 2026/7/29 16:19:55
+                  - generic [ref=e338]:
+                    - term [ref=e339]: 完成
+                    - definition [ref=e340]: —
+                  - generic [ref=e341]:
+                    - term [ref=e342]: 声明产物
+                    - definition [ref=e343]: "1"
+                - paragraph [ref=e344]: PROBLEM_ANALYSIS.md
+            - article [ref=e345]:
+              - generic [ref=e347]: "02"
+              - generic [ref=e349]:
+                - generic [ref=e350]:
+                  - generic [ref=e351]:
+                    - code [ref=e352]: comp-modeling
+                    - heading "建模求解" [level=3] [ref=e353]
+                  - generic [ref=e354]: 待启动
+                - generic [ref=e355]:
+                  - generic [ref=e356]:
+                    - term [ref=e357]: 开始
+                    - definition [ref=e358]: —
+                  - generic [ref=e359]:
+                    - term [ref=e360]: 完成
+                    - definition [ref=e361]: —
+                  - generic [ref=e362]:
+                    - term [ref=e363]: 声明产物
+                    - definition [ref=e364]: "1"
+                - paragraph [ref=e365]: MODELING_REPORT.md
+            - article [ref=e366]:
+              - generic [ref=e368]: "03"
+              - generic [ref=e370]:
+                - generic [ref=e371]:
+                  - generic [ref=e372]:
+                    - code [ref=e373]: comp-code
+                    - heading "编程实现" [level=3] [ref=e374]
+                  - generic [ref=e375]: 待启动
+                - generic [ref=e376]:
+                  - generic [ref=e377]:
+                    - term [ref=e378]: 开始
+                    - definition [ref=e379]: —
+                  - generic [ref=e380]:
+                    - term [ref=e381]: 完成
+                    - definition [ref=e382]: —
+                  - generic [ref=e383]:
+                    - term [ref=e384]: 声明产物
+                    - definition [ref=e385]: "2"
+                - paragraph [ref=e386]: code/main.py · RESULTS.md
+            - article [ref=e387]:
+              - generic [ref=e389]: "04"
+              - generic [ref=e391]:
+                - generic [ref=e392]:
+                  - generic [ref=e393]:
+                    - code [ref=e394]: paper-figure
+                    - heading "图表生成" [level=3] [ref=e395]
+                  - generic [ref=e396]: 待启动
+                - generic [ref=e397]:
+                  - generic [ref=e398]:
+                    - term [ref=e399]: 开始
+                    - definition [ref=e400]: —
+                  - generic [ref=e401]:
+                    - term [ref=e402]: 完成
+                    - definition [ref=e403]: —
+                  - generic [ref=e404]:
+                    - term [ref=e405]: 声明产物
+                    - definition [ref=e406]: "1"
+                - paragraph [ref=e407]: figures/latex_includes.tex
+            - article [ref=e408]:
+              - generic [ref=e410]: "05"
+              - generic [ref=e412]:
+                - generic [ref=e413]:
+                  - generic [ref=e414]:
+                    - code [ref=e415]: paper-figure-html
+                    - heading "流程与架构图绘制" [level=3] [ref=e416]
+                  - generic [ref=e417]: 待启动
+                - generic [ref=e418]:
+                  - generic [ref=e419]:
+                    - term [ref=e420]: 开始
+                    - definition [ref=e421]: —
+                  - generic [ref=e422]:
+                    - term [ref=e423]: 完成
+                    - definition [ref=e424]: —
+                  - generic [ref=e425]:
+                    - term [ref=e426]: 声明产物
+                    - definition [ref=e427]: "1"
+                - paragraph [ref=e428]: figures/latex_includes.tex
+            - article [ref=e429]:
+              - generic [ref=e431]: "06"
+              - generic [ref=e433]:
+                - generic [ref=e434]:
+                  - generic [ref=e435]:
+                    - code [ref=e436]: comp-paper-zh
+                    - heading "竞赛论文撰写" [level=3] [ref=e437]
+                  - generic [ref=e438]: 待启动
+                - generic [ref=e439]:
+                  - generic [ref=e440]:
+                    - term [ref=e441]: 开始
+                    - definition [ref=e442]: —
+                  - generic [ref=e443]:
+                    - term [ref=e444]: 完成
+                    - definition [ref=e445]: —
+                  - generic [ref=e446]:
+                    - term [ref=e447]: 声明产物
+                    - definition [ref=e448]: "1"
+                - paragraph [ref=e449]: paper/main.tex
+            - article [ref=e450]:
+              - generic [ref=e452]: "07"
+              - generic [ref=e453]:
+                - generic [ref=e454]:
+                  - generic [ref=e455]:
+                    - code [ref=e456]: comp-compile-zh
+                    - heading "编译与合规检查" [level=3] [ref=e457]
+                  - generic [ref=e458]: 待启动
+                - generic [ref=e459]:
+                  - generic [ref=e460]:
+                    - term [ref=e461]: 开始
+                    - definition [ref=e462]: —
+                  - generic [ref=e463]:
+                    - term [ref=e464]: 完成
+                    - definition [ref=e465]: —
+                  - generic [ref=e466]:
+                    - term [ref=e467]: 声明产物
+                    - definition [ref=e468]: "1"
+                - paragraph [ref=e469]: paper/main.pdf
+      - paragraph [ref=e470]: 当前编辑上下文：数学建模；运营台筛选不会悄悄切换项目。
