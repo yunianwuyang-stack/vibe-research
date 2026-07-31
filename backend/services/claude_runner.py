@@ -418,10 +418,21 @@ _DETECTED_XELATEX = _detect_xelatex()
 
 
 def _python_command_name() -> str:
-    """Return a shell-safe command name whose directory is prepended to PATH."""
+    """Return a shell-safe bare command name for the detected Python interpreter.
+
+    On Windows the full path resolves to ``python.exe``.  Passing that name to
+    run_command triggers the allowlist security check ("command path must be a
+    bare allowlisted program name") because the ``.exe`` suffix is treated as a
+    path component.  Stripping the extension returns the allowlisted bare name
+    ``python`` that the agent can actually use.
+    """
     if not _DETECTED_PYTHON:
         return ""
-    return Path(_DETECTED_PYTHON).name or str(_DETECTED_PYTHON)
+    name = Path(_DETECTED_PYTHON).name or str(_DETECTED_PYTHON)
+    # Strip .exe so the allowlist accepts "python" rather than rejecting "python.exe"
+    if name.lower().endswith(".exe"):
+        name = Path(name).stem
+    return name
 
 _EXECUTION_INSTRUCTIONS = """## IMPORTANT EXECUTION INSTRUCTIONS
 You are running in non-interactive mode (claude -p). Do NOT use slash commands like /skill-name. Instead, directly execute the task described below. You MUST write output files to the current working directory. Use the tools available to you to complete the task.
