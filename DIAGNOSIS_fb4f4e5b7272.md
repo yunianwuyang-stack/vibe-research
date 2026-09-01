@@ -54,7 +54,7 @@
 
 ### 修复建议（定案版，按优先级）
 
-> **修复状态（2026-09-01 12:2x）**：建议 1/2/3 已实施并提交（commit `15dfde3`，后因仓库恢复需要重挂为 origin/xbw 的子提交）；回归测试 `tests/test_host_run_process_fallback.py` 3/3 通过。建议 4 需用户确认解释器依赖后执行；建议 5 已落实到 CODEBASE.md §12.8 顶部修正块。后端以 `--reload` 运行，改动已自动热加载，可直接在前端再次点击"从失败点恢复"验证。
+> **修复状态（2026-09-01 12:2x）**：建议 1/2/3 已实施并提交（commit `9faf68f`，挂在 origin/xbw `e8b79e5f` 之上）；回归测试 `tests/test_host_run_process_fallback.py` 3/3 通过。建议 4 需用户确认解释器依赖后执行；建议 5 已落实到 CODEBASE.md §12.8 顶部修正块。后端以 `--reload` 运行，改动已自动热加载，可直接在前端再次点击"从失败点恢复"验证。
 
 1. **根治（一处修复治好所有 host 步骤）**：给 `workflow_engine._run_process`（3099-3120）增加第三层兜底——第二次 `NotImplementedError/OSError` 后改用 `await asyncio.to_thread(subprocess.run, ...)` 同步执行，直接移植 `openai_responses_agent.py:574-581` 的 `_run_command_sync_fallback` 模式。这一处同时治好 probe、`_host_execute_gen_fig_scripts`、pandoc/drawio 导出等全部走 `_run_process` 的路径。
 2. **防御**：`_run_single_step_locked` 5745-5748 的 probe 调用包 try/except，异常时构造 `probe_issue` 文案走既有 warning 分支（恢复 probe "只警告不致命"的设计意图）。
