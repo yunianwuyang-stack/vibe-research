@@ -697,6 +697,28 @@ _DRAWIO_FIG_PREFIXES = (
 )
 _SCENE_NAME_PREFIXES = ("fig_scene",)
 _FIG_IMG_EXTS = (".png", ".pdf", ".jpg", ".jpeg", ".svg")
+# Image-adjacent formats that are NOT accepted — agent may have used these by mistake.
+# Support/script files (.json, .py, .md, .tex, etc.) are intentionally excluded here;
+# they are handled separately as "辅助文件" rather than "wrong extension".
+_NEAR_IMG_EXTS = frozenset({".tiff", ".tif", ".eps", ".bmp", ".webp", ".gif", ".ppm", ".pgm"})
+
+# Per-workflow re-entry lock.  Clicking "retry/recover" several times in a row
+# used to schedule multiple run_workflow coroutines on the same workflow_id,
+# which then raced each other over _utils mounts, gen_fig_*.py outputs and the
+# attempt ledger (fb4f4e5b7272 accumulated 8 zombie 'running' attempts this
+# way).  Serialise per workflow so the second invocation waits for the first
+# to settle instead of double-mounting the same workspace.
+_WORKFLOW_RUN_LOCKS: Dict[str, asyncio.Lock] = {}
+_WORKFLOW_RUN_LOCKS_GUARD = asyncio.Lock()
+
+
+async def _acquire_workflow_lock(workflow_id: str) -> asyncio.Lock:
+    async with _WORKFLOW_RUN_LOCKS_GUARD:
+        lock = _WORKFLOW_RUN_LOCKS.get(workflow_id)
+        if lock is None:
+            lock = asyncio.Lock()
+            _WORKFLOW_RUN_LOCKS[workflow_id] = lock
+        return lock
 _STEP_MIN_SIZE = {
     "comp-prob-analysis": 1500, "comp-modeling": 2000, "comp-code": 1000,
     "comp-stats-topic": 1000, "comp-paper-zh": 10000, "comp-paper-en": 10000,
@@ -1798,7 +1820,7 @@ def _should_skip_step_by_assets(workspace: Path, skill_name: str, template: str)
         return True, "code and results already provided"
     if skill_name == "paper-figure" and assets["has_figures"] and not any(word in missing_text for word in ("figure", "chart", "plot", "图")):
         return True, "figures already provided"
-    if skill_name == "paper-figure-drawio":
+    if skill_name in {"paper-figure-drawio", "paper-figure-html"}:
         figures = Path(workspace) / "figures"
         has_roadmap = any(path.stem.lower().startswith(_DRAWIO_FIG_PREFIXES) for path in figures.glob("*") if path.is_file())
         if has_roadmap and not any(word in missing_text for word in ("roadmap", "architecture", "flow", "架构", "路线")):
@@ -1912,7 +1934,7 @@ def _check_figures_step_health_static(workspace: Path, skill_name: str, params: 
     if _plan_says_no_figures(workspace):
         return True, "plan declares no figures"
     files = _figure_files(workspace)
-    if skill_name == "paper-figure-drawio":
+    if skill_name in {"paper-figure-drawio", "paper-figure-html"}:
         healthy = any(_is_drawio_fig(path) for path in files)
         return (True, "architecture figures exist") if healthy else (False, "no architecture figure output")
     if skill_name in {"paper-figure", "nature-figure", "experiment-bridge"}:
@@ -1934,12 +1956,43 @@ def _check_figures_step_health(
         return True, "plan declares no figures"
     changed = list(files_created or []) + list(files_modified or [])
     changed_figures = [path for path in changed if path.replace("\\", "/").startswith("figures/")]
-    if skill_name == "paper-figure-drawio":
+    if skill_name in {"paper-figure-drawio", "paper-figure-html"}:
         if any(_is_drawio_fig(path) for path in changed_figures):
             return True, "architecture figure created"
     elif skill_name in {"paper-figure", "nature-figure", "experiment-bridge"}:
         if any(Path(path).suffix.lower() in _FIG_IMG_EXTS and not _is_drawio_fig(path) for path in changed_figures):
             return True, "data figure created"
+        # Provide specific diagnosis so retry prompt can target the actual root cause.
+        if changed and not changed_figures:
+            return False, "图片文件未保存到 figures/ 目录下（检测到其他目录有文件变更）"
+        if changed_figures:
+            arch_named = [
+                p for p in changed_figures
+                if _is_drawio_fig(p) and Path(p).suffix.lower() in _FIG_IMG_EXTS
+            ]
+            if arch_named:
+                example = Path(arch_named[0]).name
+                return False, (
+                    f"figures/ 内文件使用了架构图命名前缀 (例如 {example!r})，"
+                    "数据图禁止以 fig_arch/fig_flow/fig_roadmap/fig_overview/fig_system 等前缀命名，"
+                    "请改用 gen_fig_XXX.png 格式"
+                )
+            # Near-image formats (e.g. .tiff/.eps/.bmp): agent used an unsupported image format.
+            near_img = [p for p in changed_figures if Path(p).suffix.lower() in _NEAR_IMG_EXTS]
+            if near_img:
+                exts = sorted({Path(p).suffix.lower() for p in near_img})
+                return False, (
+                    f"figures/ 内文件扩展名不合法 {exts}，必须使用 .png/.pdf/.jpg/.jpeg/.svg"
+                )
+            # Support/script files only (.json/.py/.md/.tex etc.): scripts were created/run
+            # but never produced actual image output.
+            non_img = [p for p in changed_figures if Path(p).suffix.lower() not in _FIG_IMG_EXTS]
+            if non_img:
+                exts = sorted({Path(p).suffix.lower() for p in non_img})
+                return False, (
+                    f"figures/ 内只有辅助文件（扩展名: {exts}），"
+                    "gen_fig_*.py 必须实际执行并产出 .png/.pdf 文件"
+                )
     else:
         return True, "not a figure step"
     if not changed:
@@ -1948,7 +2001,7 @@ def _check_figures_step_health(
 
 
 _AUTO_RECOVER_FIGURE_SKILLS = {
-    "paper-figure", "paper-figure-drawio", "nature-figure", "experiment-bridge",
+    "paper-figure", "paper-figure-drawio", "paper-figure-html", "nature-figure", "experiment-bridge",
 }
 
 
@@ -1980,8 +2033,15 @@ def _figure_recovery_params(params: Dict[str, Any], reason: str, attempt: int) -
     retry_params["_retry_reason"] = (
         f"上一次没有产出图表 (原因: {reason})。本次是第 {attempt}/5 次自动重试。"
         "⛔ 必须按 PAPER_PLAN.md / PROBLEM_ANALYSIS.md 的图表清单逐张生成 "
-        "gen_fig_*.py 并执行产出 PNG/PDF。 ⛔ 节约 context: 不要 cat 整个 "
-        "figure_style_guide.md, 用 head -1500 + grep 按需读 recipe。"
+        "gen_fig_*.py 并执行产出 PNG/PDF。"
+        " ⛔ 文件三要素 (违反任一项均视为未产出图表): "
+        "1) 必须保存到 figures/ 目录下，不能放到 data/ 或工作区根目录；"
+        " 2) 扩展名只能用 .png/.pdf/.jpg/.jpeg/.svg；"
+        " 3) 数据图文件名禁止以架构图前缀开头"
+        "（fig_arch/fig_flow/fig_roadmap/fig_overview/fig_system/fig_pipeline/fig_framework 等），"
+        "请使用 gen_fig_XXX.png 或 fig_data_XXX.png 格式。"
+        " ⛔ 节约 context: 不要 cat 整个"
+        " figure_style_guide.md, 用 head -1500 + grep 按需读 recipe。"
     )
     if attempt >= 2:
         retry_params["_compact_preamble"] = True
@@ -2687,6 +2747,48 @@ async def create_new_workflow(
     return wf_id
 
 
+def _sync_run_process(
+    command: List[str],
+    cwd: str,
+    timeout: float | None,
+) -> tuple[int, str, str]:
+    """Synchronous last-resort runner for ``_HostStepRunner._run_process``.
+
+    Used when the event loop cannot spawn subprocesses at all — e.g. uvicorn
+    >=0.36 with ``--reload``/``--workers>1`` forces a SelectorEventLoop on
+    Windows (bypassing ``asyncio.set_event_loop_policy``), and every
+    ``asyncio.create_subprocess_exec`` raises a bare ``NotImplementedError``.
+    Classic ``subprocess.run`` (CreateProcess + WaitForMultipleObjects) does
+    not depend on the event loop, so it still works there.  Mirrors the agent
+    sandbox's ``_run_command_sync_fallback``.  Must be invoked via
+    ``asyncio.to_thread`` so the loop is never blocked.
+    """
+    try:
+        completed = subprocess.run(
+            command,
+            cwd=cwd,
+            capture_output=True,
+            timeout=timeout,
+        )
+        return (
+            int(completed.returncode or 0),
+            completed.stdout.decode("utf-8", errors="replace"),
+            completed.stderr.decode("utf-8", errors="replace"),
+        )
+    except subprocess.TimeoutExpired as exc:
+        stdout = exc.stdout if isinstance(exc.stdout, bytes) else b""
+        stderr = exc.stderr if isinstance(exc.stderr, bytes) else b""
+        detail = (
+            f"Host step timed out after {timeout}s: "
+            f"{' '.join(str(part) for part in command[:4])}"
+        )
+        return (
+            124,
+            stdout.decode("utf-8", errors="replace"),
+            (stderr.decode("utf-8", errors="replace") + "\n" + detail).strip(),
+        )
+
+
 class _HostStepRunner:
     """Execute deterministic host-side steps through the runner interface."""
 
@@ -3034,13 +3136,56 @@ class _HostStepRunner:
         if os.name == "nt":
             # Host builds should never flash a console window in the desktop app.
             process_options["creationflags"] = getattr(subprocess, "CREATE_NO_WINDOW", 0)
-        process = await asyncio.create_subprocess_exec(
-            *command,
-            cwd=str(Path(workspace).expanduser().resolve()),
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
-            **process_options,
-        )
+        cwd_str = str(Path(workspace).expanduser().resolve())
+        process = None
+        try:
+            process = await asyncio.create_subprocess_exec(
+                *command,
+                cwd=cwd_str,
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE,
+                **process_options,
+            )
+        except (NotImplementedError, OSError) as first_exc:
+            # Windows: CREATE_NO_WINDOW can trigger a NotImplementedError when the
+            # ProactorEventLoop's IOCP path fails (e.g. app execution alias / Store
+            # stub reparse points).  Retry without the flag so the process still
+            # runs, even if a console window briefly appears.
+            log.warning(
+                "create_subprocess_exec failed (%r); retrying without creationflags",
+                first_exc,
+            )
+            process_options_retry = {
+                k: v for k, v in process_options.items() if k != "creationflags"
+            }
+            try:
+                process = await asyncio.create_subprocess_exec(
+                    *command,
+                    cwd=cwd_str,
+                    stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE,
+                    **process_options_retry,
+                )
+            except (NotImplementedError, OSError) as second_exc:
+                # SelectorEventLoop (uvicorn >=0.36 forces it on Windows under
+                # --reload/--workers, bypassing set_event_loop_policy) cannot
+                # spawn subprocesses at all — every create_subprocess_exec raises
+                # a bare NotImplementedError.  Fall back to synchronous
+                # subprocess.run on a worker thread instead of letting this
+                # exception escape and kill the step (fb4f4e5b7272 regression).
+                log.warning(
+                    "asyncio subprocess unavailable (%r); "
+                    "falling back to synchronous subprocess.run",
+                    second_exc,
+                )
+                process = None
+        if process is None:
+            return await asyncio.to_thread(
+                _sync_run_process,
+                [str(part) for part in command],
+                cwd_str,
+                timeout,
+            )
         try:
             stdout, stderr = await asyncio.wait_for(process.communicate(), timeout=timeout)
         except asyncio.TimeoutError:
@@ -3060,6 +3205,146 @@ class _HostStepRunner:
             stdout.decode("utf-8", errors="replace"),
             stderr.decode("utf-8", errors="replace"),
         )
+
+    @classmethod
+    async def _host_execute_gen_fig_scripts(
+        cls,
+        workspace: Path,
+        skill_name: str,
+        *,
+        on_output=None,
+    ) -> List[str]:
+        """Host-side last resort for figure-producing steps.
+
+        When the agent's subprocess channel is broken (Windows ProactorEventLoop
+        IOCP failures, Store alias reparse points, etc.) it can write gen_fig_*.py
+        scripts but never actually execute them.  This fallback runs those scripts
+        directly from the host so the step still produces real PDF/PNG figures:
+
+        1. Try each script as a subprocess via the runtime python (with the
+           CREATE_NO_WINDOW retry already handled by _run_process).
+        2. If the subprocess cannot even start, import the script in-process with
+           matplotlib forced to the Agg backend and run it under the workspace cwd.
+        """
+        if skill_name not in {"paper-figure", "nature-figure", "experiment-bridge"}:
+            return []
+        figures_dir = Path(workspace) / "figures"
+        if not figures_dir.is_dir():
+            return []
+        scripts = sorted(figures_dir.glob("gen_fig_*.py"))
+        if not scripts:
+            return []
+
+        def _already_has_output(script: Path) -> bool:
+            stem = script.stem[len("gen_"):] if script.stem.startswith("gen_") else script.stem
+            for ext in _FIG_IMG_EXTS:
+                if (figures_dir / f"{stem}{ext}").is_file():
+                    return True
+            return False
+
+        python = cls._runtime_python()
+        produced: List[str] = []
+        for script in scripts:
+            if _already_has_output(script):
+                continue
+            if on_output:
+                await on_output(f"[系统] 宿主兜底执行绘图脚本: {script.name}")
+            rc, so, se = await cls._run_process(
+                [python, str(script)], workspace, timeout=300.0,
+            )
+            if rc != 0 and (
+                "NotImplementedError" in se or "subprocess" in se.lower()
+            ):
+                # In-process fallback: force Agg backend, chdir to workspace, exec.
+                if on_output:
+                    await on_output(f"[系统] 子进程执行失败，改为进程内执行: {script.name}")
+                try:
+                    rc = await cls._exec_figure_script_in_process(workspace, script)
+                    se = se or f"in-process exec rc={rc}"
+                except Exception as exc:  # noqa: BLE001 - last resort must not raise
+                    rc = 1
+                    se = (se + f"; in-process exec failed: {exc}").strip("; ")
+            if rc == 0 and _already_has_output(script):
+                produced.append(script.stem)
+                if on_output:
+                    await on_output(f"[系统] 绘图脚本产出图像: {script.name}")
+            elif on_output:
+                tail = (se or so or "").strip().splitlines()
+                hint = tail[-1][:200] if tail else "unknown error"
+                await on_output(f"[系统] 绘图脚本未产出图像: {script.name} ({hint})")
+        return produced
+
+    @classmethod
+    async def _exec_figure_script_in_process(cls, workspace: Path, script: Path) -> int:
+        """Execute a gen_fig_*.py script in-process with a non-interactive backend.
+
+        Runs in a worker thread so the event loop is never blocked.  Forces
+        matplotlib to Agg before the script imports pyplot, and temporarily
+        chdirs to the workspace so relative paths (figures/, _utils/) resolve
+        exactly as they would for a subprocess run.
+        """
+        import runpy
+
+        def _exec() -> int:
+            old_cwd = os.getcwd()
+            old_argv = sys.argv[:]
+            try:
+                os.environ.setdefault("MPLBACKEND", "Agg")
+                try:
+                    import matplotlib
+
+                    matplotlib.use("Agg", force=True)
+                except Exception:  # noqa: BLE001 - matplotlib may be absent
+                    pass
+                os.chdir(str(workspace))
+                sys.argv = [str(script)]
+                runpy.run_path(str(script), run_name="__main__")
+                return 0
+            except SystemExit as exc:
+                code = exc.code if isinstance(exc.code, int) else 0
+                return code
+            except Exception:  # noqa: BLE001
+                log.exception("in-process figure script failed: %s", script)
+                return 1
+            finally:
+                os.chdir(old_cwd)
+                sys.argv = old_argv
+
+        return await asyncio.to_thread(_exec)
+
+    @classmethod
+    async def _probe_figure_execution_channel(cls, workspace: Path) -> Optional[str]:
+        """Pre-flight check for figure steps.
+
+        Returns None when the host can (a) spawn a python subprocess and
+        (b) create files inside figures/.  Otherwise returns a human-readable
+        diagnosis explaining exactly which capability is missing, so the agent
+        and the UI see the real blocker instead of six opaque retries.
+        """
+        figures_dir = Path(workspace) / "figures"
+        try:
+            figures_dir.mkdir(parents=True, exist_ok=True)
+            probe_file = figures_dir / ".channel_probe"
+            probe_file.write_text("ok", encoding="utf-8")
+            # Read back instead of deleting: some sandboxes intercept deletes.
+            if probe_file.read_text(encoding="utf-8") != "ok":
+                return "figures/ 目录写入后读回内容异常"
+        except OSError as exc:
+            return f"figures/ 目录不可写: {exc}"
+
+        python = cls._runtime_python()
+        rc, so, se = await cls._run_process(
+            [python, "-c", "import sys; print(sys.version.split()[0])"],
+            workspace,
+            timeout=30.0,
+        )
+        if rc != 0:
+            return (
+                "宿主 python 子进程启动失败 "
+                f"(rc={rc}): {(se or so).strip()[:200]} — "
+                "绘图脚本将无法执行，请检查后端运行环境"
+            )
+        return None
 
     @classmethod
     async def _export_markdown_pdf(
@@ -4374,7 +4659,12 @@ class _HostStepRunner:
                 continue
             relative = source.relative_to(source_dir)
             target = paper_dir / relative
-            if target.exists():
+            # Always overwrite .cls files from the canonical template — agents
+            # sometimes write a thin wrapper (a few hundred bytes) that omits
+            # the full class body, causing catastrophic XeLaTeX failures.
+            # For every other support file keep the agent's version if present.
+            is_cls = source.suffix.lower() == ".cls"
+            if target.exists() and not is_cls:
                 continue
             target.parent.mkdir(parents=True, exist_ok=True)
             shutil.copy2(source, target)
@@ -4802,7 +5092,12 @@ class _HostStepRunner:
             )
             sources = [scaffold]
             if on_output:
-                await on_output("[系统] 未找到现成 HTML 图源，已生成本机占位 fig_pipeline.html")
+                await on_output(
+                    "[系统][警告] figures/ 目录内未找到任何 fig_*.html，"
+                    "已自动生成占位图 fig_pipeline.html。"
+                    "这通常意味着 comp-code / paper-figure 步骤尚未生成真实的 HTML 图源；"
+                    "建议检查前序步骤是否已正常完成，或在前序步骤产出 fig_*.html 后重跑本步骤。"
+                )
 
         if on_output:
             await on_output(f"[系统] 正在本机渲染 {len(sources)} 个 HTML 图源")
@@ -4813,6 +5108,23 @@ class _HostStepRunner:
         python = cls._runtime_python()
         for source in sources:
             out_pdf = source.with_suffix(".pdf")
+            # If a valid PDF already exists for this HTML source, reuse it rather
+            # than re-rendering.  This lets the step succeed on recovery even when
+            # the subprocess renderer is unavailable (e.g. CREATE_NO_WINDOW /
+            # ProactorEventLoop issues on Windows).
+            if out_pdf.is_file() and out_pdf.stat().st_size >= 200:
+                outputs.append(out_pdf)
+                png = source.with_suffix(".png")
+                if png.is_file():
+                    outputs.append(png)
+                capture = Path(str(out_pdf) + ".capture.json")
+                if capture.is_file():
+                    outputs.append(capture)
+                stdout_parts.append(f"reused existing {out_pdf.name}")
+                stderr_parts.append("")
+                if on_output:
+                    await on_output(f"[系统] 复用已有 PDF: {out_pdf.name} ({out_pdf.stat().st_size} bytes)")
+                continue
             command = [
                 python, str(script),
                 "--file", str(source),
@@ -4821,9 +5133,45 @@ class _HostStepRunner:
                 "--width", "1400",
                 "--height", "900",
             ]
-            rc, stdout, stderr = await cls._run_process(command, workspace)
-            stdout_parts.append(stdout)
-            stderr_parts.append(stderr)
+            # Attempt subprocess render; fall back to in-process rendering when the
+            # subprocess cannot be launched (Windows CREATE_NO_WINDOW / Store-stub
+            # NotImplementedError or similar OS-level failures).
+            proc_stdout, proc_stderr = "", ""
+            try:
+                rc, proc_stdout, proc_stderr = await cls._run_process(command, workspace)
+            except Exception as proc_exc:
+                rc = 1
+                proc_stderr = f"subprocess launch failed ({type(proc_exc).__name__}): {proc_exc}"
+                if on_output:
+                    await on_output(f"[系统] subprocess 启动失败 ({type(proc_exc).__name__})，尝试进程内渲染")
+                # In-process fallback: import render_html functions directly to
+                # avoid any asyncio subprocess / CREATE_NO_WINDOW issues.
+                try:
+                    import importlib.util as _ilu
+                    _spec = _ilu.spec_from_file_location("_vibe_render_html", str(script))
+                    _rmod = _ilu.module_from_spec(_spec)
+                    _spec.loader.exec_module(_rmod)  # type: ignore[union-attr]
+                    png_out = source.with_suffix(".png")
+                    browser = _rmod.find_browser()
+                    ok_br = False
+                    if browser:
+                        ok_br, _warn = _rmod._run_browser(
+                            browser, source, png_out, out_pdf,
+                            width=1400, height=900, wait_ms=1800,
+                        )
+                    if not ok_br:
+                        _rmod._fallback(source, png_out, out_pdf, 1400, 900)
+                    rc = 0 if (out_pdf.is_file() and out_pdf.stat().st_size > 100) else 1
+                    proc_stdout = f"in-process render: {'ok' if rc == 0 else 'failed'}"
+                    if rc == 0 and on_output:
+                        await on_output(f"[系统] 进程内渲染完成: {out_pdf.name}")
+                except Exception as ip_exc:
+                    rc = 1
+                    proc_stderr += f"; in-process fallback also failed: {ip_exc}"
+                    if on_output:
+                        await on_output(f"[系统] 进程内渲染也失败: {ip_exc}")
+            stdout_parts.append(proc_stdout)
+            stderr_parts.append(proc_stderr)
             ok = rc == 0 and out_pdf.is_file() and out_pdf.stat().st_size >= 200
             if ok:
                 outputs.append(out_pdf)
@@ -5454,6 +5802,43 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
             else:
                 # Unknown skill — default to ClaudeRunner as before.
                 runner = ClaudeRunner()
+
+            # Execution-channel probe for figure steps: verify the host can spawn
+            # a python subprocess AND write into figures/ BEFORE the agent burns
+            # its retries.  If the channel is broken we surface a precise diagnosis
+            # immediately instead of letting the step fail 6 times with the generic
+            # "只有辅助文件" message.
+            # NOTE: on_output is not yet defined at this point (it is created inside
+            # the attempt loop below), so report through _log/_broadcast instead.
+            if managed and skill_name in _AUTO_RECOVER_FIGURE_SKILLS:
+                try:
+                    probe_issue = await _HostStepRunner._probe_figure_execution_channel(
+                        workspace_dir
+                    )
+                except Exception as probe_exc:  # noqa: BLE001 - probe must warn, never kill
+                    # The probe is a pre-flight courtesy check; an unexpected
+                    # failure inside it (e.g. a subprocess-channel error that
+                    # escaped _run_process) must degrade to a warning, not abort
+                    # the step before the runner and host-fallback get a chance.
+                    probe_issue = (
+                        "执行通道自检自身异常 "
+                        f"({type(probe_exc).__name__}: {probe_exc or 'no message'}) — "
+                        "将继续执行，失败时由宿主兜底接管"
+                    )
+                if probe_issue:
+                    log.warning(
+                        "Step '%s' execution-channel probe failed: %s",
+                        skill_name, probe_issue,
+                    )
+                    await _log(
+                        workflow_id, skill_name, "warning",
+                        f"[系统][执行通道自检] {probe_issue}",
+                    )
+                    await _broadcast(workflow_id, {
+                        "type": "step_progress", "step": skill_name,
+                        "log": f"[系统][执行通道自检] {probe_issue}",
+                    })
+
             arguments = workflow_id if managed else json.dumps({
                 "template": template,
                 "skill_name": skill_name,
@@ -5507,6 +5892,22 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
                         "stderr": "Step timed out after 4 hours",
                         "returncode": 1,
                         "return_code": 1,
+                        "result": "",
+                    }
+                except Exception as runner_exc:  # noqa: BLE001
+                    # Catch ALL runner exceptions (CAPABILITY_BLOCKED, mount failures,
+                    # network errors, sandbox violations, etc.) and convert them into
+                    # a failed result so the host-fallback logic below still has a
+                    # chance to rescue figure-producing steps.  Without this catch,
+                    # any non-timeout exception propagates straight up and the
+                    # host-side gen_fig_*.py rescue path is unreachable.
+                    log.exception("runner.run_skill raised for step '%s'", skill_name)
+                    result = {
+                        "success": False,
+                        "stdout": "",
+                        "stderr": f"runner exception: {type(runner_exc).__name__}: {runner_exc}",
+                        "returncode": -1,
+                        "return_code": -1,
                         "result": "",
                     }
                 await flush_logs()
@@ -5608,11 +6009,82 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
                         )
 
                     if recovery_reason is not None:
+                        # Host-side last resort: the agent kept failing to produce
+                        # images (usually because its subprocess channel is broken on
+                        # this machine).  If gen_fig_*.py scripts exist, execute them
+                        # directly from the host so the step can still deliver real
+                        # PDF/PNG figures instead of dying after 6 blind retries.
+                        host_figs = await _HostStepRunner._host_execute_gen_fig_scripts(
+                            workspace_dir, skill_name, on_output=on_output,
+                        )
+                        if host_figs:
+                            await _log(
+                                workflow_id,
+                                skill_name,
+                                "info",
+                                f"[HOST-FALLBACK] 宿主环境成功执行 {len(host_figs)} 个绘图脚本: "
+                                + ", ".join(host_figs[:8])
+                                + (" ..." if len(host_figs) > 8 else ""),
+                            )
+                            snapshot_after = _snapshot_workspace(workspace_dir)
+                            files_after = set(snapshot_after)
+                            files_created = _order_step_files(files_after - files_before, step_def)
+                            files_modified = (
+                                sorted(files_before & files_after, key=str.lower) if managed else []
+                            )
+                            primary_issue = _primary_output_issue(workspace_dir, step_def)
+                            figures_ok, figures_reason = _check_figures_step_health(
+                                workspace_dir, skill_name, files_created, files_modified, params
+                            )
+                            quantity_issue = _minimum_quantity_issue(workspace_dir, skill_name, params)
+                            health_reason = primary_issue or (None if figures_ok else figures_reason) or quantity_issue
+                            if health_reason is None:
+                                recovery_reason = None
+                                result["success"] = True
+                                result["stderr"] = ""
+
+                    if recovery_reason is not None:
                         result["success"] = False
                         result["stderr"] = (
                             "步骤连续 6 次未产出 primary_output: "
                             f"{recovery_reason}."
                         )
+            elif managed and skill_name in _AUTO_RECOVER_FIGURE_SKILLS:
+                # Host-side rescue when the runner itself failed (exception, rc!=0,
+                # network/HTTP error, sandbox blocked, etc.).  The agent may have
+                # already written gen_fig_*.py scripts before dying; executing them
+                # directly from the host lets the step deliver real figures instead
+                # of propagating an opaque runner failure.
+                await _log(
+                    workflow_id, skill_name, "info",
+                    "[HOST-FALLBACK] runner 失败分支，尝试宿主兜底执行 gen_fig_*.py",
+                )
+                host_figs = await _HostStepRunner._host_execute_gen_fig_scripts(
+                    workspace_dir, skill_name, on_output=on_output,
+                )
+                if host_figs:
+                    snapshot_after = _snapshot_workspace(workspace_dir)
+                    files_after = set(snapshot_after)
+                    files_created = _order_step_files(files_after - files_before, step_def)
+                    files_modified = (
+                        sorted(files_before & files_after, key=str.lower) if managed else []
+                    )
+                    primary_issue = _primary_output_issue(workspace_dir, step_def)
+                    figures_ok, figures_reason = _check_figures_step_health(
+                        workspace_dir, skill_name, files_created, files_modified, params
+                    )
+                    quantity_issue = _minimum_quantity_issue(workspace_dir, skill_name, params)
+                    health_reason = primary_issue or (None if figures_ok else figures_reason) or quantity_issue
+                    if health_reason is None:
+                        await _log(
+                            workflow_id, skill_name, "info",
+                            f"[HOST-FALLBACK] 宿主兜底成功，产出 {len(host_figs)} 张图像，"
+                            "将 runner 失败转为步骤成功",
+                        )
+                        result["success"] = True
+                        result["stderr"] = ""
+                        result["returncode"] = 0
+                        result["return_code"] = 0
 
             if result.get("success"):
                 validation_errors = []
@@ -5669,7 +6141,27 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
                 if not managed:
                     await _broadcast(workflow_id, {"type": "workflow_completed", "output_files": reported_files})
             else:
-                error_text = result.get("stderr", "")[:500]
+                # Never persist an empty error_message — downstream code
+                # (finish_step_attempt, recovery_operations fallback) treats
+                # empty/NULL as "unknown" and surfaces the opaque "node
+                # execution failed".  Synthesise a precise reason from the
+                # runner result so attempts retain a real diagnosis.
+                raw_stderr = (result.get("stderr") or "").strip()
+                return_code = result.get("return_code", result.get("returncode"))
+                if raw_stderr:
+                    error_text = raw_stderr[:500]
+                elif return_code not in (None, 0):
+                    error_text = (
+                        f"runner exited with rc={return_code} but produced no stderr "
+                        f"(skill={skill_name}); possible sandbox block, executor "
+                        "configuration issue, or upstream LLM failure"
+                    )[:500]
+                else:
+                    error_text = (
+                        f"runner reported success=False without stderr or returncode "
+                        f"(skill={skill_name}); check backend logs for the underlying "
+                        "exception"
+                    )[:500]
 
                 async def _mark_failed(db, message=error_text):
                     await db.execute(
@@ -5687,8 +6179,12 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
                     await _broadcast(workflow_id, {"type": "workflow_stopped"})
 
         except Exception as e:
-            log.error("Step execution failed: %s", e)
-            error_text = str(e)[:500]
+            # log.exception (not log.error) so the full traceback lands in
+            # backend.log — empty-message exceptions (CancelledError wrapped
+            # by asyncio, NotImplementedError(''), etc.) are undiagnosable
+            # from the message alone.
+            log.exception("Step execution failed: %s", e)
+            error_text = (str(e) or f"{type(e).__name__} (no message)")[:500]
 
             async def _mark_exception(db, message=error_text):
                 await db.execute(
@@ -5725,6 +6221,28 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
 
 async def run_workflow(workflow_id: str) -> None:
     """(docstring)"""
+    from services.claude_runner import ClaudeRunner
+    from services.state_store import get_db, get_workflow, update_workflow
+
+    # Serialise per-workflow runs.  Without this, double-clicking
+    # retry/recover spawns concurrent run_workflow coroutines that share the
+    # same workspace_dir, which produced the fb4f4e5b7272 failure mode:
+    # one coroutine holds _utils files open while another tries to rmtree
+    # them, and the attempt ledger accumulates zombie 'running' rows.
+    workflow_lock = await _acquire_workflow_lock(workflow_id)
+    if workflow_lock.locked():
+        log.warning(
+            "run_workflow(%s) is already in progress; queuing behind the "
+            "existing run instead of racing it.  Triggering UI should debounce "
+            "retry/recover clicks.",
+            workflow_id,
+        )
+    async with workflow_lock:
+        await _run_workflow_locked(workflow_id)
+
+
+async def _run_workflow_locked(workflow_id: str) -> None:
+    """Inner implementation of run_workflow, executed under the per-workflow lock."""
     from services.claude_runner import ClaudeRunner
     from services.state_store import get_db, get_workflow, update_workflow
 

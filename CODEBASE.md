@@ -310,6 +310,27 @@ npm run dev
 ### 数据存储位置（源码模式）
 - 数据库：`runtime/backend/vibe.db`
 - 工作区：`runtime/workspaces/`
+- **后端日志**：`runtime/backend/logs/backend.log`（轮转，5 × 10MB；桌面模式在 `%APPDATA%\VibeResearch\db\logs\backend.log`）
+
+### 后端日志（诊断必读）
+
+`backend/main.py` 启动时通过 `RotatingFileHandler` 把 root logger 同时写到 stderr 和文件：
+
+- **源码模式**：`runtime/backend/logs/backend.log`（含 `.1`~`.5` 轮转历史）
+- **桌面模式**：`%APPDATA%\VibeResearch\db\logs\backend.log`
+
+uvicorn 的 logger 默认传播到 root logger，因此 HTTP 访问日志、异常 traceback、`log.error("Step execution failed: ...")` 等全部落盘。**排查工作流静默失败时第一件事就是读这个文件的最后 200 行**，不要依赖弹出的 cmd 控制台窗口（自动化无法读取其缓冲区）：
+
+```bash
+tail -n 200 runtime/backend/logs/backend.log
+```
+
+数据库辅助排查（步骤/尝试/恢复操作状态）：
+
+```bash
+python -c "import sqlite3; c=sqlite3.connect('runtime/backend/vibe.db'); c.row_factory=sqlite3.Row; \
+print([dict(r) for r in c.execute('SELECT skill_name,status,error_message FROM workflow_steps WHERE workflow_id=?', ('<wf_id>',))])"
+```
 
 ### 构建生产版本
 ```bash
@@ -481,6 +502,17 @@ if executable_name in {"python", "python3"} and any(
 ---
 
 ### 12.8 Windows App Execution Alias 引发的 NotImplementedError
+
+> **⚠️ 2026-09-01 归因修正（fb4f4e5b7272 复核定案）**：裸 `NotImplementedError`（空消息）有**两个**充分条件，排查时先看 traceback 栈帧落点：
+>
+> | 栈帧落点 | 根因 | 处置 |
+> |---|---|---|
+> | `asyncio/base_events.py` 的 `_make_subprocess_transport`（基类 `raise NotImplementedError`） | **当前事件循环是 SelectorEventLoop**（Windows 上根本不支持子进程）。最常见诱因：`uvicorn --reload` 或 `--workers>1` —— uvicorn ≥0.36 的 `loop_factory` 在 win32+`use_subprocess` 时强制 SelectorEventLoop，且**完全绕过** `asyncio.set_event_loop_policy()`（`main.py` 里的 Proactor 策略对 uvicorn 是死代码） | 去掉 `--reload`；或依赖 `_run_process` 的第三层同步兜底（已修复，见下） |
+> | `windows_events.py` / `proactor_events.py` 内部 | 才是本节的 App Execution Alias / IOCP 问题 | 按本节下文处理 |
+>
+> **判断口诀**：去掉 creationflags 重试后**仍失败** ≈ 循环类型问题；重试后成功 ≈ alias/flags 问题。
+>
+> **已修复（2026-09-01）**：`workflow_engine._run_process` 现在有第三层兜底——两次 asyncio 尝试均失败后改用 `asyncio.to_thread(subprocess.run)`（与 `openai_responses_agent._run_command_sync_fallback` 同款），SelectorEventLoop 下 probe/host-fallback/导出类 host 步骤均可工作。回归测试：`tests/test_host_run_process_fallback.py`。
 
 #### 症状
 所有 `run_command` 工具调用——包括 `python --version` 这类最基础的命令——均返回：

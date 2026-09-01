@@ -450,23 +450,24 @@ thousands of rows. Reading them raw with the read tool floods the context window
 causes immediate API failure (rc=1).
 
 REQUIRED workflow for every data file:
-1. Use run_command to execute an INLINE Python one-shot that loads the file and
-   prints only a compact summary. Use the bare name "python" (NOT python.exe):
-     run_command("python", args=["-c", """
+1. Write a one-shot Python script to _tmp/ and run it (python -c is NOT allowed):
+     write("_tmp/data_preview.py", content=\'\'\'
 import pandas as pd
-df = pd.read_csv('user_data/附件.xlsx.txt', sep='\\t', encoding='utf-8', on_bad_lines='skip')
-print('shape:', df.shape)
+df = pd.read_csv("user_data/<actual_filename>.txt", sep="\\t", encoding="utf-8", on_bad_lines="skip")
+print("shape:", df.shape)
 print(df.dtypes.to_string())
-print(df.describe(include='all').to_string())
-print('missing:', df.isnull().sum().to_string())
-print('head:'); print(df.head(3).to_string())
-"""])
+print(df.describe(include="all").to_string())
+print("missing:", df.isnull().sum().to_string())
+print("head:"); print(df.head(3).to_string())
+\'\'\')
+     run_command("python", args=["_tmp/data_preview.py"])
 2. Only the printed output goes into context — never the raw rows.
-3. For per-column stats or subsets, add more print() calls to the same inline script.
+3. For per-column stats or subsets, add more print() calls to the same script.
 
 ⛔ Never call read() on a data file larger than 80 lines.
 ⛔ Never loop read() across data file line ranges — use Python instead.
 ⛔ Never use "python.exe" — always use the bare name "python".
+⛔ Never use python -c (inline code) — always write to a .py file and run it.
 ✅ Use read() only for problem-statement PDFs, SKILL.md, _utils/ reference files,
    and output reports you have already written yourself.
 

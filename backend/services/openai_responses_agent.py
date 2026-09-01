@@ -456,6 +456,10 @@ class WorkspaceTools:
             )
             if _clean_path:
                 env["PATH"] = _clean_path
+            # NOTE: filtering PATH alone is insufficient — Windows App Execution Aliases are
+            # registered at the Win32 CreateProcess level and bypass PATH entirely.  We must
+            # also resolve python/python3 to an absolute path before exec so that CreateProcess
+            # receives an explicit path rather than a bare name that alias intercepts.
         creationflags = 0
         kwargs: dict[str, Any] = {}
         if os.name == "nt":
@@ -511,11 +515,75 @@ class WorkspaceTools:
         if os.name == "nt" and Path(argv[0]).suffix.lower() in {".cmd", ".bat"}:
             creationflags &= ~getattr(subprocess, "CREATE_NO_WINDOW", 0)
 
-        proc = await asyncio.create_subprocess_exec(
-            *argv, cwd=str(cwd), env=env,
-            stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE, creationflags=creationflags, **kwargs,
-        )
+        # Fix: on Windows ALL bare executable names (python, bash, git, …) may have
+        # App Execution Alias entries registered at the Win32 CreateProcess level that
+        # bypass PATH entirely and raise NotImplementedError when launched with
+        # CREATE_NO_WINDOW.  Resolve every command to an absolute path using the
+        # already-filtered PATH so CreateProcess gets an explicit binary path and
+        # skips alias resolution.
+        if os.name == "nt" and not Path(argv[0]).is_absolute():
+            _candidates = [argv[0]]
+            # For python/python3 also try the sibling name as a fallback.
+            if executable_name == "python":
+                _candidates.append("python3")
+            elif executable_name == "python3":
+                _candidates.append("python")
+            _resolved: str | None = None
+            for _cand in _candidates:
+                _r = shutil.which(_cand, path=env.get("PATH", ""))
+                if _r and "WindowsApps" not in _r:
+                    _resolved = _r
+                    break
+            if _resolved is None:
+                return {
+                    "ok": False,
+                    "error": (
+                        f"'{executable_name}' not found after excluding Windows App Execution "
+                        f"Alias stubs from PATH.  Ensure the real executable is installed and "
+                        f"its directory appears in PATH before any WindowsApps entry."
+                    ),
+                }
+            argv = [_resolved] + argv[1:]
+
+        # On Windows the ProactorEventLoop IOCP path can raise NotImplementedError /
+        # OSError when launching a subprocess with CREATE_NO_WINDOW (App Execution
+        # Alias reparse points, certain AV/EDR hooks, etc.).  Mirror the retry
+        # strategy used by workflow_engine._run_process: first retry without
+        # creationflags, then fall back to a synchronous subprocess.run executed on
+        # a SelectorEventLoop thread (which bypasses the Proactor IOCP subprocess
+        # implementation entirely).
+        proc: asyncio.subprocess.Process | None = None
+        _sync_fallback_result: dict[str, Any] | None = None
+        try:
+            proc = await asyncio.create_subprocess_exec(
+                *argv, cwd=str(cwd), env=env,
+                stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE, creationflags=creationflags, **kwargs,
+            )
+        except (NotImplementedError, OSError) as first_exc:
+            log.warning(
+                "create_subprocess_exec failed (%s); retrying without creationflags",
+                first_exc,
+            )
+            try:
+                proc = await asyncio.create_subprocess_exec(
+                    *argv, cwd=str(cwd), env=env,
+                    stdin=asyncio.subprocess.PIPE, stdout=asyncio.subprocess.PIPE,
+                    stderr=asyncio.subprocess.PIPE, **kwargs,
+                )
+            except (NotImplementedError, OSError) as second_exc:
+                log.warning(
+                    "subprocess still unavailable (%s); using sync subprocess.run fallback",
+                    second_exc,
+                )
+                _sync_fallback_result = await self._run_command_sync_fallback(
+                    argv, cwd=cwd, env=env, stdin_text=stdin_text, timeout=timeout,
+                )
+
+        if _sync_fallback_result is not None:
+            return _sync_fallback_result
+
+        assert proc is not None
         self._processes.add(proc)
         stdout = _TextCollector(MAX_COMMAND_OUTPUT_CHARS)
         stderr = _TextCollector(MAX_COMMAND_OUTPUT_CHARS)
@@ -600,6 +668,70 @@ class WorkspaceTools:
             "command": argv, "cwd": self._relative(cwd),
             "returncode": proc.returncode if proc.returncode is not None else -1,
             "timed_out": timed_out, "stdout": redact_secrets(stdout.value(), self.environment), "stderr": redact_secrets(stderr.value(), self.environment),
+        }
+
+    async def _run_command_sync_fallback(
+        self,
+        argv: list[str],
+        *,
+        cwd: Path,
+        env: dict[str, str],
+        stdin_text: str,
+        timeout: int,
+    ) -> dict[str, Any]:
+        """Synchronous subprocess.run fallback for environments where the asyncio
+        ProactorEventLoop cannot spawn child processes (Windows IOCP failures).
+
+        Runs entirely on a worker thread via asyncio.to_thread so the event loop
+        is never blocked.  This path uses the classic subprocess implementation
+        (CreateProcess + WaitForMultipleObjects) instead of the IOCP-backed
+        asyncio subprocess transport.
+        """
+        await self._emit(
+            "[command] asyncio subprocess unavailable; running via synchronous fallback"
+        )
+        stdout = _TextCollector(MAX_COMMAND_OUTPUT_CHARS)
+        stderr = _TextCollector(MAX_COMMAND_OUTPUT_CHARS)
+        timed_out = False
+        returncode = -1
+
+        def _run() -> None:
+            nonlocal timed_out, returncode
+            try:
+                completed = subprocess.run(
+                    argv,
+                    cwd=str(cwd),
+                    env=env,
+                    input=stdin_text.encode("utf-8") if stdin_text else None,
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                    timeout=timeout,
+                    check=False,
+                )
+                returncode = completed.returncode
+                stdout.add(completed.stdout.decode("utf-8", errors="replace"))
+                stderr.add(completed.stderr.decode("utf-8", errors="replace"))
+            except subprocess.TimeoutExpired as exc:
+                timed_out = True
+                if exc.stdout:
+                    stdout.add(exc.stdout.decode("utf-8", errors="replace"))
+                if exc.stderr:
+                    stderr.add(exc.stderr.decode("utf-8", errors="replace"))
+            except OSError as exc:
+                stderr.add(f"sync fallback failed to start process: {exc}")
+
+        await asyncio.to_thread(_run)
+        if stdout.value():
+            await self._emit(f"[command stdout] {redact_secrets(stdout.value(), self.environment)}")
+        if stderr.value():
+            await self._emit(f"[command stderr] {redact_secrets(stderr.value(), self.environment)}")
+        return {
+            "command": argv,
+            "cwd": self._relative(cwd),
+            "returncode": returncode,
+            "timed_out": timed_out,
+            "stdout": redact_secrets(stdout.value(), self.environment),
+            "stderr": redact_secrets(stderr.value(), self.environment),
         }
 
     async def _terminate(self, proc: asyncio.subprocess.Process) -> None:
@@ -704,47 +836,77 @@ class OpenAIResponsesAgent:
         self, payload: dict[str, Any], *, deadline: float, inactivity_timeout: int,
         emit: Callable[[str], Awaitable[None]],
     ) -> tuple[dict, bool]:
-        loop = asyncio.get_running_loop()
-        event_queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
+        # Cap the per-attempt transport timeout so a single long-running HTTP request
+        # cannot hold a TCP connection for hours.  Windows (and most NAT/firewalls) will
+        # silently drop connections idle for ~30–45 min, causing WinError 10060.  We
+        # retry on OSError up to 3 times while overall deadline permits.
+        _MAX_TRANSPORT_SECS = 600
+        _MAX_CONN_RETRIES = 3
+        _conn_attempt = 0
+        while True:
+            _conn_attempt += 1
+            loop = asyncio.get_running_loop()
+            event_queue: asyncio.Queue[dict[str, Any]] = asyncio.Queue()
 
-        def on_sse_event(event: dict[str, Any]) -> None:
+            def on_sse_event(event: dict[str, Any]) -> None:
+                try:
+                    loop.call_soon_threadsafe(event_queue.put_nowait, event)
+                except RuntimeError:
+                    pass
+
+            remaining = max(1, int(deadline - time.monotonic()))
+            transport_timeout = min(remaining, _MAX_TRANSPORT_SECS)
+            request_task = asyncio.create_task(
+                self._call_transport(payload, timeout=transport_timeout, on_sse_event=on_sse_event)
+            )
+            streamed_text = False
+            _conn_error: OSError | None = None
             try:
-                loop.call_soon_threadsafe(event_queue.put_nowait, event)
-            except RuntimeError:
-                pass
+                while not request_task.done():
+                    while not event_queue.empty():
+                        event = event_queue.get_nowait()
+                        self._last_activity = time.monotonic()
+                        if event.get("type") == "response.output_text.delta" and isinstance(
+                            event.get("delta"), str
+                        ):
+                            streamed_text = True
+                            await emit(event["delta"])
+                    now = time.monotonic()
+                    if self._cancel_event.is_set():
+                        self._thread_cancel_event.set()
+                        request_task.cancel()
+                        raise AgentCancelled("agent cancelled")
+                    if now >= deadline:
+                        self._thread_cancel_event.set()
+                        request_task.cancel()
+                        raise AgentTimeout("Responses agent exceeded overall timeout")
+                    if now - self._last_activity >= inactivity_timeout:
+                        self._thread_cancel_event.set()
+                        request_task.cancel()
+                        raise AgentTimeout(
+                            f"Responses agent produced no activity for {inactivity_timeout}s"
+                        )
+                    await asyncio.wait({request_task}, timeout=0.1)
+                result = await request_task
+            except OSError as exc:
+                _conn_error = exc
+            finally:
+                if not request_task.done():
+                    request_task.cancel()
+                await asyncio.gather(request_task, return_exceptions=True)
 
-        remaining = max(1, int(deadline - time.monotonic()))
-        request_task = asyncio.create_task(
-            self._call_transport(payload, timeout=remaining, on_sse_event=on_sse_event)
-        )
-        streamed_text = False
-        try:
-            while not request_task.done():
-                while not event_queue.empty():
-                    event = event_queue.get_nowait()
-                    self._last_activity = time.monotonic()
-                    if event.get("type") == "response.output_text.delta" and isinstance(
-                        event.get("delta"), str
-                    ):
-                        streamed_text = True
-                        await emit(event["delta"])
-                now = time.monotonic()
-                if self._cancel_event.is_set():
-                    self._thread_cancel_event.set()
-                    request_task.cancel()
-                    raise AgentCancelled("agent cancelled")
-                if now >= deadline:
-                    self._thread_cancel_event.set()
-                    request_task.cancel()
-                    raise AgentTimeout("Responses agent exceeded overall timeout")
-                if now - self._last_activity >= inactivity_timeout:
-                    self._thread_cancel_event.set()
-                    request_task.cancel()
-                    raise AgentTimeout(
-                        f"Responses agent produced no activity for {inactivity_timeout}s"
+            if _conn_error is not None:
+                # Network-level error (e.g. WinError 10060 WSAETIMEDOUT): retry if
+                # budget and attempts allow, otherwise propagate.
+                if _conn_attempt < _MAX_CONN_RETRIES and time.monotonic() < deadline:
+                    log.warning(
+                        "Responses agent transport error (attempt %d/%d): %s — retrying",
+                        _conn_attempt, _MAX_CONN_RETRIES, _conn_error,
                     )
-                await asyncio.wait({request_task}, timeout=0.1)
-            result = await request_task
+                    await asyncio.sleep(min(5 * _conn_attempt, 30))
+                    continue
+                raise _conn_error
+
             while not event_queue.empty():
                 event = event_queue.get_nowait()
                 self._last_activity = time.monotonic()
@@ -754,10 +916,6 @@ class OpenAIResponsesAgent:
                     streamed_text = True
                     await emit(event["delta"])
             return result, streamed_text
-        finally:
-            if not request_task.done():
-                request_task.cancel()
-            await asyncio.gather(request_task, return_exceptions=True)
 
     @staticmethod
     def _output_text(response: dict[str, Any]) -> str:

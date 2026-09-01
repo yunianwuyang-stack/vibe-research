@@ -6,6 +6,7 @@ import json
 import logging
 import os
 import shutil
+import time
 from pathlib import Path
 from typing import Optional
 
@@ -100,6 +101,66 @@ def decrypt_skill_md(skills_dir: Path, skill_name: str, license_key: Optional[st
     return None
 
 
+def _retry_rmtree(path: Path, attempts: int = 5, delay: float = 0.3) -> bool:
+    """Remove a tree, retrying on Windows file-lock errors (WinError 32).
+
+    Some sandboxes (and the desktop host's safe-delete hook) intercept rmtree's
+    per-file deletes and require a recycle bin that the backend environment does
+    not provide, turning every removal into SAFE_DELETE_FAIL_CLOSED.  When a
+    plain rmtree keeps failing, fall back to renaming the directory aside so the
+    mount point is freed and a fresh copy can be materialized; the stale tree is
+    left for the OS / user to reclaim later.
+
+    Returns True when the mount point is guaranteed free (either rmtree
+    succeeded or rename-aside moved the directory away).  Returns False when
+    even rename-aside failed (typically because the destination directory has
+    files locked by another live process).  Callers must treat False as
+    "best-effort cleanup failed" and decide whether to keep going or abort.
+    """
+    last: Exception | None = None
+    for try_n in range(attempts):
+        try:
+            shutil.rmtree(path)
+            return True
+        except (OSError, PermissionError) as exc:
+            last = exc
+            if try_n < attempts - 1:
+                time.sleep(delay * (try_n + 1))
+    # Last resort: rename aside so the destination path becomes available.
+    try:
+        stale = path.with_name(f"{path.name}.stale-{int(time.time())}")
+        os.replace(path, stale)
+        log.warning("rmtree blocked for %s; renamed aside to %s", path, stale)
+        return True
+    except OSError as rename_exc:
+        # Even rename-aside failed (destination is locked by another process).
+        # Degrade to "leave the directory in place" instead of raising, so the
+        # caller can decide to overwrite-on-write rather than abort the whole
+        # mount.  This converts a hard failure into a soft one and prevents
+        # stale-* tree pileups from cascading into mount_failed crashes.
+        log.warning(
+            "rmtree blocked for %s after %d attempts (%s); rename-aside also "
+            "failed (%s).  Leaving directory in place; mount will overwrite "
+            "files individually.",
+            path, attempts, last, rename_exc,
+        )
+        return False
+
+
+def _retry_copy2(src: Path, dst: Path, attempts: int = 3, delay: float = 0.2) -> None:
+    """Copy a file, retrying on Windows file-lock errors."""
+    last: Exception | None = None
+    for try_n in range(attempts):
+        try:
+            shutil.copy2(src, dst)
+            return
+        except (OSError, PermissionError) as exc:
+            last = exc
+            if try_n < attempts - 1:
+                time.sleep(delay * (try_n + 1))
+    raise RuntimeError(f"could not copy {src} to {dst} after {attempts} attempts: {last}")
+
+
 def decrypt_skills_to_workspace(
     skills_dir: Path,
     workspace_utils: Path,
@@ -119,7 +180,19 @@ def decrypt_skills_to_workspace(
         return False
     dst_root = Path(workspace_utils) / (destination_sub_dir or sub_dir)
     if dst_root.exists():
-        shutil.rmtree(dst_root)
+        # Best-effort cleanup: when even rename-aside fails the directory is
+        # likely locked by another live process (concurrent run_workflow, AV
+        # scanner, etc.).  Keep going and let _retry_copy2 overwrite files
+        # individually instead of aborting the whole mount; the alternative
+        # (raising CAPABILITY_BLOCKED) turns a recoverable file-lock into a
+        # workflow-killing error and was the root cause of repeated
+        # paper-figure recovery failures on Windows.
+        cleaned = _retry_rmtree(dst_root)
+        if not cleaned:
+            log.warning(
+                "could not fully clean %s; overwriting files individually",
+                dst_root,
+            )
     dst_root.mkdir(parents=True, exist_ok=True)
 
     key = get_decrypt_key()
@@ -136,7 +209,10 @@ def decrypt_skills_to_workspace(
         elif src.name != ".skill_meta.json":
             dst = dst_root / rel
             dst.parent.mkdir(parents=True, exist_ok=True)
-            shutil.copy2(src, dst)
+            try:
+                _retry_copy2(src, dst)
+            except RuntimeError as exc:
+                raise RuntimeError(f"CAPABILITY_BLOCKED:{sub_dir}:mount_failed:{exc}") from exc
     return True
 
 

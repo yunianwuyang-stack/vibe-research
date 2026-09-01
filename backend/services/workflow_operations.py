@@ -190,7 +190,27 @@ async def finish_step_attempt(
             status = "failed"
         else:
             status = "interrupted"
-        error = unhandled_error or (str(step["error_message"] or "") if step else "step disappeared")
+        # Always materialise a non-empty error string for failed/interrupted
+        # attempts.  Persisting NULL here forces every consumer (UI, recovery
+        # operations table, SSE) to fall back to the opaque "node execution
+        # failed", which made the real cause undiagnosable for the
+        # fb4f4e5b7272 paper-figure failures.
+        if unhandled_error:
+            error = unhandled_error
+        elif step and step["error_message"]:
+            error = str(step["error_message"])
+        elif status == "failed":
+            error = (
+                f"step '{skill_name}' failed but recorded no error_message; "
+                "this attempt likely crashed before the engine could persist stderr"
+            )
+        elif status == "interrupted" and not cancelled:
+            error = (
+                f"step '{skill_name}' ended in unexpected state '{step_status}'; "
+                "treating as interrupted"
+            )
+        else:
+            error = ""
         outputs = _loads(step["output_files"], []) if step else []
         outputs = outputs if isinstance(outputs, list) else []
 
@@ -234,7 +254,7 @@ async def finish_step_attempt(
         await db.execute(
             "UPDATE workflow_step_attempts SET status=?, output_files=?, artifact_count=?, "
             "error_message=?, finished_at=? WHERE id=?",
-            (status, _json(outputs), artifact_count, error[:2000] or None, _now(), attempt_id),
+            (status, _json(outputs), artifact_count, error[:2000] if error else None, _now(), attempt_id),
         )
         await db.commit()
     finally:
