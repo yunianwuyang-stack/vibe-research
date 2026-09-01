@@ -290,11 +290,27 @@ research_contract  →  literature_search  →  evidence_screening
 
 ## 10. 开发模式启动（源码模式）
 
+> **⚠️ 启动纪律（2026-09-01 确立）：后端一律由人工启动，禁止 AI 助手代劳。**
+>
+> 原因：AI 助手（WorkBuddy 等）通过工具调用派生的进程树会被宿主的 **safe-delete 沙箱钩子**注入，
+> 该钩子拦截文件删除并要求回收站通道——后端进程上下文无法提供，删除被 fail-closed 拦截
+> （`SAFE_DELETE_FAIL_CLOSED`）。后果：`skill_crypto._retry_rmtree` 清理 `_utils/` 永远失败，
+> 只能靠 rename-aside 让位，工作区堆积 `_utils.stale-*` 残留（真实案例：fb4f4e5b7272 堆了 17 个）；
+> 批量删除守卫还可能误伤 `.git`（2026-09-01 发生过 refs/pack 被删、9 个本地提交对象丢失的事故）。
+>
+> 规则：
+> - **后端启动/重启**：由用户在自有终端执行 `start.bat`（或桌面 Electron 应用，其由 main.js 直接
+>   spawn Python，天然不在沙箱内）。
+> - **AI 助手需要后端重启时**：明确告知用户"请重启后端"，不要自己 spawn 后端进程。
+> - AI 派生的**短命只读进程**（查询、测试、curl）不受此限；涉及删除/长驻留的一律人工。
+>
+> 验证后端是否在沙箱外：删除通道正常时，步骤重挂载不会再产生新的 `_utils.stale-*` 目录。
+
 ### 前提条件
 - Python 3.x 已安装（`pip install -r backend/requirements.txt`）
 - Node.js 已安装（`cd frontend && npm install`）
 
-### 启动方式
+### 启动方式（人工执行）
 ```bash
 # 终端1：启动后端（热重载）
 cd backend
@@ -304,6 +320,9 @@ python -m uvicorn main:app --reload --port 18088
 cd frontend
 npm run dev
 ```
+
+注：`--reload` 在 Windows 下会使 uvicorn 选用 SelectorEventLoop（不支持 asyncio 子进程），
+`_run_process` 已内置同步兜底（见 §12.8 顶部修正块），无需为此去掉热重载。
 
 浏览器访问：**http://localhost:5173**
 
@@ -477,7 +496,7 @@ if executable_name in {"python", "python3"} and any(
 5. 如果日志只有业务 ERROR（check 脚本输出）而无 allowlist 字样
    └─ 这是正常的内容质量门控，不是 sandbox 问题，应修复报告内容
 
-6. 修改 SKILL.md 后，若 backend 代码也有变动，重启 FastAPI（端口 18088）
+6. 修改 SKILL.md 后，若 backend 代码也有变动，**请用户人工重启 FastAPI**（端口 18088）——见 §10 启动纪律
 ```
 
 ---
