@@ -2053,9 +2053,17 @@ _TRANSIENT_ERROR_PATTERNS = (
 # so the sleep is not the pacing bottleneck — a short, predictable delay gets
 # the step back to work as soon as the relay recovers.  The attempt cap is
 # sized so the time box (not the counter) is the binding constraint.
-_TRANSIENT_RETRY_WINDOW_S = 45 * 60.0
+#
+# The window measures TIME SINCE THE LAST PRODUCTIVE ATTEMPT, not time since
+# step start: an attempt that ran >= _TRANSIENT_PROGRESS_RESET_S before
+# failing demonstrably had a working upstream, so the window resets and only
+# genuine outage time accumulates against it (without this, a long-running
+# step like comp-paper-zh burned 22 productive minutes of its 45-minute
+# budget before the first real failure — fb4f4e5b7272, 2026-09-02).
+_TRANSIENT_RETRY_WINDOW_S = 120 * 60.0
 _TRANSIENT_RETRY_DELAY_S = 20.0
 _TRANSIENT_MAX_RETRIES = 120
+_TRANSIENT_PROGRESS_RESET_S = 300.0
 
 
 def _classify_step_error(text: str) -> str:
@@ -5936,8 +5944,9 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
             # permanent/unknown failures keep the original strict cap
             # (max_attempts total executions, no sleep), while transient
             # infrastructure failures (upstream relay outages, DNS, resets)
-            # get a time-boxed window with exponential backoff so a single
-            # multi-minute outage wave no longer exhausts the whole budget.
+            # get a time-boxed window with a flat 20s delay.  The window
+            # restarts whenever an attempt ran long enough to prove the
+            # upstream was actually working (see _TRANSIENT_PROGRESS_RESET_S).
             result = {}
             max_attempts = 9 if managed else 1
             transient_window_s = _TRANSIENT_RETRY_WINDOW_S
@@ -5952,6 +5961,7 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
             transient_retries = 0
             transient_started = time.monotonic()
             while True:
+                attempt_started = time.monotonic()
                 log_buffer: List[str] = []
                 log_flush_lock = asyncio.Lock()
 
@@ -6019,6 +6029,26 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
                 _category = _classify_step_error(_stderr_text)
                 if managed and _category == "transient":
                     transient_retries += 1
+                    _attempt_dur = time.monotonic() - attempt_started
+                    if _attempt_dur >= _TRANSIENT_PROGRESS_RESET_S:
+                        # The attempt did real work before the upstream flapped,
+                        # so the relay is basically healthy — restart the window
+                        # and let only genuine outage time count against it.
+                        # The lifetime retry counter keeps running, so a
+                        # pathological flap loop still hits the hard cap.
+                        transient_started = time.monotonic()
+                        log.info(
+                            "Step '%s' attempt ran %.0fs before transient failure; "
+                            "resetting retry window",
+                            skill_name, _attempt_dur,
+                        )
+                        await _log(
+                            workflow_id,
+                            skill_name,
+                            "info",
+                            f"[RETRY] 本次尝试有效运行 {_attempt_dur/60:.0f} 分钟后遇上游抖动，"
+                            "重试时间盒已重置",
+                        )
                     _elapsed = time.monotonic() - transient_started
                     _remaining = transient_window_s - _elapsed
                     if transient_retries <= _TRANSIENT_MAX_RETRIES and _remaining > 5.0:
