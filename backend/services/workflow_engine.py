@@ -11,6 +11,7 @@ import shlex
 import shutil
 import subprocess
 import sys
+import time
 import uuid
 from contextvars import ContextVar
 from dataclasses import dataclass, field
@@ -2003,6 +2004,86 @@ def _check_figures_step_health(
 _AUTO_RECOVER_FIGURE_SKILLS = {
     "paper-figure", "paper-figure-drawio", "paper-figure-html", "nature-figure", "experiment-bridge",
 }
+
+
+# ---------------------------------------------------------------------------
+# Failure-class-aware retry policy for the step runner loop.
+#
+# rc=1 conflates two very different failure families:
+#   * transient  — upstream LLM relay outages (HTTP 502/503/504,
+#     upstream_unavailable, 429), DNS failures, connection resets.  These
+#     recover on their own given enough patience, so they get a long
+#     TIME-BOXED retry window with exponential backoff instead of the bare
+#     8-attempt cap (which, with no sleep between attempts, burns through the
+#     whole budget inside a single ~9-minute outage wave — fb4f4e5b7272
+#     comp-paper-zh hit exactly this on 2026-09-02).
+#   * permanent  — sandbox denials, content quality gates, auth/config
+#     errors, payload_limit rejections.  Retrying these is futile token burn,
+#     so they keep the original strict attempt cap.
+# Anything unrecognized stays on the original conservative cap.
+# ---------------------------------------------------------------------------
+
+# Lowercase substring patterns, checked permanent-first so that e.g. an
+# "HTTP 503 ... invalid api key" body is not misread as transient.
+_PERMANENT_ERROR_PATTERNS = (
+    "not allowlisted",
+    "workspaceboundaryerror",
+    "capability_blocked",
+    "interpreter inline and module execution",
+    "payload_limit",
+    "http 401", "http 403",
+    "invalid api key", "invalid_api_key",
+    "authentication failed",
+)
+
+_TRANSIENT_ERROR_PATTERNS = (
+    "upstream_unavailable",
+    "http 429", "http 500", "http 502", "http 503", "http 504",
+    "getaddrinfo failed",          # DNS resolution (local network/VPN blip)
+    "winerror 10054", "winerror 10060", "winerror 10061",  # reset/timeout/refused
+    "connection reset", "connection aborted", "connection refused",
+    "read timed out", "read timeout", "connect timeout",
+    "service unavailable", "temporarily unavailable",
+    "eof occurred", "remote end closed",
+)
+
+# Time-boxed transient retry window (overridable per-workflow via
+# params["transient_retry_window_minutes"]).  The inter-retry delay is a flat
+# 20s: each failed attempt already burns ~60s waiting for the hung upstream,
+# so the sleep is not the pacing bottleneck — a short, predictable delay gets
+# the step back to work as soon as the relay recovers.  The attempt cap is
+# sized so the time box (not the counter) is the binding constraint.
+_TRANSIENT_RETRY_WINDOW_S = 45 * 60.0
+_TRANSIENT_RETRY_DELAY_S = 20.0
+_TRANSIENT_MAX_RETRIES = 120
+
+
+def _classify_step_error(text: str) -> str:
+    """Classify a step failure as 'transient', 'permanent', or 'unknown'.
+
+    Pure string matching on the runner's stderr/error text; permanent patterns
+    win over transient ones so that deterministic failures never fall into the
+    patient retry path.
+    """
+    t = (text or "").lower()
+    if not t.strip():
+        return "unknown"
+    for pat in _PERMANENT_ERROR_PATTERNS:
+        if pat in t:
+            return "permanent"
+    for pat in _TRANSIENT_ERROR_PATTERNS:
+        if pat in t:
+            return "transient"
+    return "unknown"
+
+
+def _transient_backoff_s(consecutive: int) -> float:
+    """Fixed 20s delay between transient retries (flat, not exponential).
+
+    Kept as a function so the retry loop and tests have a stable seam; the
+    ``consecutive`` counter is accepted for API compatibility but unused.
+    """
+    return _TRANSIENT_RETRY_DELAY_S
 
 
 def _primary_output_issue(
@@ -5850,9 +5931,27 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
             # immediate retries for a non-zero runner result (nine calls total).
             # Accept both runner result spellings while preserving the rebuilt
             # runner's public ``returncode`` field.
+            #
+            # Retry policy is failure-class aware (see _classify_step_error):
+            # permanent/unknown failures keep the original strict cap
+            # (max_attempts total executions, no sleep), while transient
+            # infrastructure failures (upstream relay outages, DNS, resets)
+            # get a time-boxed window with exponential backoff so a single
+            # multi-minute outage wave no longer exhausts the whole budget.
             result = {}
             max_attempts = 9 if managed else 1
-            for attempt in range(max_attempts):
+            transient_window_s = _TRANSIENT_RETRY_WINDOW_S
+            if managed:
+                try:
+                    _win_min = float((params or {}).get("transient_retry_window_minutes") or 0)
+                    if _win_min > 0:
+                        transient_window_s = _win_min * 60.0
+                except (TypeError, ValueError):
+                    pass
+            attempt = 0
+            transient_retries = 0
+            transient_started = time.monotonic()
+            while True:
                 log_buffer: List[str] = []
                 log_flush_lock = asyncio.Lock()
 
@@ -5915,17 +6014,57 @@ async def _run_single_step_locked(workflow_id: str, skill_name: str, ClaudeRunne
                 succeeded = result.get("success", return_code == 0)
                 if succeeded and (return_code is None or return_code == 0):
                     break
-                if attempt < max_attempts - 1:
+                attempt += 1
+                _stderr_text = result.get("stderr") or ""
+                _category = _classify_step_error(_stderr_text)
+                if managed and _category == "transient":
+                    transient_retries += 1
+                    _elapsed = time.monotonic() - transient_started
+                    _remaining = transient_window_s - _elapsed
+                    if transient_retries <= _TRANSIENT_MAX_RETRIES and _remaining > 5.0:
+                        _delay = min(_transient_backoff_s(transient_retries), _remaining)
+                        log.warning(
+                            "Step '%s' transient failure (rc=%s, retry %d, "
+                            "window %.0f/%.0fs), backing off %.0fs: %s",
+                            skill_name, return_code, transient_retries,
+                            _elapsed, transient_window_s, _delay, _stderr_text[:300],
+                        )
+                        await _log(
+                            workflow_id,
+                            skill_name,
+                            "info",
+                            f"[RETRY] 上游/网络瞬时故障，{_delay:.0f}s 后重试"
+                            f"（时间盒 {int(_elapsed)//60}/{int(transient_window_s)//60} 分钟，"
+                            f"第 {transient_retries} 次）",
+                        )
+                        await asyncio.sleep(_delay)
+                        continue
+                    log.warning(
+                        "Step '%s' transient retry window exhausted (%d retries over %.0fs)",
+                        skill_name, transient_retries, _elapsed,
+                    )
+                    await _log(
+                        workflow_id,
+                        skill_name,
+                        "warning",
+                        f"[RETRY] 瞬时故障重试时间盒耗尽（{transient_retries} 次 / "
+                        f"{int(transient_window_s)//60} 分钟），上游仍不可用；"
+                        "标记失败，可稍后从失败点恢复",
+                    )
+                    break
+                if attempt < max_attempts:
                     log.warning(
                         "Step '%s' failed (rc=%s, attempt %s/8), retrying... error: %s",
-                        skill_name, return_code, attempt + 1, result.get("stderr", ""),
+                        skill_name, return_code, attempt, result.get("stderr", ""),
                     )
                     await _log(
                         workflow_id,
                         skill_name,
                         "info",
-                        f"[RETRY] 步骤退出码 rc={return_code}, 自动重试 (attempt {attempt + 1}/8)",
+                        f"[RETRY] 步骤退出码 rc={return_code}, 自动重试 (attempt {attempt}/8)",
                     )
+                    continue
+                break
 
             files_after = set(files_before)
             files_created: List[str] = []

@@ -382,6 +382,14 @@ npm run build:release          # 打包 Windows 安装包
 > 适用场景：某 workflow 步骤反复以 `rc=1` 失败并触发 auto-retry（日志显示 `auto-retry attempt N/8`），  
 > 而非业务逻辑返回失败（例如 AI 报告内容不合格）。
 
+> **2026-09-02 起：重试策略按失败类别分治**（`workflow_engine.py` `_classify_step_error`）。
+> 瞬时基础设施故障（`upstream_unavailable` / HTTP 429·502·503·504 / DNS `getaddrinfo` / 连接重置）
+> 不再消耗 8 次硬上限，改为**时间盒重试**：固定 20s 间隔（失败尝试本身已在挂起的上游上耗时 ~60s，
+> sleep 不是节奏瓶颈），默认窗口 45 分钟（可用工作流参数 `transient_retry_window_minutes` 覆盖），
+> 安全上限 120 次；日志为 `[RETRY] 上游/网络瞬时故障，Xs 后重试（时间盒 N/45 分钟）`。
+> 确定性故障（沙箱拦截 / payload_limit / 401·403 / 内容门控）维持原 8 次上限快速失败。
+> 排查时先区分日志里是哪一类 `[RETRY]`。
+
 ---
 
 ### 12.1 rc=1 的两种含义
