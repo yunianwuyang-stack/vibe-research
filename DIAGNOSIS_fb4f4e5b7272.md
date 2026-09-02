@@ -74,13 +74,41 @@
 
 ---
 
-## （以下为 2026-08-31 初诊原文，保留作历史层参考）
+## ★ 2026-09-02 追加：comp-paper-zh 阶段 rc=1 自动重试的原因
+
+**前置验证**：paper-figure / paper-figure-html 已 `completed`，figures/ 产出 3 个图像文件——昨日 SelectorEventLoop 修复在生产环境生效。
+
+**结论：本次 rc=1 与项目代码无关，是上游 LLM 转发站不可用。**
+
+执行器配置：`openai_responses` → `https://a6api.com/v1`，model `gpt-5.6-sol`（第三方转发站，Cloudflare 接入）。
+
+三波失败的错误签名（backend.log）：
+
+| 时间 | attempts | 错误 | 归因 |
+|---|---|---|---|
+| 09-01 21:35 | 7/8, 8/8 | HTTP 504 + Cloudflare 错误页 HTML | 转发站边缘→源站超时 |
+| 09-02 13:33–13:42 | 1/8–8/8 | 同上 HTTP 504 | 同上（故障窗口持续） |
+| 09-02 15:57–16:00 | 1/8–8/8 | HTTP 400 `upstream_unavailable`（转发站建议"切换固定商家"）+ 两次 `[Errno 11001] getaddrinfo failed` | 上游渠道不可用；两次为本机 DNS 抖动（本地网络/VPN） |
+
+机制：agent 适配器调用失败 → runner 返回 rc=1 → 引擎 `[RETRY]` 统一重试 8 次（`workflow_engine.py:5918-5928`）。**注意：引擎层重试没有退避 sleep**，8 次约 9 分钟打完（每次 ~65s 是转发站挂起后超时），覆盖不了上游故障窗口。
+
+历史佐证：08-31 本工作流 attempt 34 命中过同站 `smart_route payload_limit` 502——该转发站对智能路由+大负载有前科；comp-paper-zh 是全文写作步骤，上下文负载最大。
+
+**处置建议**：
+1. 立刻：按转发站建议切换"固定商家"/换渠道，或等上游恢复后直接点"从失败点恢复"（恢复链已修好）
+2. 检查本机网络/VPN（11001 是本机 DNS 失败）
+3. 反复失败则换 executor 渠道，或精简上下文规避转发站 payload 限制
+4. 代码层可选优化：`upstream_unavailable`/504/DNS 归类为基础设施错误，改指数退避并拉长重试窗口；UI 把此类 rc=1 翻译为"模型服务不可用"而非泛化的"步骤失败"
+
+---
 
 ### 初诊一句话结论
 
 `paper-figure` 步骤陷入**多重叠加的恢复死锁**：恢复时同时命中 (A) 桌面宿主的"安全删除"策略、(B) AI 子进程通道的 Win32 App Execution Alias bug、(C) 缺少必要的 host-fallback 触发条件，导致 50 次尝试全部失败，且工作区累积 17 个 `_utils.stale-*` 残留目录。
 
 ---
+
+## （以下为 2026-08-31 初诊原文，保留作历史层参考）
 
 ## 症状时间线（按 attempt_number 聚类）
 
