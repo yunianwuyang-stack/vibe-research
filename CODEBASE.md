@@ -401,6 +401,7 @@ npm run build:release          # 打包 Windows 安装包
 | **工具调用被 sandbox 拒绝** | `run_command` 抛出 `ValueError`，agent 的工具返回 `{"ok":false,"error":"..."}` | 日志含 `command not allowlisted` / `not allowlisted` / `WorkspaceBoundaryError` |
 | **业务校验失败** | `check_*.py` 等脚本发现内容错误，正常退出码 1 | 日志含 `ERROR:` 前缀的校验输出行，无 allowlist 字样 |
 | **OS 层面进程创建失败** | `asyncio.create_subprocess_exec` 抛出底层异常，工具返回 `{"ok":false,"error":"NotImplementedError: "}` | 日志含 `NotImplementedError: `（消息为空），且 `python --version` 等最基础命令也同样失败 |
+| **转发站包装的确定性 400** | 请求体本身不合法（如响应项 `status` 被回放进 input），严格上游拒绝后被转发站包装成"上游暂时不可用" | 日志 400 响应体含 `"param":"input[N].xxx"` 字段路径；每次失败都极快（秒回）且内容雷同。已于 2026-09-03 修复 status 回放问题（`openai_responses_agent._continuation_items` 剥离 status） |
 
 **首先区分这三类**。本手册主要针对第一类（sandbox 拒绝）和第三类（OS 级别失败，见 12.8）。
 

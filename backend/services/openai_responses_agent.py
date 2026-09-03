@@ -948,8 +948,21 @@ class OpenAIResponsesAgent:
         if not isinstance(output, list):
             return []
         # Reasoning items must be preserved for reasoning models. Messages and
-        # function calls are valid input items when copied verbatim.
-        return [dict(item) for item in output if isinstance(item, dict)]
+        # function calls are valid input items when copied — but response items
+        # carry server-side metadata (notably ``status``) that strict
+        # OpenAI-compatible relays reject on input with
+        # "Unknown parameter: 'input[N].status'", which then surfaces wrapped
+        # as a misleading "upstream_unavailable" 400 (fb4f4e5b7272 comp-paper-zh,
+        # 2026-09-03).  Strip it before replaying; ``id``/``call_id``/content
+        # stay intact for reasoning and tool-call matching.
+        items: list[dict[str, Any]] = []
+        for item in output:
+            if not isinstance(item, dict):
+                continue
+            cleaned = dict(item)
+            cleaned.pop("status", None)
+            items.append(cleaned)
+        return items
 
     async def run(
         self, *, prompt: str, cwd: str | Path, workflow_id: str,
