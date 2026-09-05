@@ -18,10 +18,16 @@
 """
 import os
 import numpy as np
+import pandas as pd
 
 
 def _stars(p):
-    if p is None or (isinstance(p, float) and np.isnan(p)):
+    if p is None:
+        return ''
+    try:
+        if np.isnan(p):
+            return ''
+    except TypeError:
         return ''
     if p < 0.01: return '***'
     if p < 0.05: return '**'
@@ -30,7 +36,12 @@ def _stars(p):
 
 
 def _fmt(x, d=3):
-    if x is None or (isinstance(x, float) and np.isnan(x)):
+    if x is None:
+        return ''
+    try:
+        if np.isnan(x):
+            return ''
+    except TypeError:
         return ''
     if abs(x) >= 1000: return f'{x:,.0f}'
     return f'{x:.{d}f}'
@@ -123,7 +134,8 @@ def regression_table(models, col_labels=None, output='figures/TABLE_regression.t
         else:
             results.append({
                 'params': dict(m.params), 'bse': dict(m.bse), 'pvalues': dict(m.pvalues),
-                'rsquared': getattr(m, 'rsquared', None),
+                # Logit/Probit/Poisson 等没有 rsquared，用 McFadden 伪 R²（prsquared）兜底
+                'rsquared': getattr(m, 'rsquared', None) if hasattr(m, 'rsquared') else getattr(m, 'prsquared', None),
                 'rsquared_adj': getattr(m, 'rsquared_adj', None),
                 'nobs': int(m.nobs),
             })
@@ -279,19 +291,26 @@ def correlation_table(df, variables=None, output='figures/TABLE_correlation.tex'
     """相关系数矩阵三线表（下三角+显著性星号）。"""
     if variables is None:
         variables = df.select_dtypes(include='number').columns.tolist()
-    sub = df[variables]
-    corr = sub.corr()
+    sub = df[variables].apply(lambda c: pd.to_numeric(c, errors='coerce'))
+    corr = sub.corr()  # pandas 默认 pairwise-complete，与下面 p 值口径保持一致
     n = len(variables)
+    pvals = np.full((n, n), np.nan)
     try:
         from scipy import stats as sp
-        pvals = np.zeros((n, n))
         for i in range(n):
-            for j in range(n):
-                if i != j:
-                    _, p = sp.pearsonr(sub.iloc[:, i].dropna(), sub.iloc[:, j].dropna())
-                    pvals[i, j] = p
+            for j in range(i):
+                # ⛔ 修复：旧版对两列分别 dropna() 会造成行错位（甚至长度不等直接抛错），
+                # p 值与 corr 完全对不上。必须按"成对完整"删除缺失。
+                pair = sub.iloc[:, [i, j]].dropna()
+                if len(pair) < 3 or pair.iloc[:, 0].nunique() < 2 or pair.iloc[:, 1].nunique() < 2:
+                    continue
+                try:
+                    _, pv = sp.pearsonr(pair.iloc[:, 0].to_numpy(), pair.iloc[:, 1].to_numpy())
+                except Exception:
+                    continue
+                pvals[i, j] = pvals[j, i] = pv
     except ImportError:
-        pvals = np.ones((n, n))
+        pass
 
     is_md = _is_markdown_output(output)
     note = '*、**、*** 分别表示在 10%、5%、1% 水平上显著。'

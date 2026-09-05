@@ -1132,8 +1132,10 @@ def set_all_seeds(seed: int = 42) -> dict:
     """统一 seed 函数，所有代码入口必须先调用此函数。返回设置详情供日志。"""
     import random
     random.seed(seed)
+    # 注意：PYTHONHASHSEED 只在解释器启动前设置才生效，这里写入 os.environ 仅用于
+    # 传给后续 subprocess；当前进程的 set/dict 遍历顺序不会因此固定 —— 依赖顺序的地方请显式 sorted()
     os.environ['PYTHONHASHSEED'] = str(seed)
-    info = {'seed': seed, 'python_hashseed': str(seed)}
+    info = {'seed': seed, 'python_hashseed': str(seed), 'note': 'PYTHONHASHSEED 仅对子进程生效'}
     try:
         import numpy as np
         np.random.seed(seed)
@@ -1396,19 +1398,36 @@ import numpy as np
 import json, sys
 from pathlib import Path
 
-def audit_continuous_optimum(result, tol_grad=1e-4, tol_eq=1e-6) -> dict:
+def audit_continuous_optimum(result, tol_grad=1e-4, tol_eq=1e-6, bounds=None, has_constraints=False) -> dict:
     """
     审计 scipy.optimize / cvxpy / similar 结果。
     result 至少含: success, fun, x, (optional) jac, status
+    bounds: [(lb, ub), ...]，有边界约束时用"投影梯度"判收敛。
+    has_constraints: 有一般等式/不等式约束时，目标梯度在最优点本来就不为 0
+                     （KKT 是 ∇f + Σλ∇g = 0），此时跳过裸梯度范数检查，只做可行性/成功标志检查。
+    ⛔ 旧版对所有问题都检查 ||∇f|| < tol，几乎所有带约束的竞赛题都会被误判"未收敛"。
     """
     fails = []
     if not result.get('success', False):
         fails.append(f"求解器报告失败: status={result.get('status')}, message={result.get('message')}")
-    # 梯度范数
-    if 'jac' in result and result['jac'] is not None:
-        g = np.array(result['jac'])
-        if np.linalg.norm(g) > tol_grad:
-            fails.append(f"梯度范数 {np.linalg.norm(g):.2e} > {tol_grad}（疑似未真正收敛）")
+    # 梯度范数（仅无约束 / 仅边界约束时有意义）
+    if 'jac' in result and result['jac'] is not None and not has_constraints:
+        g = np.array(result['jac'], dtype=float)
+        x = np.array(result.get('x', []), dtype=float)
+        if bounds is not None and x.size == g.size:
+            # 投影梯度：在下界处只看 g<0 的分量，在上界处只看 g>0 的分量
+            pg = g.copy()
+            for i, (lb, ub) in enumerate(bounds):
+                if lb is not None and abs(x[i] - lb) < 1e-9 and g[i] > 0:
+                    pg[i] = 0.0
+                if ub is not None and abs(x[i] - ub) < 1e-9 and g[i] < 0:
+                    pg[i] = 0.0
+            g = pg
+        gnorm = np.linalg.norm(g)
+        # 相对容差：目标函数量级大时绝对 1e-4 不合理
+        scale = max(1.0, abs(float(result.get('fun', 0.0))))
+        if gnorm > tol_grad * scale:
+            fails.append(f"(投影)梯度范数 {gnorm:.2e} > {tol_grad * scale:.1e}（疑似未真正收敛）")
     # 目标函数值是否爆炸
     if abs(result.get('fun', 0)) > 1e10:
         fails.append(f"目标函数值 {result['fun']:.2e} 异常大（可能数值爆炸）")
@@ -1432,14 +1451,15 @@ def audit_multistart(results_list, rel_tol=0.05) -> dict:
 
 
 def audit_heuristic_convergence(history: list[dict], window_frac=0.1, tol_rel=1e-3) -> dict:
-    """启发式（GA/SA/PSO）收敛曲线审计：最后 X% 代的相对下降应 < tol。"""
+    """启发式（GA/SA/PSO）收敛曲线审计：最后 X% 代的相对改进应 < tol。
+    ⛔ 用 abs()：旧版 (recent[0]-recent[-1]) 隐含最小化，最大化问题 rel 恒为负 → 永远"通过"。"""
     if len(history) < 20:
         return {'audit_pass': False, 'fails': [f"收敛历史仅 {len(history)} 代，太短"]}
     fbest = [h['best'] for h in history]
     n = len(fbest)
     window = max(1, int(n * window_frac))
     recent = fbest[-window:]
-    rel = (recent[0] - recent[-1]) / max(abs(recent[0]), 1e-10)
+    rel = abs(recent[0] - recent[-1]) / max(abs(recent[0]), 1e-10)
     fails = []
     if rel > tol_rel:
         fails.append(f"最后 {window_frac:.0%} 代仍下降 {rel:.2%}（可能过早终止）")
@@ -2125,8 +2145,10 @@ def audit_subproblem_isolation(facts: dict, code_file, current_sub: str) -> list
 ### 在 comp-code 阶段必跑加固审计（更新版凭证）
 
 ```bash
-python3 facts_audit_v2.py 2>&1 | tee AUDIT_REPORT.md
-n_suspicious=$(grep -c "^⚠" AUDIT_REPORT.md)
+# facts_audit.py 自己会落档 AUDIT_REPORT.md，日志另存；退出码用 PIPESTATUS[0]（管道后 $? 是 tee 的）
+python3 _utils/facts_audit.py --stage code 2>&1 | tee _tmp/facts_audit.log
+RC=${PIPESTATUS[0]}
+n_suspicious=$(grep -cE '^- (⛔|⚠)' AUDIT_REPORT.md 2>/dev/null || true); n_suspicious=${n_suspicious:-0}
 # 凭证里加 n_suspicious_numbers 字段
 echo "<!-- AUDIT_OK source=results.json rechecked_at=$(date -Iseconds) n_constraints=$N n_suspicious_numbers=$n_suspicious -->" >> RESULTS.md
 ```

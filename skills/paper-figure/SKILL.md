@@ -247,8 +247,14 @@ fi
 
 ```bash
 # Step 4 末尾：检查图标签单位 / 图例与 facts 实体名匹配 / 图脚本数据来源
-[ -f PROBLEM_FACTS.json ] && python3 _utils/facts_audit.py --stage figure 2>&1 | tee -a AUDIT_REPORT.md
-FIG_RC=$?
+# ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件，会互相覆盖）；
+#    管道后 $? 是 tee 的退出码（恒 0）——旧写法让这道审计门禁从未真正拦截过。
+mkdir -p _tmp
+FIG_RC=0
+if [ -f PROBLEM_FACTS.json ]; then
+    python3 _utils/facts_audit.py --stage figure 2>&1 | tee -a _tmp/facts_audit_figure.log
+    FIG_RC=${PIPESTATUS[0]}
+fi
 if [ $FIG_RC -eq 1 ]; then
     echo "⛔ 图脚本审计失败：xlabel/ylabel 缺单位、图例与 facts 实体名不匹配、或脚本未从 JSON 读数据。请修正后重新跑。"
 fi

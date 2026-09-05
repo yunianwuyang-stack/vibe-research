@@ -66,13 +66,28 @@ prob = pulp.LpProblem("name", pulp.LpMinimize)
 ```python
 import time, itertools
 
-def auto_tune(solve_func, param_grid, time_budget=None):
+def auto_tune(solve_func, param_grid, time_budget=None, sense="min", seed=42):
     """
     自动参数搜索框架。
     solve_func(params) -> (objective, feasible, solution)
     param_grid: dict, 如 {'pop_size': [50, 100, 200], 'n_gen': [200, 500, 1000], 'cx_rate': [0.7, 0.8, 0.9]}
     time_budget: 总时间预算（秒）, 由 Claude 根据问题规模自行决定
+    sense: "min" 或 "max" —— ⛔ 必须与 MODELING_REPORT.md 的目标函数方向一致。
+           旧版隐含最小化，最大化问题直接套用会把"最差解"当最优返回。
+    seed: random_search 的随机种子（可复现性，见 error_prevention 第十一章）
     """
+    import random
+    rng = random.Random(seed)
+    better = (lambda a, b: a < b) if sense == "min" else (lambda a, b: a > b)
+
+    def _improves(obj, feasible, best_obj, best_feasible):
+        # 可行解永远优先于不可行解；旧版若首个解不可行，后续可行解会因目标值更差而被拒绝
+        if feasible and not best_feasible:
+            return True
+        if not feasible:
+            return False
+        return best_obj is None or better(obj, best_obj)
+
     first_params = {k: v[0] for k, v in param_grid.items()}
     t0 = time.time()
     obj, feasible, sol = solve_func(first_params)
@@ -96,7 +111,7 @@ def auto_tune(solve_func, param_grid, time_budget=None):
         n_samples = max(5, int(time_budget / single_time / 2))
         strategy = f"random_search_{n_samples}"
 
-    best_obj, best_params, best_sol = obj, first_params, sol
+    best_obj, best_params, best_sol, best_feasible = obj, first_params, sol, bool(feasible)
     results_log = [{"params": first_params, "objective": obj, "feasible": feasible}]
     start_time = time.time()
 
@@ -111,8 +126,8 @@ def auto_tune(solve_func, param_grid, time_budget=None):
             if params == first_params: continue
             obj, feasible, sol = solve_func(params)
             results_log.append({"params": params, "objective": obj, "feasible": feasible})
-            if feasible and obj < best_obj:
-                best_obj, best_params, best_sol = obj, params, sol
+            if _improves(obj, feasible, best_obj, best_feasible):
+                best_obj, best_params, best_sol, best_feasible = obj, params, sol, True
     elif strategy == "coordinate_search":
         current_best = dict(first_params)
         for key in param_grid:
@@ -123,20 +138,21 @@ def auto_tune(solve_func, param_grid, time_budget=None):
                 params[key] = val
                 obj, feasible, sol = solve_func(params)
                 results_log.append({"params": params, "objective": obj, "feasible": feasible})
-                if feasible and obj < best_obj:
-                    best_obj, best_params, best_sol = obj, params, sol
+                if _improves(obj, feasible, best_obj, best_feasible):
+                    best_obj, best_params, best_sol, best_feasible = obj, params, sol, True
                     current_best = dict(params)
     else:  # random_search
-        import random
         n = int(strategy.split("_")[-1])
         for _ in range(n):
             if not _time_ok(): break
-            params = {k: random.choice(v) for k, v in param_grid.items()}
+            params = {k: rng.choice(v) for k, v in param_grid.items()}
             obj, feasible, sol = solve_func(params)
             results_log.append({"params": params, "objective": obj, "feasible": feasible})
-            if feasible and obj < best_obj:
-                best_obj, best_params, best_sol = obj, params, sol
+            if _improves(obj, feasible, best_obj, best_feasible):
+                best_obj, best_params, best_sol, best_feasible = obj, params, sol, True
 
+    if not best_feasible:
+        raise RuntimeError("auto_tune: 所有参数组合都没有找到可行解——先回层级 1 检查约束/初始解，不要把不可行解当结果")
     return best_obj, best_params, best_sol, results_log
 ```
 
@@ -148,23 +164,29 @@ def auto_tune(solve_func, param_grid, time_budget=None):
 ## 层级 3：结果改进（启发式专用）
 
 ```python
-def local_search(solution, max_iter=1000, time_limit=None):
+def local_search(solution, max_iter=1000, time_limit=None, sense="min", patience=200):
+    """sense 必须与目标函数方向一致（max 问题用旧版 `obj < best_obj` 会越搜越差）。
+    patience: 连续多少次无改进即提前停止（避免 max_iter 大时空转）。"""
     import time
     if time_limit is None:
         time_limit = float('inf')
+    better = (lambda a, b: a < b) if sense == "min" else (lambda a, b: a > b)
     best = solution.copy()
     best_obj = objective(best)
     t0 = time.time()
-    improved = 0
+    improved, stale = 0, 0
     for i in range(max_iter):
-        if time.time() - t0 > time_limit:
+        if time.time() - t0 > time_limit or stale >= patience:
             break
         neighbor = generate_neighbor(best)
         if all(c.check(neighbor) for c in constraints):
             obj = objective(neighbor)
-            if obj < best_obj:
+            if better(obj, best_obj):
                 best, best_obj = neighbor, obj
                 improved += 1
+                stale = 0
+                continue
+        stale += 1
     return best, best_obj
 ```
 
@@ -200,54 +222,75 @@ def local_search(solution, max_iter=1000, time_limit=None):
 # 在保存 problem_N_results.json 之前执行, 不通过则禁止保存
 
 def structural_validation(solution, objective_func, constraints, decision_vars_info,
-                          solve_func=None, n_stability_runs=5):
-    """优化结果结构性验证。返回 (passed: bool, report: str)。"""
+                          solve_func=None, n_stability_runs=5,
+                          integer_vars=(), problem_class="nlp", cv_threshold=0.05):
+    """优化结果结构性验证。返回 (passed: bool, report: str)。
+
+    integer_vars:  整数/0-1 决策变量名集合 —— 这些变量取到边界是正常的（0-1 变量永远在边界），
+                   旧版对它们做"全在边界=❌"判定，导致指派/背包/选址类 0-1 规划永远过不了验证。
+    problem_class: "lp" / "milp" / "nlp" / "heuristic"。LP/MILP 由精确求解器给出 Optimal 时，
+                   最优解本来就在顶点（角点解），不应把"多个约束同时活跃"当异常。
+    cv_threshold:  稳定性 CV 阈值，应与 MODELING_REPORT.md「稳定性预期」一致（默认 5%）。
+    """
     issues = []
     warnings = []
     best_obj = objective_func(solution)
+    integer_vars = set(integer_vars)
 
-    # ===== 验证 1：约束活跃性分析 =====
+    # ===== 验证 0：可行性复核（旧版只看"活跃/不活跃"，约束被违反时会被静默归为"不活跃"）=====
+    violated = []
     active_constraints = []
     inactive_constraints = []
-    tol = 1e-4
     for name, (func, bound, direction) in constraints.items():
         value = func(solution)
+        # 相对+绝对容差：预算 1e6 量级用 1e-4 绝对容差永远"不活跃"
+        tol = 1e-6 + 1e-6 * abs(bound)
+        act_tol = 1e-4 * max(1.0, abs(bound))
         if direction == 'le':
             slack = bound - value
         elif direction == 'ge':
             slack = value - bound
         else:
-            slack = abs(value - bound)
-        if abs(slack) < tol:
+            slack = -abs(value - bound)
+        if slack < -tol:
+            violated.append(f"{name}: value={value:.6g} bound={bound:.6g} ({direction}) 违反量 {-slack:.3g}")
+        elif abs(slack) <= act_tol:
             active_constraints.append(name)
         else:
             inactive_constraints.append((name, slack))
+    if violated:
+        issues.append("❌ 解不可行！以下约束被违反（必须先修模型/求解，其余验证无意义）：\n  " + "\n  ".join(violated))
+        return False, "\n".join(issues)
 
     if len(active_constraints) == 0 and len(constraints) > 2:
         warnings.append(
             f"⚠ 所有 {len(constraints)} 个约束均不活跃（解在可行域内部）。"
             f"可能原因：约束太松/遗漏关键约束。请回查题目是否有未建模的限制条件。"
         )
-    if len(active_constraints) > len(constraints) * 0.5 and len(constraints) >= 4:
+    if (len(active_constraints) > len(constraints) * 0.5 and len(constraints) >= 4
+            and problem_class not in ("lp", "milp")):
         warnings.append(
             f"⚠ {len(active_constraints)}/{len(constraints)} 个约束同时活跃（角点解）。"
             f"角点解对参数微扰极其敏感。"
         )
 
     # ===== 验证 2：决策变量边界检查（防止"死变量"）=====
+    # 只对连续变量做此检查；整数/0-1 变量与 LP 顶点解取边界是正常现象
     boundary_vars = []
     interior_vars = []
-    for var_name, (value, lb, ub, desc) in decision_vars_info.items():
+    continuous_info = {k: v for k, v in decision_vars_info.items() if k not in integer_vars}
+    for var_name, (value, lb, ub, desc) in continuous_info.items():
         range_width = ub - lb if ub != lb else 1
-        if abs(value - lb) < tol * range_width:
+        btol = 1e-4
+        if abs(value - lb) < btol * range_width:
             boundary_vars.append(f"{var_name}={value:.4f} (at lower bound {lb})")
-        elif abs(value - ub) < tol * range_width:
+        elif abs(value - ub) < btol * range_width:
             boundary_vars.append(f"{var_name}={value:.4f} (at upper bound {ub})")
         else:
             interior_vars.append(var_name)
 
-    if boundary_vars:
-        if len(boundary_vars) == len(decision_vars_info):
+    if boundary_vars and problem_class not in ("lp", "milp"):
+        if len(boundary_vars) == len(continuous_info) and len(continuous_info) > 0:
             issues.append(
                 f"❌ 所有决策变量都取到了边界值！这通常意味着：\n"
                 f"  1. 目标函数是单调的（不需要优化, 直接取边界就行）\n"
@@ -275,11 +318,13 @@ def structural_validation(solution, objective_func, constraints, decision_vars_i
                 pass
         if len(objectives) >= 3:
             obj_mean = np.mean(objectives)
-            obj_std = np.std(objectives)
-            cv = obj_std / abs(obj_mean) if abs(obj_mean) > 1e-10 else 0
-            if cv > 0.05:
+            obj_std = np.std(objectives, ddof=1)  # 样本标准差
+            # 目标值接近 0 或可正可负时 CV 无意义，改用相对极差（相对于 |max|）
+            scale = abs(obj_mean) if abs(obj_mean) > 1e-8 else max(abs(np.max(objectives)), abs(np.min(objectives)), 1e-8)
+            cv = obj_std / scale
+            if cv > cv_threshold:
                 issues.append(
-                    f"❌ 优化结果不稳定！CV={cv:.2%} > 5%。"
+                    f"❌ 优化结果不稳定！CV={cv:.2%} > {cv_threshold:.0%}。"
                     f"必须：增加种群大小/迭代次数, 或做变量降维后重新优化。"
                 )
             elif cv > 0.01:
@@ -308,7 +353,10 @@ constraints_check = {
 passed, report = structural_validation(
     solution, objective, constraints_check, decision_vars_info,
     solve_func=lambda seed: solve_with_seed(seed),
-    n_stability_runs=5
+    n_stability_runs=5,
+    integer_vars={'y1', 'y2'},        # 0-1/整数变量名：取边界是正常的，不参与"死变量"判定
+    problem_class='milp',             # lp / milp（精确求解 Optimal）跳过稳定性与角点解告警
+    cv_threshold=0.05,                # 与 MODELING_REPORT.md 的稳定性预期一致
 )
 if not passed:
     raise ValueError(f"结构性验证失败, 必须修正：\n{report}")

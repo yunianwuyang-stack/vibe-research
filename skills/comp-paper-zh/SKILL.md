@@ -1328,8 +1328,11 @@ fi
 #     ⛔ 修复历史 bug：之前 if 是 [-f PROBLEM_FACTS.json]，导致简单题 + PDF 中文工作流
 #        全程无 paper 阶段审计，凭印象的虚构数字漏网。改为按 _utils/facts_audit.py 存在判断。
 if [ -f _utils/facts_audit.py ]; then
-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
-    PAPER_RC=$?
+    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件，会互相覆盖）；
+    #    管道后 $? 是 tee 的退出码（恒 0）——旧写法让这道审计门禁从未真正拦截过。
+    mkdir -p _tmp
+    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
+    PAPER_RC=${PIPESTATUS[0]}
     if [ $PAPER_RC -eq 1 ]; then
         echo "❌ Step 5 结论审计失败：正文结论性陈述与 results.json 不一致 / 含虚构数字。先修正文，再编译。"
     fi

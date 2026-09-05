@@ -20,20 +20,40 @@ def check(filepath: str = "MODELING_REPORT.md") -> int:
         print(f"WARN {filepath} 不存在，跳过检查")
         return 0
 
-    text = Path(filepath).read_text(encoding="utf-8")
-    # 移除代码块、$$ 块、行内 $ 公式
-    cleaned = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
-    cleaned = re.sub(r"\$\$[\s\S]*?\$\$", "", cleaned)
-    cleaned = re.sub(r"\$[^\n$]+\$", "", cleaned)
+    text = Path(filepath).read_text(encoding="utf-8", errors="replace")
 
-    # 查找裸 LaTeX 命令
-    PATTERN = re.compile(
-        r"\\(tag|sqrt|hat|frac|tfrac|dot|begin|cdot|pm|in|exists|forall|big|cap)\b"
-    )
+    # 0. $$ 必须成对：奇数个 $$ 说明有块级公式没闭合，后面所有内容都会被渲染器吞掉
+    n_block = len(re.findall(r"(?<!\\)\$\$", re.sub(r"```.*?```", "", text, flags=re.DOTALL)))
+    if n_block % 2 == 1:
+        print(f"ERROR $$ 数量为奇数（{n_block}），存在未闭合的块级公式")
+        return 1
+
+    # 1. 移除围栏代码块、行内代码、$$ 块、行内 $ 公式（旧版没有去掉 `行内代码`，
+    #    SKILL 自带的说明文字里写 `\\begin{aligned}` 也会被误报）
+    cleaned = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
+    cleaned = re.sub(r"`[^`\n]*`", "", cleaned)
+    cleaned = re.sub(r"\$\$[\s\S]*?\$\$", "", cleaned)
+    cleaned = re.sub(r"(?<!\\)\$[^\n$]+?(?<!\\)\$", "", cleaned)
+    cleaned = re.sub(r"\\\(.*?\\\)", "", cleaned)
+    cleaned = re.sub(r"\\\[[\s\S]*?\\\]", "", cleaned)
+
+    # 2. 通用检测：任何 "\字母命令" 在公式外都可疑（旧版只列了 14 个命令，\sum/\alpha/\leq
+    #    /\mathbf/\partial/\int 等最常见的全部漏检）。白名单排除 Markdown 里合法的反斜杠用法。
+    ALLOW = {"n", "t", "r", "b", "f", "v", "x", "u", "N", "d", "w", "s", "W", "S", "D",
+             "newline", "textbackslash", "url", "href", "cite", "ref", "label", "input",
+             "include", "usepackage", "documentclass", "section", "subsection", "item"}
+    PATTERN = re.compile(r"(?<!\\)\\([a-zA-Z]+)\b")
     bad: list[tuple[int, str]] = []
     for i, line in enumerate(cleaned.split("\n"), 1):
-        if PATTERN.search(line):
-            bad.append((i, line.strip()[:80]))
+        stripped = line.strip()
+        # 跳过 Windows 路径 / 文件路径行
+        if re.search(r"[A-Za-z]:\\|\\\\", stripped):
+            continue
+        cmds = [m.group(1) for m in PATTERN.finditer(line)]
+        cmds = [c for c in cmds if c not in ALLOW]
+        if cmds:
+            shown = ", ".join("\\" + c for c in cmds[:4])
+            bad.append((i, "[" + shown + "] " + stripped[:70]))
 
     if bad:
         print(f"ERROR 发现 {len(bad)} 处裸 LaTeX（缺 $$ 包围）：")

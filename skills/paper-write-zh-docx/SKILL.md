@@ -635,8 +635,11 @@ fi
 #   [14] 事件源归属（防"凭变量名脑补撞击 / 命中 / 拦截"）
 # 即使没 PROBLEM_FACTS.json（普通学术 / 课程论文 / 人文社科），也会以"简化模式"跑独立审计。
 if [ -f _utils/facts_audit.py ]; then
-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
-    PRC=$?
+    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件）；管道后 $? 是 tee 的退出码（恒 0），
+    #    旧写法让这道审计门禁从未真正拦截过。用 PIPESTATUS[0]。
+    mkdir -p _tmp
+    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
+    PRC=${PIPESTATUS[0]}
     if [ "$PRC" = "1" ]; then
         echo "❌ 通用 paper-stage 审计未通过 — 必须按上面提示修正正文 / results.json 后重新跑"
     fi

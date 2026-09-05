@@ -122,9 +122,12 @@ fi
 
 ```bash
 # 第一步审计：纯 OCR 客观比对（防 AI 抄题面时虚构 / 漏抄 / 串台）
-python3 _utils/facts_audit.py --stage prob 2>&1 | tee AUDIT_REPORT.md
-RC=$?
-if [ $RC -eq 1 ]; then
+# ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己会写这个文件，会互相覆盖）；
+#    管道后 `$?` 是 tee 的退出码（恒 0）——旧写法导致下面的失败分支永远走不到，OCR 防虚构门禁形同虚设。
+mkdir -p _tmp
+python3 _utils/facts_audit.py --stage prob 2>&1 | tee _tmp/facts_audit_prob.log
+RC=${PIPESTATUS[0]}
+if [ "$RC" -eq 1 ]; then
     echo "⛔ 第一步审计失败：facts 与 OCR 原文不一致。必须修复 PROBLEM_FACTS.json 后重新跑，不要结束本步骤。"
     echo "   常见原因：facts 里写的数字在 user_data/*_extracted.txt 里 grep 不到（虚构）；source_files 的 sha256 不一致（OCR 被改）"
 elif [ $RC -eq 2 ]; then

@@ -33,20 +33,50 @@ export LANG=C.UTF-8 2>/dev/null || true
 # 具体：抓取形如  ^##[#] ... 问题<编号>  的标题行，提取到"问题X"这个 token 后去重计数。
 # - 中文："问题" 后跟任意一个中文数字或阿拉伯数字
 # - 英文：Problem / Question 后跟数字
+# 优先级 0：comp-prob-analysis 要求在报告开头写 "本赛题共 X 个子问题"，有则以声明为准
+declared=$(grep -oE '本赛题共[[:space:]]*[0-9]+[[:space:]]*个子问题' "$f" 2>/dev/null | head -1 | grep -oE '[0-9]+' | head -1)
+if [ -n "$declared" ] && [ "$declared" -gt 0 ] 2>/dev/null; then
+    echo "$declared"
+    exit 0
+fi
+
+# 中文数字 → 阿拉伯数字归一化，使 "问题一" 与 "问题1" 视为同一子问题（旧版会重复计数）
 count=$(awk '
-    # 只处理标题行(以一个或多个 # 开头)
-    /^#{1,4}[[:space:]]/ {
-        line=$0
-        # 匹配中文"问题X"：问题后面跟一个字符(中文数字或阿拉伯数字)
-        if (match(line, /问题[一二三四五六七八九十0-9]+/)) {
-            key=substr(line, RSTART, RLENGTH)
-            seen[key]=1
+    BEGIN {
+        cn["一"]=1; cn["二"]=2; cn["三"]=3; cn["四"]=4; cn["五"]=5;
+        cn["六"]=6; cn["七"]=7; cn["八"]=8; cn["九"]=9; cn["十"]=10;
+    }
+    function norm(tok,   n, m) {
+        if (match(tok, /[0-9]+/)) return "q" (substr(tok, RSTART, RLENGTH) + 0)
+        n = 0
+        if (match(tok, /十/)) {
+            # 十 / 二十 / 十三 / 二十三
+            split(tok, parts, "十")
+            n = (parts[1] == "" ? 1 : cn[parts[1]]) * 10 + (parts[2] == "" ? 0 : cn[parts[2]])
+        } else {
+            n = cn[tok]
         }
-        # 匹配英文 Problem N / Question N
-        else if (match(tolower(line), /(problem|question)[ ]*[0-9]+/)) {
-            key=substr(tolower(line), RSTART, RLENGTH)
-            gsub(/[ ]+/, "", key)
-            seen[key]=1
+        return "q" n
+    }
+    # 只处理标题行(以一个或多个 # 开头)
+    /^##?#?#?[[:space:]]/ {  # 不用 {1,4} 区间：mawk/busybox awk 不支持，整条规则会静默失效
+        line=$0
+        # 匹配中文"问题X"（同一标题可能提到多个子问题，逐个抓）
+        # 注意：norm() 内部也会调用 match()，会覆盖全局 RSTART/RLENGTH，
+        # 必须先把偏移存到局部变量再调用，否则 substr 用错偏移 → 死循环
+        while (match(line, /问题[[:space:]]*(一|二|三|四|五|六|七|八|九|十|[0-9])+/)) {
+            rs=RSTART; rl=RLENGTH
+            tok=substr(line, rs, rl)
+            sub(/^问题[[:space:]]*/, "", tok)
+            seen[norm(tok)]=1
+            line=substr(line, rs+rl)
+        }
+        low=tolower($0)
+        while (match(low, /(problem|question)[ ]*[0-9]+/)) {
+            rs=RSTART; rl=RLENGTH
+            tok=substr(low, rs, rl)
+            seen[norm(tok)]=1
+            low=substr(low, rs+rl)
         }
     }
     END { print length(seen) }

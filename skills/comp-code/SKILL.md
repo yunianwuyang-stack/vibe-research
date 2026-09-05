@@ -146,11 +146,18 @@ ACTUAL_JSON=$(ls figures/problem_*_results.json 2>/dev/null | wc -l)
 **⛔ 加固版审计（参数密集型必跑，覆盖 6 个边缘漏洞）：**
    ```bash
    # comp-prob-analysis 阶段已跑过 --stage prob（OCR 比对）；本阶段跑完整审计含代码端
-   python3 _utils/facts_audit.py --stage code 2>&1 | tee AUDIT_REPORT.md
-   RC=$?
-   n_suspicious=$(grep -cE '^- (⛔|⚠)' AUDIT_REPORT.md || echo 0)
+   # ⛔ 不要 tee 到 AUDIT_REPORT.md：facts_audit.py 自己会写 AUDIT_REPORT.md，两者同时写会互相覆盖成乱码；
+   #    且管道后 $? 是 tee 的退出码（恒为 0），审计失败会被静默吞掉。用 PIPESTATUS[0] 取 python 的退出码。
+   python3 _utils/facts_audit.py --stage code 2>&1 | tee _tmp/facts_audit.log
+   RC=${PIPESTATUS[0]}
+   # grep -c 无匹配时会输出 0 且退出码 1，再 `|| echo 0` 会得到 "0\n0" 两行 → 用 || true
+   n_suspicious=$(grep -cE '^- (⛔|⚠)' AUDIT_REPORT.md 2>/dev/null || true)
+   n_suspicious=${n_suspicious:-0}
+   if [ "$RC" -eq 1 ]; then
+     echo "⛔ facts_audit 有 fatal 项，必须先修复再写凭证（不要带着 fatal 结束本步骤）"
+   fi
    # 凭证里加 n_suspicious_numbers 字段（写稿阶段拦截非零）
-   echo "<!-- AUDIT_OK source=results.json rechecked_at=$(date -Iseconds) n_constraints=$N n_suspicious_numbers=$n_suspicious -->" >> RESULTS.md
+   echo "<!-- AUDIT_OK source=results.json rechecked_at=$(date -Iseconds) n_constraints=$N n_suspicious_numbers=$n_suspicious facts_audit_rc=$RC -->" >> RESULTS.md
    ```
    含：OCR 比对（复查，防中途篡改）/ schema 校验 / 派生值验算 / 代码端裸数字审计 / 图脚本数据溯源 / 子问题字段隔离。详见 `_utils/error_prevention.md` 第十四章 14.6-14.7。
 
@@ -208,17 +215,24 @@ print(f"找到 {len(data_files)} 个数据文件")
 for f in data_files:
     print(f"\n=== {os.path.basename(f)} ===")
     try:
+        df = None
         if f.endswith('.csv'):
-            # 尝试多种编码
-            for enc in ['utf-8', 'gbk', 'gb2312', 'latin-1']:
+            # 尝试多种编码（utf-8-sig 可去掉 Excel 导出的 BOM，避免首列名变成 '\ufeff列名'）
+            for enc in ['utf-8-sig', 'utf-8', 'gbk', 'gb18030', 'latin-1']:
                 try:
                     df = pd.read_csv(f, encoding=enc)
                     print(f"  编码: {enc}")
                     break
                 except UnicodeDecodeError:
                     continue
+            if df is None:
+                raise RuntimeError('所有编码均无法解码')
         else:
-            df = pd.read_excel(f)
+            # 多 sheet 的 Excel 只读第一个 sheet 会漏数据：先列出所有 sheet
+            sheets = pd.ExcelFile(f).sheet_names
+            if len(sheets) > 1:
+                print(f"  ⚠ 含 {len(sheets)} 个 sheet: {sheets}（下面只展示第一个，其余需单独读取）")
+            df = pd.read_excel(f, sheet_name=sheets[0])
         
         print(f"  形状: {df.shape}")
         print(f"  列名: {list(df.columns)}")
@@ -230,9 +244,10 @@ for f in data_files:
         num_cols = df.select_dtypes(include='number').columns
         if len(num_cols) > 0:
             print(f"  数值统计:\n{df[num_cols].describe()}")
-            # 检查异常值
+            # 检查异常值（注意运算符优先级：旧写法 `a and b or c or d` 会让所有"数量/距离"列都误报负值）
+            NONNEG_HINTS = ('价格', '数量', '距离', '成本', '人数', '重量', '面积', '时间', '速度', '容量')
             for col in num_cols:
-                if df[col].min() < 0 and '价格' in col or '数量' in col or '距离' in col:
+                if df[col].min() < 0 and any(k in str(col) for k in NONNEG_HINTS):
                     print(f"  ⚠ {col} 有负值（{df[col].min()}），检查是否合理")
                 if df[col].isnull().sum() > len(df) * 0.5:
                     print(f"  ⚠ {col} 缺失率 > 50%")
@@ -294,8 +309,10 @@ python -m code.problem1
 **⛔ 规则 4：跑代码必须用 `set -e` + 显式检查 exit code，不能在脚本失败后假装结果有效：**
 
 ```bash
+mkdir -p _tmp
 cd code
-set -e
+# ⛔ 必须加 -o pipefail：只有 set -e 时，`python x.py | tee log` 的退出码是 tee 的（恒 0），脚本崩了也不会停
+set -eo pipefail
 python data_check.py 2>&1 | tee ../_tmp/data_check.log
 python problem1.py 2>&1 | tee ../_tmp/problem1.log
 [ -f ../figures/problem_1_results.json ] || { echo "❌ problem1 未产出结果 JSON"; exit 1; }
@@ -506,6 +523,14 @@ echo "Missing: $MISSING"
 <data_quality>
 ### Data generation quality (when generating/simulating data without user uploads)
 
+⛔ **先判断是否真的允许生成数据**：竞赛题若给了附件数据，禁止用模拟数据替代；若题目要求"自行采集真实数据"（如统计建模大赛），必须采集真实公开数据并标注来源，禁止模拟。
+只有"纯建模题、题面只给参数不给数据"时才允许按题面参数构造仿真输入。
+
+⛔ **模拟数据必须显式打标，禁止伪装成真实数据**：
+- 每个由模拟数据得到的 `figures/*.json` 必须含 `"data_source": "synthetic"` 与生成方式（分布/参数/seed）
+- RESULTS.md 对应小节标题加 `（仿真数据）`，写稿步骤据此在论文中如实说明
+- 禁止为了"让方法看起来更好"而调整模拟数据；对比实验中方法优劣必须是模型/算法带来的，不是数据设计出来的
+
 When no user data is available and you need to generate or simulate data:
 
 1. **Realistic ranges**: values must match the problem domain — e.g., temperature in °C not arbitrary 0-1, population in millions not random integers
@@ -514,7 +539,7 @@ When no user data is available and you need to generate or simulate data:
    - Avoid extreme outliers that compress the main data into a tiny range
    - Ensure different methods/groups have visible but not identical differences (5-20% gaps, not 0.1% or 500%)
    - Include enough data points for smooth curves (≥50 for line plots, ≥200 for distributions)
-   - For method comparison: the proposed method should be best but not unrealistically dominant — other methods should have their own strengths on some metrics
+   - For method comparison: do NOT tune the synthetic data so that the proposed method wins; generate data from the stated problem mechanism only, run every method on the same seeds, and report whatever ranking results (with CI). If the proposed method loses, that is a finding to report, not a data problem to fix
 4. **Consistent with problem statement**: all generated numbers must be traceable to the problem description — if the problem says "30 provinces", generate 30 data points, not 10
 5. **Reproducible**: set random seeds (`np.random.seed(42)`) so results are deterministic
 </data_quality>

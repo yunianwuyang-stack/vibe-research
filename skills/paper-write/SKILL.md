@@ -480,8 +480,11 @@ Before finishing writing / compiling, run the universal audit. Works without `PR
 #   [14] Event source attribution (prevent "guessing source from variable name")
 # Falls back to simplified mode if no PROBLEM_FACTS.json (general academic / course / humanities).
 if [ -f _utils/facts_audit.py ]; then
-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
-    PRC=$?
+    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件）；管道后 $? 是 tee 的退出码（恒 0），
+    #    旧写法让这道审计门禁从未真正拦截过。用 PIPESTATUS[0]。
+    mkdir -p _tmp
+    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
+    PRC=${PIPESTATUS[0]}
     if [ "$PRC" = "1" ]; then
         echo "❌ Universal paper-stage audit failed — fix paper text / results.json before finishing"
     fi

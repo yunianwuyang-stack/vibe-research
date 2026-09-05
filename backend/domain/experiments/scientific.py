@@ -43,9 +43,15 @@ def derive_ml_verdict(runs: Sequence[Mapping[str, Any]], *, metric: str,
     for required in ("candidate", "baseline", "ablation"):
         if not by_variant.get(required):
             issues.append(f"missing_real_{required}")
-    if any(run.get("train_ids_sha256") == run.get("test_ids_sha256") for run in real):
-        issues.append("data_leakage_detected")
-    if any("calibration_error" not in run.get("metrics", {}) for run in real):
+    # 修复：旧版 None == None 为真，缺少 split 哈希的 run 会被误判为"数据泄漏"；
+    # 缺哈希应报 split 未记录（split_hashes_missing），两者都有且相等才是泄漏。
+    for run in real:
+        train_h, test_h = run.get("train_ids_sha256"), run.get("test_ids_sha256")
+        if not train_h or not test_h:
+            issues.append("split_hashes_missing")
+        elif train_h == test_h:
+            issues.append("data_leakage_detected")
+    if any("calibration_error" not in (run.get("metrics") or {}) for run in real):
         issues.append("calibration_not_computed")
     means = {name: sum(values) / len(values) for name, values in by_variant.items()}
     if "candidate" in means and "baseline" in means:

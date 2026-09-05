@@ -1,0 +1,1430 @@
+diff --git a/backend/domain/experiments/scientific.py b/backend/domain/experiments/scientific.py
+index da8710e..288ce70 100644
+--- a/backend/domain/experiments/scientific.py
++++ b/backend/domain/experiments/scientific.py
+@@ -43,9 +43,15 @@ def derive_ml_verdict(runs: Sequence[Mapping[str, Any]], *, metric: str,
+     for required in ("candidate", "baseline", "ablation"):
+         if not by_variant.get(required):
+             issues.append(f"missing_real_{required}")
+-    if any(run.get("train_ids_sha256") == run.get("test_ids_sha256") for run in real):
+-        issues.append("data_leakage_detected")
+-    if any("calibration_error" not in run.get("metrics", {}) for run in real):
++    # 修复：旧版 None == None 为真，缺少 split 哈希的 run 会被误判为"数据泄漏"；
++    # 缺哈希应报 split 未记录（split_hashes_missing），两者都有且相等才是泄漏。
++    for run in real:
++        train_h, test_h = run.get("train_ids_sha256"), run.get("test_ids_sha256")
++        if not train_h or not test_h:
++            issues.append("split_hashes_missing")
++        elif train_h == test_h:
++            issues.append("data_leakage_detected")
++    if any("calibration_error" not in (run.get("metrics") or {}) for run in real):
+         issues.append("calibration_not_computed")
+     means = {name: sum(values) / len(values) for name, values in by_variant.items()}
+     if "candidate" in means and "baseline" in means:
+diff --git a/backend/services/workflow_engine.py b/backend/services/workflow_engine.py
+index 195a7b9..67a6a7c 100644
+--- a/backend/services/workflow_engine.py
++++ b/backend/services/workflow_engine.py
+@@ -1172,10 +1172,13 @@ _COMP_CORE_PRINCIPLES = """## ⛔ 核心原则：发现问题必须修正（不
+ - 多阶段问题必须分层（任务分配+子任务优化），禁止把所有维度混在一起全量搜索
+ 
+ ⛔ 建模与优化有效性约束（通用）：
+-- 资源单调性：更多决策资源→结果必须严格更优，否则建模降维失败
+-- 解析基准下界：启发式优化解必须优于解析/几何/贪心基准，否则算法失败
++- 资源单调性：更多决策资源→最优目标值必须**不劣于**原来（弱单调）。若完全没有改善，必须给出结构性解释
++  （哪个约束此时不再绑定 / 新增资源为何无边际效益），并用约束活跃性数据支撑；禁止为了"看起来更优"而人为制造改善
++- 解析基准下界：启发式优化解必须**不劣于**解析/几何/贪心基准（min 问题 ≤ 基准，max 问题 ≥ 基准）；若劣于基准说明算法/编码有误，必须修复
++- 优化方向显式化：每个目标函数必须写明 min 或 max，代码中所有比较（best 更新、收敛判据、基准对比）都必须与该方向一致，禁止隐含最小化
+ - 搜索空间健康度：维度≥6时先采样100点，有效解<30%则必须降维或启发式播种
+ - 维度分层：决策变量≥10维时禁止单层黑箱优化，必须分层分解
++- 精确求解优先：LP/MILP/凸问题必须先用精确求解器（HiGHS/CBC/SCIP/CP-SAT）求 Optimal，启发式只用于精确求解不可行的规模；报告中必须写明解是"精确最优"还是"启发式近似（含 gap/bound）"
+ 
+ 检测到问题 = 必须修复。解释原因 ≠ 处理完毕。
+ 发现不合理 → 必须行动修正 → 用修正后的值继续。
+diff --git a/skills/comp-code/SKILL.md b/skills/comp-code/SKILL.md
+index 8da7b14..d633aed 100644
+--- a/skills/comp-code/SKILL.md
++++ b/skills/comp-code/SKILL.md
+@@ -146,11 +146,18 @@ ACTUAL_JSON=$(ls figures/problem_*_results.json 2>/dev/null | wc -l)
+ **⛔ 加固版审计（参数密集型必跑，覆盖 6 个边缘漏洞）：**
+    ```bash
+    # comp-prob-analysis 阶段已跑过 --stage prob（OCR 比对）；本阶段跑完整审计含代码端
+-   python3 _utils/facts_audit.py --stage code 2>&1 | tee AUDIT_REPORT.md
+-   RC=$?
+-   n_suspicious=$(grep -cE '^- (⛔|⚠)' AUDIT_REPORT.md || echo 0)
++   # ⛔ 不要 tee 到 AUDIT_REPORT.md：facts_audit.py 自己会写 AUDIT_REPORT.md，两者同时写会互相覆盖成乱码；
++   #    且管道后 $? 是 tee 的退出码（恒为 0），审计失败会被静默吞掉。用 PIPESTATUS[0] 取 python 的退出码。
++   python3 _utils/facts_audit.py --stage code 2>&1 | tee _tmp/facts_audit.log
++   RC=${PIPESTATUS[0]}
++   # grep -c 无匹配时会输出 0 且退出码 1，再 `|| echo 0` 会得到 "0\n0" 两行 → 用 || true
++   n_suspicious=$(grep -cE '^- (⛔|⚠)' AUDIT_REPORT.md 2>/dev/null || true)
++   n_suspicious=${n_suspicious:-0}
++   if [ "$RC" -eq 1 ]; then
++     echo "⛔ facts_audit 有 fatal 项，必须先修复再写凭证（不要带着 fatal 结束本步骤）"
++   fi
+    # 凭证里加 n_suspicious_numbers 字段（写稿阶段拦截非零）
+-   echo "<!-- AUDIT_OK source=results.json rechecked_at=$(date -Iseconds) n_constraints=$N n_suspicious_numbers=$n_suspicious -->" >> RESULTS.md
++   echo "<!-- AUDIT_OK source=results.json rechecked_at=$(date -Iseconds) n_constraints=$N n_suspicious_numbers=$n_suspicious facts_audit_rc=$RC -->" >> RESULTS.md
+    ```
+    含：OCR 比对（复查，防中途篡改）/ schema 校验 / 派生值验算 / 代码端裸数字审计 / 图脚本数据溯源 / 子问题字段隔离。详见 `_utils/error_prevention.md` 第十四章 14.6-14.7。
+ 
+@@ -208,17 +215,24 @@ print(f"找到 {len(data_files)} 个数据文件")
+ for f in data_files:
+     print(f"\n=== {os.path.basename(f)} ===")
+     try:
++        df = None
+         if f.endswith('.csv'):
+-            # 尝试多种编码
+-            for enc in ['utf-8', 'gbk', 'gb2312', 'latin-1']:
++            # 尝试多种编码（utf-8-sig 可去掉 Excel 导出的 BOM，避免首列名变成 '\ufeff列名'）
++            for enc in ['utf-8-sig', 'utf-8', 'gbk', 'gb18030', 'latin-1']:
+                 try:
+                     df = pd.read_csv(f, encoding=enc)
+                     print(f"  编码: {enc}")
+                     break
+                 except UnicodeDecodeError:
+                     continue
++            if df is None:
++                raise RuntimeError('所有编码均无法解码')
+         else:
+-            df = pd.read_excel(f)
++            # 多 sheet 的 Excel 只读第一个 sheet 会漏数据：先列出所有 sheet
++            sheets = pd.ExcelFile(f).sheet_names
++            if len(sheets) > 1:
++                print(f"  ⚠ 含 {len(sheets)} 个 sheet: {sheets}（下面只展示第一个，其余需单独读取）")
++            df = pd.read_excel(f, sheet_name=sheets[0])
+         
+         print(f"  形状: {df.shape}")
+         print(f"  列名: {list(df.columns)}")
+@@ -230,9 +244,10 @@ for f in data_files:
+         num_cols = df.select_dtypes(include='number').columns
+         if len(num_cols) > 0:
+             print(f"  数值统计:\n{df[num_cols].describe()}")
+-            # 检查异常值
++            # 检查异常值（注意运算符优先级：旧写法 `a and b or c or d` 会让所有"数量/距离"列都误报负值）
++            NONNEG_HINTS = ('价格', '数量', '距离', '成本', '人数', '重量', '面积', '时间', '速度', '容量')
+             for col in num_cols:
+-                if df[col].min() < 0 and '价格' in col or '数量' in col or '距离' in col:
++                if df[col].min() < 0 and any(k in str(col) for k in NONNEG_HINTS):
+                     print(f"  ⚠ {col} 有负值（{df[col].min()}），检查是否合理")
+                 if df[col].isnull().sum() > len(df) * 0.5:
+                     print(f"  ⚠ {col} 缺失率 > 50%")
+@@ -294,8 +309,10 @@ python -m code.problem1
+ **⛔ 规则 4：跑代码必须用 `set -e` + 显式检查 exit code，不能在脚本失败后假装结果有效：**
+ 
+ ```bash
++mkdir -p _tmp
+ cd code
+-set -e
++# ⛔ 必须加 -o pipefail：只有 set -e 时，`python x.py | tee log` 的退出码是 tee 的（恒 0），脚本崩了也不会停
++set -eo pipefail
+ python data_check.py 2>&1 | tee ../_tmp/data_check.log
+ python problem1.py 2>&1 | tee ../_tmp/problem1.log
+ [ -f ../figures/problem_1_results.json ] || { echo "❌ problem1 未产出结果 JSON"; exit 1; }
+@@ -506,6 +523,14 @@ echo "Missing: $MISSING"
+ <data_quality>
+ ### Data generation quality (when generating/simulating data without user uploads)
+ 
++⛔ **先判断是否真的允许生成数据**：竞赛题若给了附件数据，禁止用模拟数据替代；若题目要求"自行采集真实数据"（如统计建模大赛），必须采集真实公开数据并标注来源，禁止模拟。
++只有"纯建模题、题面只给参数不给数据"时才允许按题面参数构造仿真输入。
++
++⛔ **模拟数据必须显式打标，禁止伪装成真实数据**：
++- 每个由模拟数据得到的 `figures/*.json` 必须含 `"data_source": "synthetic"` 与生成方式（分布/参数/seed）
++- RESULTS.md 对应小节标题加 `（仿真数据）`，写稿步骤据此在论文中如实说明
++- 禁止为了"让方法看起来更好"而调整模拟数据；对比实验中方法优劣必须是模型/算法带来的，不是数据设计出来的
++
+ When no user data is available and you need to generate or simulate data:
+ 
+ 1. **Realistic ranges**: values must match the problem domain — e.g., temperature in °C not arbitrary 0-1, population in millions not random integers
+@@ -514,7 +539,7 @@ When no user data is available and you need to generate or simulate data:
+    - Avoid extreme outliers that compress the main data into a tiny range
+    - Ensure different methods/groups have visible but not identical differences (5-20% gaps, not 0.1% or 500%)
+    - Include enough data points for smooth curves (≥50 for line plots, ≥200 for distributions)
+-   - For method comparison: the proposed method should be best but not unrealistically dominant — other methods should have their own strengths on some metrics
++   - For method comparison: do NOT tune the synthetic data so that the proposed method wins; generate data from the stated problem mechanism only, run every method on the same seeds, and report whatever ranking results (with CI). If the proposed method loses, that is a finding to report, not a data problem to fix
+ 4. **Consistent with problem statement**: all generated numbers must be traceable to the problem description — if the problem says "30 provinces", generate 30 data points, not 10
+ 5. **Reproducible**: set random seeds (`np.random.seed(42)`) so results are deterministic
+ </data_quality>
+diff --git a/skills/comp-code/references/checks/evaluation.md b/skills/comp-code/references/checks/evaluation.md
+index dba2bcc..29ba6a2 100644
+--- a/skills/comp-code/references/checks/evaluation.md
++++ b/skills/comp-code/references/checks/evaluation.md
+@@ -9,6 +9,13 @@ E3. [排名稳定] 权重微调后排名是否稳定？
+ E4. [指标方向] 正向/负向指标是否正确处理？
+ E5. [得分区分度] 所有方案得分差异是否 < 1%（无区分度）？
+ E6. [常识对照] 排名是否与题目暗示的常识严重矛盾（正负向反了）？
++E7. [熵权法 log(0)] 归一化后是否有 p_ij = 0？必须用 p_ij·ln(p_ij) 在 p=0 处取 0（或加极小平移），
++    否则出现 nan 权重；某指标所有方案取值相同 → 该指标熵=1、权重=0，需在报告中说明而不是静默丢弃
++E8. [TOPSIS 负向指标] 负向/区间型指标必须先正向化再归一化；理想解 z+ 取的是"正向化后"的列最大值
++E9. [AHP RI 表] n≥3 才算 CR；RI 用标准表 {3:0.58, 4:0.90, 5:1.12, 6:1.24, 7:1.32, 8:1.41, 9:1.45}，
++    n=1,2 时 CR 恒为 0 不必报告
++E10. [归一化零除] 极差归一化 (x-min)/(max-min) 在 max==min 时零除 → 必须显式处理
++E11. [权重来源] 主观权重（AHP）与客观权重（熵权/CRITIC）组合时，组合方式（乘积归一/加权平均）必须写明
+ ```
+ 
+ ## 红旗信号
+@@ -23,14 +30,16 @@ E6. [常识对照] 排名是否与题目暗示的常识严重矛盾（正负向
+ ## 权重稳定性验证
+ 
+ ```python
+-# 微调权重 ±10%, 看排名是否稳定
++# 微调权重 ±10%, 看排名是否稳定（⛔ 必须固定 seed，否则每次跑结论不同、论文无法复现）
+ import numpy as np
++rng = np.random.default_rng(42)
+ base_weights = np.array([0.3, 0.25, 0.2, 0.15, 0.1])
++assert abs(base_weights.sum() - 1) < 1e-6, "权重未归一"
+ base_rank = compute_rank(base_weights)
+ 
+ shaken_ranks = []
+-for trial in range(20):
+-    perturb = 1 + np.random.uniform(-0.1, 0.1, len(base_weights))
++for trial in range(200):   # 20 次太少，Spearman/Kendall 统计不稳定；200 次足够且很快
++    perturb = 1 + rng.uniform(-0.1, 0.1, len(base_weights))
+     w = base_weights * perturb
+     w /= w.sum()
+     shaken_ranks.append(compute_rank(w))
+@@ -42,6 +51,11 @@ for idx in range(num_alternatives):
+     span = max(ranks_at_idx) - min(ranks_at_idx)
+     if span > 2:
+         print(f"⚠ 方案 {idx} 排名波动 {span} 名, 不稳定")
++
++# 整体稳定性用秩相关系数量化（写进 results.json，供论文引用）
++from scipy.stats import spearmanr
++rhos = [spearmanr(base_rank, r).correlation for r in shaken_ranks]
++print(f"Spearman ρ 均值={np.mean(rhos):.3f}, 最小={np.min(rhos):.3f}（>0.9 视为稳定）")
+ ```
+ 
+ ## 必产数据
+diff --git a/skills/comp-code/references/checks/optimization.md b/skills/comp-code/references/checks/optimization.md
+index 21b7750..98c36a2 100644
+--- a/skills/comp-code/references/checks/optimization.md
++++ b/skills/comp-code/references/checks/optimization.md
+@@ -66,13 +66,28 @@ prob = pulp.LpProblem("name", pulp.LpMinimize)
+ ```python
+ import time, itertools
+ 
+-def auto_tune(solve_func, param_grid, time_budget=None):
++def auto_tune(solve_func, param_grid, time_budget=None, sense="min", seed=42):
+     """
+     自动参数搜索框架。
+     solve_func(params) -> (objective, feasible, solution)
+     param_grid: dict, 如 {'pop_size': [50, 100, 200], 'n_gen': [200, 500, 1000], 'cx_rate': [0.7, 0.8, 0.9]}
+     time_budget: 总时间预算（秒）, 由 Claude 根据问题规模自行决定
++    sense: "min" 或 "max" —— ⛔ 必须与 MODELING_REPORT.md 的目标函数方向一致。
++           旧版隐含最小化，最大化问题直接套用会把"最差解"当最优返回。
++    seed: random_search 的随机种子（可复现性，见 error_prevention 第十一章）
+     """
++    import random
++    rng = random.Random(seed)
++    better = (lambda a, b: a < b) if sense == "min" else (lambda a, b: a > b)
++
++    def _improves(obj, feasible, best_obj, best_feasible):
++        # 可行解永远优先于不可行解；旧版若首个解不可行，后续可行解会因目标值更差而被拒绝
++        if feasible and not best_feasible:
++            return True
++        if not feasible:
++            return False
++        return best_obj is None or better(obj, best_obj)
++
+     first_params = {k: v[0] for k, v in param_grid.items()}
+     t0 = time.time()
+     obj, feasible, sol = solve_func(first_params)
+@@ -96,7 +111,7 @@ def auto_tune(solve_func, param_grid, time_budget=None):
+         n_samples = max(5, int(time_budget / single_time / 2))
+         strategy = f"random_search_{n_samples}"
+ 
+-    best_obj, best_params, best_sol = obj, first_params, sol
++    best_obj, best_params, best_sol, best_feasible = obj, first_params, sol, bool(feasible)
+     results_log = [{"params": first_params, "objective": obj, "feasible": feasible}]
+     start_time = time.time()
+ 
+@@ -111,8 +126,8 @@ def auto_tune(solve_func, param_grid, time_budget=None):
+             if params == first_params: continue
+             obj, feasible, sol = solve_func(params)
+             results_log.append({"params": params, "objective": obj, "feasible": feasible})
+-            if feasible and obj < best_obj:
+-                best_obj, best_params, best_sol = obj, params, sol
++            if _improves(obj, feasible, best_obj, best_feasible):
++                best_obj, best_params, best_sol, best_feasible = obj, params, sol, True
+     elif strategy == "coordinate_search":
+         current_best = dict(first_params)
+         for key in param_grid:
+@@ -123,20 +138,21 @@ def auto_tune(solve_func, param_grid, time_budget=None):
+                 params[key] = val
+                 obj, feasible, sol = solve_func(params)
+                 results_log.append({"params": params, "objective": obj, "feasible": feasible})
+-                if feasible and obj < best_obj:
+-                    best_obj, best_params, best_sol = obj, params, sol
++                if _improves(obj, feasible, best_obj, best_feasible):
++                    best_obj, best_params, best_sol, best_feasible = obj, params, sol, True
+                     current_best = dict(params)
+     else:  # random_search
+-        import random
+         n = int(strategy.split("_")[-1])
+         for _ in range(n):
+             if not _time_ok(): break
+-            params = {k: random.choice(v) for k, v in param_grid.items()}
++            params = {k: rng.choice(v) for k, v in param_grid.items()}
+             obj, feasible, sol = solve_func(params)
+             results_log.append({"params": params, "objective": obj, "feasible": feasible})
+-            if feasible and obj < best_obj:
+-                best_obj, best_params, best_sol = obj, params, sol
++            if _improves(obj, feasible, best_obj, best_feasible):
++                best_obj, best_params, best_sol, best_feasible = obj, params, sol, True
+ 
++    if not best_feasible:
++        raise RuntimeError("auto_tune: 所有参数组合都没有找到可行解——先回层级 1 检查约束/初始解，不要把不可行解当结果")
+     return best_obj, best_params, best_sol, results_log
+ ```
+ 
+@@ -148,23 +164,29 @@ def auto_tune(solve_func, param_grid, time_budget=None):
+ ## 层级 3：结果改进（启发式专用）
+ 
+ ```python
+-def local_search(solution, max_iter=1000, time_limit=None):
++def local_search(solution, max_iter=1000, time_limit=None, sense="min", patience=200):
++    """sense 必须与目标函数方向一致（max 问题用旧版 `obj < best_obj` 会越搜越差）。
++    patience: 连续多少次无改进即提前停止（避免 max_iter 大时空转）。"""
+     import time
+     if time_limit is None:
+         time_limit = float('inf')
++    better = (lambda a, b: a < b) if sense == "min" else (lambda a, b: a > b)
+     best = solution.copy()
+     best_obj = objective(best)
+     t0 = time.time()
+-    improved = 0
++    improved, stale = 0, 0
+     for i in range(max_iter):
+-        if time.time() - t0 > time_limit:
++        if time.time() - t0 > time_limit or stale >= patience:
+             break
+         neighbor = generate_neighbor(best)
+         if all(c.check(neighbor) for c in constraints):
+             obj = objective(neighbor)
+-            if obj < best_obj:
++            if better(obj, best_obj):
+                 best, best_obj = neighbor, obj
+                 improved += 1
++                stale = 0
++                continue
++        stale += 1
+     return best, best_obj
+ ```
+ 
+@@ -200,54 +222,75 @@ def local_search(solution, max_iter=1000, time_limit=None):
+ # 在保存 problem_N_results.json 之前执行, 不通过则禁止保存
+ 
+ def structural_validation(solution, objective_func, constraints, decision_vars_info,
+-                          solve_func=None, n_stability_runs=5):
+-    """优化结果结构性验证。返回 (passed: bool, report: str)。"""
++                          solve_func=None, n_stability_runs=5,
++                          integer_vars=(), problem_class="nlp", cv_threshold=0.05):
++    """优化结果结构性验证。返回 (passed: bool, report: str)。
++
++    integer_vars:  整数/0-1 决策变量名集合 —— 这些变量取到边界是正常的（0-1 变量永远在边界），
++                   旧版对它们做"全在边界=❌"判定，导致指派/背包/选址类 0-1 规划永远过不了验证。
++    problem_class: "lp" / "milp" / "nlp" / "heuristic"。LP/MILP 由精确求解器给出 Optimal 时，
++                   最优解本来就在顶点（角点解），不应把"多个约束同时活跃"当异常。
++    cv_threshold:  稳定性 CV 阈值，应与 MODELING_REPORT.md「稳定性预期」一致（默认 5%）。
++    """
+     issues = []
+     warnings = []
+     best_obj = objective_func(solution)
++    integer_vars = set(integer_vars)
+ 
+-    # ===== 验证 1：约束活跃性分析 =====
++    # ===== 验证 0：可行性复核（旧版只看"活跃/不活跃"，约束被违反时会被静默归为"不活跃"）=====
++    violated = []
+     active_constraints = []
+     inactive_constraints = []
+-    tol = 1e-4
+     for name, (func, bound, direction) in constraints.items():
+         value = func(solution)
++        # 相对+绝对容差：预算 1e6 量级用 1e-4 绝对容差永远"不活跃"
++        tol = 1e-6 + 1e-6 * abs(bound)
++        act_tol = 1e-4 * max(1.0, abs(bound))
+         if direction == 'le':
+             slack = bound - value
+         elif direction == 'ge':
+             slack = value - bound
+         else:
+-            slack = abs(value - bound)
+-        if abs(slack) < tol:
++            slack = -abs(value - bound)
++        if slack < -tol:
++            violated.append(f"{name}: value={value:.6g} bound={bound:.6g} ({direction}) 违反量 {-slack:.3g}")
++        elif abs(slack) <= act_tol:
+             active_constraints.append(name)
+         else:
+             inactive_constraints.append((name, slack))
++    if violated:
++        issues.append("❌ 解不可行！以下约束被违反（必须先修模型/求解，其余验证无意义）：\n  " + "\n  ".join(violated))
++        return False, "\n".join(issues)
+ 
+     if len(active_constraints) == 0 and len(constraints) > 2:
+         warnings.append(
+             f"⚠ 所有 {len(constraints)} 个约束均不活跃（解在可行域内部）。"
+             f"可能原因：约束太松/遗漏关键约束。请回查题目是否有未建模的限制条件。"
+         )
+-    if len(active_constraints) > len(constraints) * 0.5 and len(constraints) >= 4:
++    if (len(active_constraints) > len(constraints) * 0.5 and len(constraints) >= 4
++            and problem_class not in ("lp", "milp")):
+         warnings.append(
+             f"⚠ {len(active_constraints)}/{len(constraints)} 个约束同时活跃（角点解）。"
+             f"角点解对参数微扰极其敏感。"
+         )
+ 
+     # ===== 验证 2：决策变量边界检查（防止"死变量"）=====
++    # 只对连续变量做此检查；整数/0-1 变量与 LP 顶点解取边界是正常现象
+     boundary_vars = []
+     interior_vars = []
+-    for var_name, (value, lb, ub, desc) in decision_vars_info.items():
++    continuous_info = {k: v for k, v in decision_vars_info.items() if k not in integer_vars}
++    for var_name, (value, lb, ub, desc) in continuous_info.items():
+         range_width = ub - lb if ub != lb else 1
+-        if abs(value - lb) < tol * range_width:
++        btol = 1e-4
++        if abs(value - lb) < btol * range_width:
+             boundary_vars.append(f"{var_name}={value:.4f} (at lower bound {lb})")
+-        elif abs(value - ub) < tol * range_width:
++        elif abs(value - ub) < btol * range_width:
+             boundary_vars.append(f"{var_name}={value:.4f} (at upper bound {ub})")
+         else:
+             interior_vars.append(var_name)
+ 
+-    if boundary_vars:
+-        if len(boundary_vars) == len(decision_vars_info):
++    if boundary_vars and problem_class not in ("lp", "milp"):
++        if len(boundary_vars) == len(continuous_info) and len(continuous_info) > 0:
+             issues.append(
+                 f"❌ 所有决策变量都取到了边界值！这通常意味着：\n"
+                 f"  1. 目标函数是单调的（不需要优化, 直接取边界就行）\n"
+@@ -275,11 +318,13 @@ def structural_validation(solution, objective_func, constraints, decision_vars_i
+                 pass
+         if len(objectives) >= 3:
+             obj_mean = np.mean(objectives)
+-            obj_std = np.std(objectives)
+-            cv = obj_std / abs(obj_mean) if abs(obj_mean) > 1e-10 else 0
+-            if cv > 0.05:
++            obj_std = np.std(objectives, ddof=1)  # 样本标准差
++            # 目标值接近 0 或可正可负时 CV 无意义，改用相对极差（相对于 |max|）
++            scale = abs(obj_mean) if abs(obj_mean) > 1e-8 else max(abs(np.max(objectives)), abs(np.min(objectives)), 1e-8)
++            cv = obj_std / scale
++            if cv > cv_threshold:
+                 issues.append(
+-                    f"❌ 优化结果不稳定！CV={cv:.2%} > 5%。"
++                    f"❌ 优化结果不稳定！CV={cv:.2%} > {cv_threshold:.0%}。"
+                     f"必须：增加种群大小/迭代次数, 或做变量降维后重新优化。"
+                 )
+             elif cv > 0.01:
+@@ -308,7 +353,10 @@ constraints_check = {
+ passed, report = structural_validation(
+     solution, objective, constraints_check, decision_vars_info,
+     solve_func=lambda seed: solve_with_seed(seed),
+-    n_stability_runs=5
++    n_stability_runs=5,
++    integer_vars={'y1', 'y2'},        # 0-1/整数变量名：取边界是正常的，不参与"死变量"判定
++    problem_class='milp',             # lp / milp（精确求解 Optimal）跳过稳定性与角点解告警
++    cv_threshold=0.05,                # 与 MODELING_REPORT.md 的稳定性预期一致
+ )
+ if not passed:
+     raise ValueError(f"结构性验证失败, 必须修正：\n{report}")
+diff --git a/skills/comp-modeling/SKILL.md b/skills/comp-modeling/SKILL.md
+index 4f2d5a1..4e5c96c 100644
+--- a/skills/comp-modeling/SKILL.md
++++ b/skills/comp-modeling/SKILL.md
+@@ -227,7 +227,12 @@ python3 _utils/check_modeling.py MODELING_REPORT.md PROBLEM_ANALYSIS.md
+ ```markdown
+ ## 方法指定
+ 步骤 N：[做什么]
+-  方法：[唯一指定的方法名 + 关键参数]
++  问题类别：[LP / MILP / QP / 凸NLP / 非凸NLP / 组合优化 / ODE / 统计推断 / 评价 …]
++  优化方向：[min / max]（⛔ 必填，comp-code 的 auto_tune / local_search / 收敛审计都按它比较）
++  决策变量类型：[连续 / 整数 / 0-1；哪些是 0-1 变量]（0-1 变量取边界是正常的，结构性验证需据此跳过"死变量"判定）
++  方法：[唯一指定的方法名 + 关键参数 + 求解器（如 HiGHS / CBC / SCIP / CP-SAT / SLSQP / DE）]
++  精确性：[精确最优 / 启发式近似（需报告 bound 与 gap）]
++  基准解：[用什么简单方法（贪心/解析/均分）得到基准值，用于"不劣于基准"校验]
+   输入：[从哪来]
+   输出：[到哪去]
+   禁止替代：[不允许用的方法，以及为什么不用]
+@@ -263,7 +268,8 @@ python3 _utils/check_modeling.py MODELING_REPORT.md PROBLEM_ANALYSIS.md
+ ### 稳定性预期
+ - 问题是凸的/非凸的？
+ - 预期有几个局部最优？（1个=结果应完全稳定；多个=允许 CV<5%）
+-- 可接受的变异系数阈值：[X]%
++- 可接受的变异系数阈值：[X]%（精确求解器给出 Optimal 的 LP/MILP 写 "N/A：精确解无随机性"）
++- 资源单调性预期：新增资源/放松约束后目标值应 **不劣于** 原值；若预计"无改善"，提前写出原因（哪个约束不再绑定）
+ 
+ ### 资源利用率预期
+ - [资源1]：预期利用率 [X%-Y%]，若为 0 说明 [什么问题]
+diff --git a/skills/comp-modeling/references/methods_table.md b/skills/comp-modeling/references/methods_table.md
+index 32e1194..2f22994 100644
+--- a/skills/comp-modeling/references/methods_table.md
++++ b/skills/comp-modeling/references/methods_table.md
+@@ -1,17 +1,27 @@
+ # 常用建模方法参考表
+ 
+-| 问题类型 | 常用方法 | Python 库 |
+-|----------|----------|-----------|
+-| 线性规划 | 单纯形法、内点法 | scipy.optimize.linprog, PuLP, Gurobi |
+-| 整数规划 | 分支定界、割平面 | PuLP, Gurobi, OR-Tools |
+-| 非线性优化 | 梯度下降、遗传算法 | scipy.optimize.minimize, DEAP |
+-| 多目标优化 | NSGA-II、加权法 | pymoo, platypus |
+-| 回归分析 | OLS、岭回归、LASSO | sklearn, statsmodels |
+-| 时间序列 | ARIMA、指数平滑、LSTM | statsmodels, pmdarima, keras |
+-| 聚类分析 | K-means、DBSCAN、层次聚类 | sklearn |
+-| 层次分析 | AHP 一致性检验 | 手动实现 / ahpy |
+-| TOPSIS | 理想解排序 | 手动实现 |
+-| 灰色预测 | GM(1,1) | 手动实现 |
+-| 图论 | Dijkstra、Floyd、最大流 | networkx |
+-| 蒙特卡洛 | 随机模拟 | numpy.random |
+-| 微分方程 | Euler、Runge-Kutta | scipy.integrate |
++> 选方法的顺序：**能精确求解就精确求解**（LP/MILP/凸问题），精确不可行（规模/非凸/黑箱）再用启发式；
++> 启发式必须给出基准解与多种子稳定性。表中"首选"栏是 2024+ 的主流开源选择。
++
++| 问题类型 | 常用方法 | Python 库（首选 → 备选） | 备注 |
++|----------|----------|-----------|------|
++| 线性规划 | 单纯形法、内点法 | `scipy.optimize.linprog(method="highs")` → PuLP(HiGHS/CBC) | HiGHS 已内置于 SciPy ≥1.9，速度远超旧 simplex |
++| 整数/混合整数规划 | 分支定界、割平面 | PuLP(CBC/HiGHS) → OR-Tools **CP-SAT**（组合/调度尤佳）→ SCIP(pyscipopt) | 报告 MIP gap；CP-SAT 对排程/指派/时间窗类通常更快 |
++| 非线性优化（连续） | SLSQP / trust-constr / L-BFGS-B | `scipy.optimize.minimize` → cvxpy（凸问题）→ pyomo+ipopt | 非凸必须 multistart；凸问题优先 cvxpy 保证全局最优 |
++| 全局/黑箱优化 | 差分进化、CMA-ES、贝叶斯优化 | `scipy.optimize.differential_evolution` → `cma` → `optuna` | 必须固定 seed、报告多次运行 CV |
++| 多目标优化 | NSGA-II/III、加权法、ε-约束 | pymoo → platypus | 输出 Pareto 前沿 + 超体积指标 |
++| 组合优化（TSP/VRP/排程） | 贪心构造 + 2-opt/Or-opt、LNS、CP-SAT | OR-Tools routing / CP-SAT → python-tsp / LKH | 小规模 (<15 城) 可精确 MILP 验证启发式 |
++| 回归分析 | OLS、岭/LASSO、GLM、分位数回归 | statsmodels（报告 p 值/CI/诊断）→ sklearn | 因果解释必须写清识别策略 |
++| 时间序列 | ARIMA/SARIMA、ETS、Prophet、LSTM/TCN | statsmodels / pmdarima → prophet → torch | 必须用滚动/时序切分，禁止随机 KFold |
++| 机器学习预测 | 梯度提升树、随机森林、SHAP 解释 | lightgbm / xgboost → sklearn；shap | 交叉验证 + 特征重要性 + 校准 |
++| 聚类分析 | K-means(++)、DBSCAN/HDBSCAN、层次聚类、GMM | sklearn → hdbscan | 报告轮廓系数/CH 指标选 k |
++| 层次分析 (AHP) | 判断矩阵 + 一致性检验 | 手动实现 / ahpy | n≥3 才报 CR，CR<0.1 |
++| 综合评价 | TOPSIS、熵权法、CRITIC、灰色关联、DEA | 手动实现 / pyDEA | 负向指标先正向化；熵权 log(0) 处理 |
++| 灰色预测 | GM(1,1)、GM(1,N) | 手动实现 | 只适合小样本、近似指数趋势；必须做后验差检验 |
++| 图论 | Dijkstra、Floyd、最大流/最小费用流、最小生成树 | networkx → igraph（大图） | 大图用 igraph/scipy.sparse.csgraph |
++| 蒙特卡洛 / 随机模拟 | 逆变换、重要性采样、拉丁超立方 | `numpy.random.default_rng(seed)` → scipy.stats.qmc | 报告样本数与置信区间 |
++| 微分方程 | RK45/LSODA/Radau（刚性）、有限差分 | `scipy.integrate.solve_ivp` → fipy/fenics(PDE) | 刚性问题选 Radau/BDF；结果必须做物理约束检验 |
++| 参数估计 / 贝叶斯 | MLE、MCMC | scipy.optimize → pymc / emcee | 多链 R̂<1.1 |
++| 排队/仿真 | M/M/c 公式、离散事件仿真 | 手动 / simpy | 仿真需热身期 + 多次重复 |
++| 传染病/生态动力学 | SIR/SEIR、Lotka-Volterra | solve_ivp + 参数拟合 (least_squares) | 时变参数不能取均值当常数 |
++| 空间/地理 | K-D 树、Voronoi、凸包、覆盖优化 | scipy.spatial → shapely / geopandas | 距离用大圆/投影坐标，勿直接用经纬度欧氏距离 |
+diff --git a/skills/comp-paper-en-docx/SKILL.md b/skills/comp-paper-en-docx/SKILL.md
+index 7fad458..6b42110 100644
+--- a/skills/comp-paper-en-docx/SKILL.md
++++ b/skills/comp-paper-en-docx/SKILL.md
+@@ -568,8 +568,11 @@ Before finishing writing / compiling, run the universal audit. Works without `PR
+ #   [14] Event source attribution (prevent "guessing source from variable name")
+ # Falls back to simplified mode if no PROBLEM_FACTS.json (general academic / course / humanities).
+ if [ -f _utils/facts_audit.py ]; then
+-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
+-    PRC=$?
++    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件，会互相覆盖）；
++    #    管道后 $? 是 tee 的退出码（恒 0）——旧写法让这道审计门禁从未真正拦截过。
++    mkdir -p _tmp
++    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
++    PRC=${PIPESTATUS[0]}
+     if [ "$PRC" = "1" ]; then
+         echo "❌ Universal paper-stage audit failed — fix paper text / results.json before finishing"
+     fi
+diff --git a/skills/comp-paper-en/SKILL.md b/skills/comp-paper-en/SKILL.md
+index 89ab6f7..1084bd8 100644
+--- a/skills/comp-paper-en/SKILL.md
++++ b/skills/comp-paper-en/SKILL.md
+@@ -480,8 +480,11 @@ Before finishing writing / compiling, run the universal audit. Works without `PR
+ #   [14] Event source attribution (prevent "guessing source from variable name")
+ # Falls back to simplified mode if no PROBLEM_FACTS.json (general academic / course / humanities).
+ if [ -f _utils/facts_audit.py ]; then
+-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
+-    PRC=$?
++    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件，会互相覆盖）；
++    #    管道后 $? 是 tee 的退出码（恒 0）——旧写法让这道审计门禁从未真正拦截过。
++    mkdir -p _tmp
++    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
++    PRC=${PIPESTATUS[0]}
+     if [ "$PRC" = "1" ]; then
+         echo "❌ Universal paper-stage audit failed — fix paper text / results.json before finishing"
+     fi
+diff --git a/skills/comp-paper-zh-docx/SKILL.md b/skills/comp-paper-zh-docx/SKILL.md
+index f64080c..b8e7eed 100644
+--- a/skills/comp-paper-zh-docx/SKILL.md
++++ b/skills/comp-paper-zh-docx/SKILL.md
+@@ -1003,8 +1003,11 @@ fi
+ 
+ # 1c. ⛔ 参数密集型题目必跑：正文结论 vs results.json 一致性
+ if [ -f PROBLEM_FACTS.json ]; then
+-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
+-    PAPER_RC=$?
++    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件，会互相覆盖）；
++    #    管道后 $? 是 tee 的退出码（恒 0）——旧写法让这道审计门禁从未真正拦截过。
++    mkdir -p _tmp
++    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
++    PAPER_RC=${PIPESTATUS[0]}
+     if [ $PAPER_RC -eq 1 ]; then
+         echo "❌ Step 5 结论审计失败：正文结论性陈述与 results.json 不一致。先修正文，再导出 docx。"
+     fi
+diff --git a/skills/comp-paper-zh/SKILL.md b/skills/comp-paper-zh/SKILL.md
+index 2712386..b6ff59a 100644
+--- a/skills/comp-paper-zh/SKILL.md
++++ b/skills/comp-paper-zh/SKILL.md
+@@ -1328,8 +1328,11 @@ fi
+ #     ⛔ 修复历史 bug：之前 if 是 [-f PROBLEM_FACTS.json]，导致简单题 + PDF 中文工作流
+ #        全程无 paper 阶段审计，凭印象的虚构数字漏网。改为按 _utils/facts_audit.py 存在判断。
+ if [ -f _utils/facts_audit.py ]; then
+-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
+-    PAPER_RC=$?
++    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件，会互相覆盖）；
++    #    管道后 $? 是 tee 的退出码（恒 0）——旧写法让这道审计门禁从未真正拦截过。
++    mkdir -p _tmp
++    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
++    PAPER_RC=${PIPESTATUS[0]}
+     if [ $PAPER_RC -eq 1 ]; then
+         echo "❌ Step 5 结论审计失败：正文结论性陈述与 results.json 不一致 / 含虚构数字。先修正文，再编译。"
+     fi
+diff --git a/skills/comp-prob-analysis/SKILL.md b/skills/comp-prob-analysis/SKILL.md
+index dd846cd..b5fbe4c 100644
+--- a/skills/comp-prob-analysis/SKILL.md
++++ b/skills/comp-prob-analysis/SKILL.md
+@@ -122,9 +122,12 @@ fi
+ 
+ ```bash
+ # 第一步审计：纯 OCR 客观比对（防 AI 抄题面时虚构 / 漏抄 / 串台）
+-python3 _utils/facts_audit.py --stage prob 2>&1 | tee AUDIT_REPORT.md
+-RC=$?
+-if [ $RC -eq 1 ]; then
++# ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己会写这个文件，会互相覆盖）；
++#    管道后 `$?` 是 tee 的退出码（恒 0）——旧写法导致下面的失败分支永远走不到，OCR 防虚构门禁形同虚设。
++mkdir -p _tmp
++python3 _utils/facts_audit.py --stage prob 2>&1 | tee _tmp/facts_audit_prob.log
++RC=${PIPESTATUS[0]}
++if [ "$RC" -eq 1 ]; then
+     echo "⛔ 第一步审计失败：facts 与 OCR 原文不一致。必须修复 PROBLEM_FACTS.json 后重新跑，不要结束本步骤。"
+     echo "   常见原因：facts 里写的数字在 user_data/*_extracted.txt 里 grep 不到（虚构）；source_files 的 sha256 不一致（OCR 被改）"
+ elif [ $RC -eq 2 ]; then
+diff --git a/skills/course-paper/SKILL.md b/skills/course-paper/SKILL.md
+index a3966f4..cf51c32 100644
+--- a/skills/course-paper/SKILL.md
++++ b/skills/course-paper/SKILL.md
+@@ -518,8 +518,11 @@ fi
+ #   [14] 事件源归属（防"凭变量名脑补撞击 / 命中 / 拦截"）
+ # 即使没 PROBLEM_FACTS.json（普通学术 / 课程论文 / 人文社科），也会以"简化模式"跑独立审计。
+ if [ -f _utils/facts_audit.py ]; then
+-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
+-    PRC=$?
++    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件，会互相覆盖）；
++    #    管道后 $? 是 tee 的退出码（恒 0）——旧写法让这道审计门禁从未真正拦截过。
++    mkdir -p _tmp
++    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
++    PRC=${PIPESTATUS[0]}
+     if [ "$PRC" = "1" ]; then
+         echo "❌ 通用 paper-stage 审计未通过 — 必须按上面提示修正正文 / results.json 后重新跑"
+     fi
+diff --git a/skills/course-report/SKILL.md b/skills/course-report/SKILL.md
+index 1cbdd54..59cec55 100644
+--- a/skills/course-report/SKILL.md
++++ b/skills/course-report/SKILL.md
+@@ -462,8 +462,11 @@ fi
+ #   [14] 事件源归属（防"凭变量名脑补撞击 / 命中 / 拦截"）
+ # 即使没 PROBLEM_FACTS.json（普通学术 / 课程论文 / 人文社科），也会以"简化模式"跑独立审计。
+ if [ -f _utils/facts_audit.py ]; then
+-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
+-    PRC=$?
++    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件，会互相覆盖）；
++    #    管道后 $? 是 tee 的退出码（恒 0）——旧写法让这道审计门禁从未真正拦截过。
++    mkdir -p _tmp
++    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
++    PRC=${PIPESTATUS[0]}
+     if [ "$PRC" = "1" ]; then
+         echo "❌ 通用 paper-stage 审计未通过 — 必须按上面提示修正正文 / results.json 后重新跑"
+     fi
+diff --git a/skills/humanities-write-latex/SKILL.md b/skills/humanities-write-latex/SKILL.md
+index cf8060f..4fbf2a7 100644
+--- a/skills/humanities-write-latex/SKILL.md
++++ b/skills/humanities-write-latex/SKILL.md
+@@ -297,8 +297,11 @@ echo "缺失嵌入: $missing"
+ #   [14] 事件源归属（防"凭变量名脑补撞击 / 命中 / 拦截"）
+ # 即使没 PROBLEM_FACTS.json（普通学术 / 课程论文 / 人文社科），也会以"简化模式"跑独立审计。
+ if [ -f _utils/facts_audit.py ]; then
+-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
+-    PRC=$?
++    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件，会互相覆盖）；
++    #    管道后 $? 是 tee 的退出码（恒 0）——旧写法让这道审计门禁从未真正拦截过。
++    mkdir -p _tmp
++    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
++    PRC=${PIPESTATUS[0]}
+     if [ "$PRC" = "1" ]; then
+         echo "❌ 通用 paper-stage 审计未通过 — 必须按上面提示修正正文 / results.json 后重新跑"
+     fi
+diff --git a/skills/humanities-write/SKILL.md b/skills/humanities-write/SKILL.md
+index 331a164..502a552 100644
+--- a/skills/humanities-write/SKILL.md
++++ b/skills/humanities-write/SKILL.md
+@@ -276,8 +276,11 @@ echo "缺失嵌入: $missing"
+ #   [14] 事件源归属（防"凭变量名脑补撞击 / 命中 / 拦截"）
+ # 即使没 PROBLEM_FACTS.json（普通学术 / 课程论文 / 人文社科），也会以"简化模式"跑独立审计。
+ if [ -f _utils/facts_audit.py ]; then
+-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
+-    PRC=$?
++    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件，会互相覆盖）；
++    #    管道后 $? 是 tee 的退出码（恒 0）——旧写法让这道审计门禁从未真正拦截过。
++    mkdir -p _tmp
++    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
++    PRC=${PIPESTATUS[0]}
+     if [ "$PRC" = "1" ]; then
+         echo "❌ 通用 paper-stage 审计未通过 — 必须按上面提示修正正文 / results.json 后重新跑"
+     fi
+diff --git a/skills/paper-figure/SKILL.md b/skills/paper-figure/SKILL.md
+index 1390ca7..c20688f 100644
+--- a/skills/paper-figure/SKILL.md
++++ b/skills/paper-figure/SKILL.md
+@@ -247,8 +247,14 @@ fi
+ 
+ ```bash
+ # Step 4 末尾：检查图标签单位 / 图例与 facts 实体名匹配 / 图脚本数据来源
+-[ -f PROBLEM_FACTS.json ] && python3 _utils/facts_audit.py --stage figure 2>&1 | tee -a AUDIT_REPORT.md
+-FIG_RC=$?
++# ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件，会互相覆盖）；
++#    管道后 $? 是 tee 的退出码（恒 0）——旧写法让这道审计门禁从未真正拦截过。
++mkdir -p _tmp
++FIG_RC=0
++if [ -f PROBLEM_FACTS.json ]; then
++    python3 _utils/facts_audit.py --stage figure 2>&1 | tee -a _tmp/facts_audit_figure.log
++    FIG_RC=${PIPESTATUS[0]}
++fi
+ if [ $FIG_RC -eq 1 ]; then
+     echo "⛔ 图脚本审计失败：xlabel/ylabel 缺单位、图例与 facts 实体名不匹配、或脚本未从 JSON 读数据。请修正后重新跑。"
+ fi
+diff --git a/skills/paper-write-docx/SKILL.md b/skills/paper-write-docx/SKILL.md
+index 0c4eaa7..2f91d42 100644
+--- a/skills/paper-write-docx/SKILL.md
++++ b/skills/paper-write-docx/SKILL.md
+@@ -491,8 +491,11 @@ Before finishing writing / compiling, run the universal audit. Works without `PR
+ #   [14] Event source attribution (prevent "guessing source from variable name")
+ # Falls back to simplified mode if no PROBLEM_FACTS.json (general academic / course / humanities).
+ if [ -f _utils/facts_audit.py ]; then
+-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
+-    PRC=$?
++    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件）；管道后 $? 是 tee 的退出码（恒 0），
++    #    旧写法让这道审计门禁从未真正拦截过。用 PIPESTATUS[0]。
++    mkdir -p _tmp
++    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
++    PRC=${PIPESTATUS[0]}
+     if [ "$PRC" = "1" ]; then
+         echo "❌ Universal paper-stage audit failed — fix paper text / results.json before finishing"
+     fi
+diff --git a/skills/paper-write-nature-docx/SKILL.md b/skills/paper-write-nature-docx/SKILL.md
+index c07d607..b297c90 100644
+--- a/skills/paper-write-nature-docx/SKILL.md
++++ b/skills/paper-write-nature-docx/SKILL.md
+@@ -527,8 +527,11 @@ Before finishing writing / compiling, run the universal audit. Works without `PR
+ #   [14] Event source attribution (prevent "guessing source from variable name")
+ # Falls back to simplified mode if no PROBLEM_FACTS.json (general academic / course / humanities).
+ if [ -f _utils/facts_audit.py ]; then
+-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
+-    PRC=$?
++    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件）；管道后 $? 是 tee 的退出码（恒 0），
++    #    旧写法让这道审计门禁从未真正拦截过。用 PIPESTATUS[0]。
++    mkdir -p _tmp
++    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
++    PRC=${PIPESTATUS[0]}
+     if [ "$PRC" = "1" ]; then
+         echo "❌ Universal paper-stage audit failed — fix paper text / results.json before finishing"
+     fi
+diff --git a/skills/paper-write-nature/SKILL.md b/skills/paper-write-nature/SKILL.md
+index dbe9dd0..77dc39c 100644
+--- a/skills/paper-write-nature/SKILL.md
++++ b/skills/paper-write-nature/SKILL.md
+@@ -363,8 +363,11 @@ Before finishing writing / compiling, run the universal audit. Works without `PR
+ #   [14] Event source attribution (prevent "guessing source from variable name")
+ # Falls back to simplified mode if no PROBLEM_FACTS.json (general academic / course / humanities).
+ if [ -f _utils/facts_audit.py ]; then
+-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
+-    PRC=$?
++    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件）；管道后 $? 是 tee 的退出码（恒 0），
++    #    旧写法让这道审计门禁从未真正拦截过。用 PIPESTATUS[0]。
++    mkdir -p _tmp
++    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
++    PRC=${PIPESTATUS[0]}
+     if [ "$PRC" = "1" ]; then
+         echo "❌ Universal paper-stage audit failed — fix paper text / results.json before finishing"
+     fi
+diff --git a/skills/paper-write-zh-docx/SKILL.md b/skills/paper-write-zh-docx/SKILL.md
+index 4adf51b..e193569 100644
+--- a/skills/paper-write-zh-docx/SKILL.md
++++ b/skills/paper-write-zh-docx/SKILL.md
+@@ -635,8 +635,11 @@ fi
+ #   [14] 事件源归属（防"凭变量名脑补撞击 / 命中 / 拦截"）
+ # 即使没 PROBLEM_FACTS.json（普通学术 / 课程论文 / 人文社科），也会以"简化模式"跑独立审计。
+ if [ -f _utils/facts_audit.py ]; then
+-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
+-    PRC=$?
++    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件）；管道后 $? 是 tee 的退出码（恒 0），
++    #    旧写法让这道审计门禁从未真正拦截过。用 PIPESTATUS[0]。
++    mkdir -p _tmp
++    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
++    PRC=${PIPESTATUS[0]}
+     if [ "$PRC" = "1" ]; then
+         echo "❌ 通用 paper-stage 审计未通过 — 必须按上面提示修正正文 / results.json 后重新跑"
+     fi
+diff --git a/skills/paper-write-zh/SKILL.md b/skills/paper-write-zh/SKILL.md
+index fac07d5..6fe0ed6 100644
+--- a/skills/paper-write-zh/SKILL.md
++++ b/skills/paper-write-zh/SKILL.md
+@@ -555,8 +555,11 @@ fi
+ #   [14] 事件源归属（防"凭变量名脑补撞击 / 命中 / 拦截"）
+ # 即使没 PROBLEM_FACTS.json（普通学术 / 课程论文 / 人文社科），也会以"简化模式"跑独立审计。
+ if [ -f _utils/facts_audit.py ]; then
+-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
+-    PRC=$?
++    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件）；管道后 $? 是 tee 的退出码（恒 0），
++    #    旧写法让这道审计门禁从未真正拦截过。用 PIPESTATUS[0]。
++    mkdir -p _tmp
++    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
++    PRC=${PIPESTATUS[0]}
+     if [ "$PRC" = "1" ]; then
+         echo "❌ 通用 paper-stage 审计未通过 — 必须按上面提示修正正文 / results.json 后重新跑"
+     fi
+diff --git a/skills/paper-write/SKILL.md b/skills/paper-write/SKILL.md
+index c49d410..5dbb7ea 100644
+--- a/skills/paper-write/SKILL.md
++++ b/skills/paper-write/SKILL.md
+@@ -480,8 +480,11 @@ Before finishing writing / compiling, run the universal audit. Works without `PR
+ #   [14] Event source attribution (prevent "guessing source from variable name")
+ # Falls back to simplified mode if no PROBLEM_FACTS.json (general academic / course / humanities).
+ if [ -f _utils/facts_audit.py ]; then
+-    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a AUDIT_REPORT.md
+-    PRC=$?
++    # ⛔ 不要 tee 到 AUDIT_REPORT.md（facts_audit.py 自己写该文件）；管道后 $? 是 tee 的退出码（恒 0），
++    #    旧写法让这道审计门禁从未真正拦截过。用 PIPESTATUS[0]。
++    mkdir -p _tmp
++    python3 _utils/facts_audit.py --stage paper 2>&1 | tee -a _tmp/facts_audit_paper.log
++    PRC=${PIPESTATUS[0]}
+     if [ "$PRC" = "1" ]; then
+         echo "❌ Universal paper-stage audit failed — fix paper text / results.json before finishing"
+     fi
+diff --git a/skills/shared-scripts/check_latex.py b/skills/shared-scripts/check_latex.py
+index 7947683..fdba1cd 100644
+--- a/skills/shared-scripts/check_latex.py
++++ b/skills/shared-scripts/check_latex.py
+@@ -20,20 +20,40 @@ def check(filepath: str = "MODELING_REPORT.md") -> int:
+         print(f"WARN {filepath} 不存在，跳过检查")
+         return 0
+ 
+-    text = Path(filepath).read_text(encoding="utf-8")
+-    # 移除代码块、$$ 块、行内 $ 公式
++    text = Path(filepath).read_text(encoding="utf-8", errors="replace")
++
++    # 0. $$ 必须成对：奇数个 $$ 说明有块级公式没闭合，后面所有内容都会被渲染器吞掉
++    n_block = len(re.findall(r"(?<!\\)\$\$", re.sub(r"```.*?```", "", text, flags=re.DOTALL)))
++    if n_block % 2 == 1:
++        print(f"ERROR $$ 数量为奇数（{n_block}），存在未闭合的块级公式")
++        return 1
++
++    # 1. 移除围栏代码块、行内代码、$$ 块、行内 $ 公式（旧版没有去掉 `行内代码`，
++    #    SKILL 自带的说明文字里写 `\\begin{aligned}` 也会被误报）
+     cleaned = re.sub(r"```.*?```", "", text, flags=re.DOTALL)
++    cleaned = re.sub(r"`[^`\n]*`", "", cleaned)
+     cleaned = re.sub(r"\$\$[\s\S]*?\$\$", "", cleaned)
+-    cleaned = re.sub(r"\$[^\n$]+\$", "", cleaned)
++    cleaned = re.sub(r"(?<!\\)\$[^\n$]+?(?<!\\)\$", "", cleaned)
++    cleaned = re.sub(r"\\\(.*?\\\)", "", cleaned)
++    cleaned = re.sub(r"\\\[[\s\S]*?\\\]", "", cleaned)
+ 
+-    # 查找裸 LaTeX 命令
+-    PATTERN = re.compile(
+-        r"\\(tag|sqrt|hat|frac|tfrac|dot|begin|cdot|pm|in|exists|forall|big|cap)\b"
+-    )
++    # 2. 通用检测：任何 "\字母命令" 在公式外都可疑（旧版只列了 14 个命令，\sum/\alpha/\leq
++    #    /\mathbf/\partial/\int 等最常见的全部漏检）。白名单排除 Markdown 里合法的反斜杠用法。
++    ALLOW = {"n", "t", "r", "b", "f", "v", "x", "u", "N", "d", "w", "s", "W", "S", "D",
++             "newline", "textbackslash", "url", "href", "cite", "ref", "label", "input",
++             "include", "usepackage", "documentclass", "section", "subsection", "item"}
++    PATTERN = re.compile(r"(?<!\\)\\([a-zA-Z]+)\b")
+     bad: list[tuple[int, str]] = []
+     for i, line in enumerate(cleaned.split("\n"), 1):
+-        if PATTERN.search(line):
+-            bad.append((i, line.strip()[:80]))
++        stripped = line.strip()
++        # 跳过 Windows 路径 / 文件路径行
++        if re.search(r"[A-Za-z]:\\|\\\\", stripped):
++            continue
++        cmds = [m.group(1) for m in PATTERN.finditer(line)]
++        cmds = [c for c in cmds if c not in ALLOW]
++        if cmds:
++            shown = ", ".join("\\" + c for c in cmds[:4])
++            bad.append((i, "[" + shown + "] " + stripped[:70]))
+ 
+     if bad:
+         print(f"ERROR 发现 {len(bad)} 处裸 LaTeX（缺 $$ 包围）：")
+diff --git a/skills/shared-scripts/check_modeling.py b/skills/shared-scripts/check_modeling.py
+index caedaa8..0ba60f3 100644
+--- a/skills/shared-scripts/check_modeling.py
++++ b/skills/shared-scripts/check_modeling.py
+@@ -15,22 +15,67 @@ import sys
+ from pathlib import Path
+ 
+ 
+-def count_subproblems(filepath: str) -> int:
++_CN_DIGITS = {"一": 1, "二": 2, "三": 3, "四": 4, "五": 5, "六": 6, "七": 7, "八": 8, "九": 9, "十": 10}
++
++
++def _normalize_id(token: str) -> str:
++    """把 问题一 / 问题1 / Problem 1 / question1 统一成 'q1'，使跨文件口径一致。"""
++    t = token.lower()
++    m = re.search(r"([0-9]+)", t)
++    if m:
++        return f"q{int(m.group(1))}"
++    m = re.search(r"([一二三四五六七八九十]+)", t)
++    if m:
++        cn = m.group(1)
++        if cn == "十":
++            n = 10
++        elif cn.startswith("十"):
++            n = 10 + _CN_DIGITS.get(cn[1:], 0)
++        elif cn.endswith("十"):
++            n = _CN_DIGITS.get(cn[0], 0) * 10
++        elif "十" in cn:
++            a, b = cn.split("十", 1)
++            n = _CN_DIGITS.get(a, 0) * 10 + _CN_DIGITS.get(b, 0)
++        else:
++            n = _CN_DIGITS.get(cn, 0)
++        return f"q{n}"
++    return t
++
++
++def subproblem_ids(filepath: str) -> set[str]:
++    """从 Markdown 标题行提取子问题 id 集合（归一化）。
++
++    与 _utils/count_subproblems.sh 口径一致：只看标题行，支持
++    中文数字 / 阿拉伯数字 / Problem N / Question N。
++    """
+     p = Path(filepath)
+     if not p.exists():
+-        return 0
++        return set()
+     seen: set[str] = set()
+-    for line in p.read_text(encoding="utf-8").splitlines():
++    for line in p.read_text(encoding="utf-8", errors="replace").splitlines():
+         if not re.match(r"^#{1,4}\s", line):
+             continue
+-        m = re.search(r"问题[一二三四五六七八九十0-9]+", line)
+-        if m:
+-            seen.add(m.group())
+-        else:
+-            m2 = re.search(r"(problem|question)\s*[0-9]+", line.lower())
+-            if m2:
+-                seen.add(re.sub(r"\s+", "", m2.group()))
+-    return len(seen)
++        for m in re.finditer(r"问题\s*([一二三四五六七八九十]+|[0-9]+)", line):
++            seen.add(_normalize_id(m.group(0)))
++        for m in re.finditer(r"(problem|question)\s*([0-9]+)", line, re.IGNORECASE):
++            seen.add(_normalize_id(m.group(0)))
++    return seen
++
++
++def declared_subproblem_count(filepath: str) -> int:
++    """comp-prob-analysis 要求在报告开头写 “本赛题共 X 个子问题”，优先以此声明为准。"""
++    p = Path(filepath)
++    if not p.exists():
++        return 0
++    text = p.read_text(encoding="utf-8", errors="replace")
++    m = re.search(r"本赛题共\s*([0-9]+|[一二三四五六七八九十]+)\s*个子问题", text)
++    if not m:
++        return 0
++    return int(_normalize_id(m.group(1))[1:] or 0)
++
++
++def count_subproblems(filepath: str) -> int:
++    return len(subproblem_ids(filepath))
+ 
+ 
+ def main(modeling: str = "MODELING_REPORT.md",
+@@ -51,17 +96,24 @@ def main(modeling: str = "MODELING_REPORT.md",
+ 
+     text = Path(modeling).read_text(encoding="utf-8")
+ 
+-    # 1. 子问题覆盖
+-    prob = count_subproblems(analysis)
+-    model_secs = count_subproblems(modeling)
+-    print(f"赛题子问题数: {prob}, 建模报告覆盖: {model_secs}")
+-    if model_secs < prob:
++    # 1. 子问题覆盖（按归一化 id 做集合差，而不是只比大小——旧版 3 vs 3 但覆盖的是不同问题也会放行）
++    prob_ids = subproblem_ids(analysis)
++    model_ids = subproblem_ids(modeling)
++    declared = declared_subproblem_count(analysis)
++    prob = max(len(prob_ids), declared)
++    model_secs = len(model_ids)
++    print(f"赛题子问题数: {prob}（声明 {declared or '-'} / 标题 {len(prob_ids)}），建模报告覆盖: {model_secs}")
++    missing = sorted(prob_ids - model_ids, key=lambda x: int(x[1:]) if x[1:].isdigit() else 0)
++    if missing:
++        print(f"ERROR 以下子问题在建模报告中没有对应标题: {', '.join(missing)}")
++        errors += 1
++    elif model_secs < prob:
+         print("ERROR 有子问题未建模！")
+         errors += 1
+ 
+-    # 2. 目标函数
++    # 2. 目标函数（\bmin\b/\bmax\b 前后都加词边界，避免 admin/climax 误命中）
+     obj = len(re.findall(
+-        r"目标函数|min\b|max\b|最小化|最大化|objective|模型公式|数学模型",
++        r"目标函数|\bmin\b|\bmax\b|最小化|最大化|objective|模型公式|数学模型",
+         text, re.IGNORECASE,
+     ))
+     print(f"目标函数/模型公式出现次数: {obj}")
+@@ -87,7 +139,8 @@ def main(modeling: str = "MODELING_REPORT.md",
+         print("WARN 缺少灵敏度分析方案（评审加分项）")
+ 
+     # 6. 图表预规划
+-    if re.search(r"图表预规划|fig_|TABLE_|DrawIO", text, re.IGNORECASE):
++    # \bfig_ 加词边界：旧版 'fig_' 会被 'config_' 命中而误判通过
++    if re.search(r"图表预规划|FIGURE_MANIFEST|\bfig_|\bTABLE_|DrawIO", text, re.IGNORECASE):
+         print("OK 图表预规划已带入")
+     else:
+         print("ERROR 缺少图表预规划（paper-figure 步骤需要）")
+@@ -99,6 +152,26 @@ def main(modeling: str = "MODELING_REPORT.md",
+     else:
+         print("WARN 缺少编程实现要点（comp-code 步骤需要）")
+ 
++    # 7.5 comp-modeling Step 5.5 要求的 5 项必备内容（comp-code 依赖这些做约束闭环）
++    required_sections = [
++        ("结果约束清单", r"结果约束清单|约束清单"),
++        ("预期行为", r"预期行为"),
++        ("异常处理预案", r"异常处理预案|异常预案"),
++        ("方法指定", r"方法指定|方法唯一性"),
++        ("验证检查点", r"验证检查点"),
++    ]
++    missing_sections = [name for name, pat in required_sections if not re.search(pat, text)]
++    if missing_sections:
++        print(f"WARN 缺少建模报告必备章节: {', '.join(missing_sections)}（comp-code 的 constraint_audit / structural_validation 依赖它们）")
++    else:
++        print("OK 5 项必备内容（约束清单/预期行为/异常预案/方法指定/验证检查点）齐全")
++
++    # 7.6 优化类必须声明优化方向（min/max）——下游 auto_tune / local_search / 收敛审计都依赖它
++    if re.search(r"目标函数|objective", text, re.IGNORECASE) and not re.search(
++        r"\\(min|max)\b|\b(min|max)(imize)?\b|最小化|最大化", text, re.IGNORECASE
++    ):
++        print("WARN 存在目标函数但未明确写出优化方向（最小化/最大化）")
++
+     # 8. 问题递进性提示
+     print()
+     print("=== 问题递进性检查 ===")
+diff --git a/skills/shared-scripts/count_subproblems.sh b/skills/shared-scripts/count_subproblems.sh
+index b088ab1..45d7327 100644
+--- a/skills/shared-scripts/count_subproblems.sh
++++ b/skills/shared-scripts/count_subproblems.sh
+@@ -33,20 +33,50 @@ export LANG=C.UTF-8 2>/dev/null || true
+ # 具体：抓取形如  ^##[#] ... 问题<编号>  的标题行，提取到"问题X"这个 token 后去重计数。
+ # - 中文："问题" 后跟任意一个中文数字或阿拉伯数字
+ # - 英文：Problem / Question 后跟数字
++# 优先级 0：comp-prob-analysis 要求在报告开头写 "本赛题共 X 个子问题"，有则以声明为准
++declared=$(grep -oE '本赛题共[[:space:]]*[0-9]+[[:space:]]*个子问题' "$f" 2>/dev/null | head -1 | grep -oE '[0-9]+' | head -1)
++if [ -n "$declared" ] && [ "$declared" -gt 0 ] 2>/dev/null; then
++    echo "$declared"
++    exit 0
++fi
++
++# 中文数字 → 阿拉伯数字归一化，使 "问题一" 与 "问题1" 视为同一子问题（旧版会重复计数）
+ count=$(awk '
++    BEGIN {
++        cn["一"]=1; cn["二"]=2; cn["三"]=3; cn["四"]=4; cn["五"]=5;
++        cn["六"]=6; cn["七"]=7; cn["八"]=8; cn["九"]=9; cn["十"]=10;
++    }
++    function norm(tok,   n, m) {
++        if (match(tok, /[0-9]+/)) return "q" (substr(tok, RSTART, RLENGTH) + 0)
++        n = 0
++        if (match(tok, /十/)) {
++            # 十 / 二十 / 十三 / 二十三
++            split(tok, parts, "十")
++            n = (parts[1] == "" ? 1 : cn[parts[1]]) * 10 + (parts[2] == "" ? 0 : cn[parts[2]])
++        } else {
++            n = cn[tok]
++        }
++        return "q" n
++    }
+     # 只处理标题行(以一个或多个 # 开头)
+-    /^#{1,4}[[:space:]]/ {
++    /^##?#?#?[[:space:]]/ {  # 不用 {1,4} 区间：mawk/busybox awk 不支持，整条规则会静默失效
+         line=$0
+-        # 匹配中文"问题X"：问题后面跟一个字符(中文数字或阿拉伯数字)
+-        if (match(line, /问题[一二三四五六七八九十0-9]+/)) {
+-            key=substr(line, RSTART, RLENGTH)
+-            seen[key]=1
++        # 匹配中文"问题X"（同一标题可能提到多个子问题，逐个抓）
++        # 注意：norm() 内部也会调用 match()，会覆盖全局 RSTART/RLENGTH，
++        # 必须先把偏移存到局部变量再调用，否则 substr 用错偏移 → 死循环
++        while (match(line, /问题[[:space:]]*(一|二|三|四|五|六|七|八|九|十|[0-9])+/)) {
++            rs=RSTART; rl=RLENGTH
++            tok=substr(line, rs, rl)
++            sub(/^问题[[:space:]]*/, "", tok)
++            seen[norm(tok)]=1
++            line=substr(line, rs+rl)
+         }
+-        # 匹配英文 Problem N / Question N
+-        else if (match(tolower(line), /(problem|question)[ ]*[0-9]+/)) {
+-            key=substr(tolower(line), RSTART, RLENGTH)
+-            gsub(/[ ]+/, "", key)
+-            seen[key]=1
++        low=tolower($0)
++        while (match(low, /(problem|question)[ ]*[0-9]+/)) {
++            rs=RSTART; rl=RLENGTH
++            tok=substr(low, rs, rl)
++            seen[norm(tok)]=1
++            low=substr(low, rs+rl)
+         }
+     }
+     END { print length(seen) }
+diff --git a/skills/shared-scripts/error_prevention.md b/skills/shared-scripts/error_prevention.md
+index 5fe5ba4..1194544 100644
+--- a/skills/shared-scripts/error_prevention.md
++++ b/skills/shared-scripts/error_prevention.md
+@@ -1132,8 +1132,10 @@ def set_all_seeds(seed: int = 42) -> dict:
+     """统一 seed 函数，所有代码入口必须先调用此函数。返回设置详情供日志。"""
+     import random
+     random.seed(seed)
++    # 注意：PYTHONHASHSEED 只在解释器启动前设置才生效，这里写入 os.environ 仅用于
++    # 传给后续 subprocess；当前进程的 set/dict 遍历顺序不会因此固定 —— 依赖顺序的地方请显式 sorted()
+     os.environ['PYTHONHASHSEED'] = str(seed)
+-    info = {'seed': seed, 'python_hashseed': str(seed)}
++    info = {'seed': seed, 'python_hashseed': str(seed), 'note': 'PYTHONHASHSEED 仅对子进程生效'}
+     try:
+         import numpy as np
+         np.random.seed(seed)
+@@ -1396,19 +1398,36 @@ import numpy as np
+ import json, sys
+ from pathlib import Path
+ 
+-def audit_continuous_optimum(result, tol_grad=1e-4, tol_eq=1e-6) -> dict:
++def audit_continuous_optimum(result, tol_grad=1e-4, tol_eq=1e-6, bounds=None, has_constraints=False) -> dict:
+     """
+     审计 scipy.optimize / cvxpy / similar 结果。
+     result 至少含: success, fun, x, (optional) jac, status
++    bounds: [(lb, ub), ...]，有边界约束时用"投影梯度"判收敛。
++    has_constraints: 有一般等式/不等式约束时，目标梯度在最优点本来就不为 0
++                     （KKT 是 ∇f + Σλ∇g = 0），此时跳过裸梯度范数检查，只做可行性/成功标志检查。
++    ⛔ 旧版对所有问题都检查 ||∇f|| < tol，几乎所有带约束的竞赛题都会被误判"未收敛"。
+     """
+     fails = []
+     if not result.get('success', False):
+         fails.append(f"求解器报告失败: status={result.get('status')}, message={result.get('message')}")
+-    # 梯度范数
+-    if 'jac' in result and result['jac'] is not None:
+-        g = np.array(result['jac'])
+-        if np.linalg.norm(g) > tol_grad:
+-            fails.append(f"梯度范数 {np.linalg.norm(g):.2e} > {tol_grad}（疑似未真正收敛）")
++    # 梯度范数（仅无约束 / 仅边界约束时有意义）
++    if 'jac' in result and result['jac'] is not None and not has_constraints:
++        g = np.array(result['jac'], dtype=float)
++        x = np.array(result.get('x', []), dtype=float)
++        if bounds is not None and x.size == g.size:
++            # 投影梯度：在下界处只看 g<0 的分量，在上界处只看 g>0 的分量
++            pg = g.copy()
++            for i, (lb, ub) in enumerate(bounds):
++                if lb is not None and abs(x[i] - lb) < 1e-9 and g[i] > 0:
++                    pg[i] = 0.0
++                if ub is not None and abs(x[i] - ub) < 1e-9 and g[i] < 0:
++                    pg[i] = 0.0
++            g = pg
++        gnorm = np.linalg.norm(g)
++        # 相对容差：目标函数量级大时绝对 1e-4 不合理
++        scale = max(1.0, abs(float(result.get('fun', 0.0))))
++        if gnorm > tol_grad * scale:
++            fails.append(f"(投影)梯度范数 {gnorm:.2e} > {tol_grad * scale:.1e}（疑似未真正收敛）")
+     # 目标函数值是否爆炸
+     if abs(result.get('fun', 0)) > 1e10:
+         fails.append(f"目标函数值 {result['fun']:.2e} 异常大（可能数值爆炸）")
+@@ -1432,14 +1451,15 @@ def audit_multistart(results_list, rel_tol=0.05) -> dict:
+ 
+ 
+ def audit_heuristic_convergence(history: list[dict], window_frac=0.1, tol_rel=1e-3) -> dict:
+-    """启发式（GA/SA/PSO）收敛曲线审计：最后 X% 代的相对下降应 < tol。"""
++    """启发式（GA/SA/PSO）收敛曲线审计：最后 X% 代的相对改进应 < tol。
++    ⛔ 用 abs()：旧版 (recent[0]-recent[-1]) 隐含最小化，最大化问题 rel 恒为负 → 永远"通过"。"""
+     if len(history) < 20:
+         return {'audit_pass': False, 'fails': [f"收敛历史仅 {len(history)} 代，太短"]}
+     fbest = [h['best'] for h in history]
+     n = len(fbest)
+     window = max(1, int(n * window_frac))
+     recent = fbest[-window:]
+-    rel = (recent[0] - recent[-1]) / max(abs(recent[0]), 1e-10)
++    rel = abs(recent[0] - recent[-1]) / max(abs(recent[0]), 1e-10)
+     fails = []
+     if rel > tol_rel:
+         fails.append(f"最后 {window_frac:.0%} 代仍下降 {rel:.2%}（可能过早终止）")
+@@ -2125,8 +2145,10 @@ def audit_subproblem_isolation(facts: dict, code_file, current_sub: str) -> list
+ ### 在 comp-code 阶段必跑加固审计（更新版凭证）
+ 
+ ```bash
+-python3 facts_audit_v2.py 2>&1 | tee AUDIT_REPORT.md
+-n_suspicious=$(grep -c "^⚠" AUDIT_REPORT.md)
++# facts_audit.py 自己会落档 AUDIT_REPORT.md，日志另存；退出码用 PIPESTATUS[0]（管道后 $? 是 tee 的）
++python3 _utils/facts_audit.py --stage code 2>&1 | tee _tmp/facts_audit.log
++RC=${PIPESTATUS[0]}
++n_suspicious=$(grep -cE '^- (⛔|⚠)' AUDIT_REPORT.md 2>/dev/null || true); n_suspicious=${n_suspicious:-0}
+ # 凭证里加 n_suspicious_numbers 字段
+ echo "<!-- AUDIT_OK source=results.json rechecked_at=$(date -Iseconds) n_constraints=$N n_suspicious_numbers=$n_suspicious -->" >> RESULTS.md
+ ```
+diff --git a/skills/shared-scripts/facts_audit.py b/skills/shared-scripts/facts_audit.py
+index 0e8c3a8..d91d067 100644
+--- a/skills/shared-scripts/facts_audit.py
++++ b/skills/shared-scripts/facts_audit.py
+@@ -31,12 +31,29 @@ from pathlib import Path
+ 
+ # ----- 通用工具 -----
+ 
+-# 数字 regex：数字后允许跟字母（单位 km/s/min/kn 等），但禁止跟点或数字（避免抓章节号 1.2.3）
+-NUM_RE = re.compile(r'(?<![\w.])([-+]?\d+\.\d+|\d+)(?![\.\d])')
++# 数字 regex：数字后允许跟字母（单位 km/s/min/kn 等）或句末英文句号，
++# 但禁止跟 ".数字"（避免抓章节号 1.2.3）。
++# 修复：旧版 (?![\.\d]) 会把句末带英文句号的 "0.95." 整个丢掉，导致 facts 里的 0.95
++# 被误判为"虚构"；同时支持千分位 "1,852" 与科学计数法 "1e-3"。
++NUM_RE = re.compile(
++    r'(?<![\w.])([-+]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?:[eE][-+]?\d+)?)(?!\.\d)'
++)
+ 
+ # 数字白名单：常用辅助常数，不参与"虚构"判定
+ WHITELIST = {0, 1, 2, 3, 4, 5, 10, 100, 1000, 60, 24, 0.5, 1.5, -1}
+ 
++# 数学/物理常数白名单：建模报告里合法出现但题面不会给的数
++MATH_CONSTANTS = {
++    3.14, 3.1416, 3.14159, 2.718, 2.7183, 9.8, 9.81, 0.05, 0.01, 0.001, 0.1,
++    0.25, 0.75, 0.9, 0.95, 0.99, 1.96, 2.58, 1.645, 0.5, 1e-3, 1e-4, 1e-6, 1e-8,
++    1852.0, 3.6, 273.15, 6371.0, 6378.0, 299792458.0,
++}
++
++
++def _to_float(token: str) -> float:
++    """把带千分位/科学计数法的字符串转成 float。"""
++    return float(token.replace(',', ''))
++
+ 
+ def compute_source_hash(file_path) -> str:
+     """计算文件 sha256，作为防篡改证据。"""
+@@ -51,12 +68,32 @@ def extract_numbers_from_text(text: str) -> set:
+     nums = set()
+     for m in NUM_RE.finditer(text):
+         try:
+-            nums.add(round(float(m.group(1)), 4))
++            nums.add(round(_to_float(m.group(1)), 4))
+         except ValueError:
+             continue
+     return nums
+ 
+ 
++def extract_derived_numbers(facts: dict) -> set:
++    """facts 中"合法派生"的数值：unit_conversions[].si_value 等。
++
++    这些值是由题面原值 × 换算因子得到的，OCR 原文里当然找不到，
++    不应被 audit_facts_against_ocr 判成"虚构"（旧版会误报）。
++    """
++    nums = set()
++    for conv in facts.get('unit_conversions', []) or []:
++        for k in ('si_value', 'value_si', 'derived'):
++            v = conv.get(k)
++            if isinstance(v, (int, float)):
++                nums.add(round(float(v), 4))
++    for item in facts.get('derived', []) or []:
++        if isinstance(item, dict):
++            v = item.get('value')
++            if isinstance(v, (int, float)):
++                nums.add(round(float(v), 4))
++    return nums
++
++
+ def extract_numbers_from_facts(facts: dict) -> set:
+     """从 facts 嵌套结构里递归抽数值字段。跳过元信息字段如 source/sha256/raw_quote。"""
+     SKIP_KEYS = {'source', 'raw_quote', 'machine_check', 'factor', 'sha256', 'path', 'note'}
+@@ -129,12 +166,14 @@ def validate_derivations(facts: dict) -> list:
+         factor = conv.get('factor', '')
+         if not (raw and si_value is not None and factor):
+             continue
+-        m_raw = re.search(r'([-+]?\d+\.?\d*)', raw)
+-        m_fac = re.search(r'=\s*([-+]?\d+\.?\d*)', factor)
++        m_raw = re.search(r'([-+]?\d[\d,]*\.?\d*(?:[eE][-+]?\d+)?)', str(raw))
++        m_fac = re.search(r'=\s*([-+]?\d[\d,]*\.?\d*(?:[eE][-+]?\d+)?)', str(factor))
+         if m_raw and m_fac:
+             try:
+-                expected = float(m_raw.group(1)) * float(m_fac.group(1))
+-                if abs(expected - float(si_value)) > 1e-3:
++                expected = _to_float(m_raw.group(1)) * _to_float(m_fac.group(1))
++                # 相对+绝对容差：旧版纯绝对 1e-3 对 1e5 量级的量太严、对 1e-6 量级的量太松
++                tol = max(1e-6, 1e-4 * abs(expected))
++                if abs(expected - float(si_value)) > tol:
+                     fails.append(f'⛔ unit_conversion 验算失败: {raw} × ({factor}) → 预期 {expected:.4f}, 但 si_value={si_value}')
+             except ValueError:
+                 pass
+@@ -183,9 +222,14 @@ def audit_facts_against_ocr(facts: dict) -> list:
+             fails.append(f'⚠ 读取 {fp} 失败: {e}')
+ 
+     facts_nums = extract_numbers_from_facts(facts)
++    derived_nums = extract_derived_numbers(facts)
+ 
+-    facts_only = facts_nums - ocr_nums - WHITELIST
++    # 派生值（单位换算结果）合法地不出现在 OCR 原文里，不算虚构
++    facts_only = facts_nums - ocr_nums - WHITELIST - derived_nums
+     ocr_only = ocr_nums - facts_nums - WHITELIST
++    # 百分比容差：题面写 95%（OCR 抽到 95），facts 登记 0.95 也算命中
++    facts_only = {v for v in facts_only
++                  if round(v * 100, 4) not in ocr_nums and round(v / 100, 4) not in ocr_nums}
+ 
+     if facts_only:
+         fails.append(f'⛔ PROBLEM_FACTS.json 含 {len(facts_only)} 个 OCR 原文中找不到的数字（疑似 AI 虚构）: '
+@@ -211,10 +255,10 @@ def audit_code_against_facts(facts: dict, code_dir='code') -> list:
+                     continue
+                 for m in NUM_RE.finditer(line):
+                     try:
+-                        v = float(m.group(1))
++                        v = _to_float(m.group(1))
+                     except ValueError:
+                         continue
+-                    if v in WHITELIST or round(v, 4) in fact_nums:
++                    if v in WHITELIST or v in MATH_CONSTANTS or round(v, 4) in fact_nums:
+                         continue
+                     susp.append(f'⚠ {f.relative_to(p.parent)}:{i} 值={v} {s[:80]}')
+                     if len(susp) >= 20:
+@@ -290,14 +334,14 @@ def audit_modeling_report(facts: dict, report_path='MODELING_REPORT.md') -> list
+     text = p.read_text(encoding='utf-8')
+ 
+     # ① 数字溯源
+-    fact_nums = extract_numbers_from_facts(facts)
+-    # 仅抓有 2 位以上小数的浮点（避免误抓章节号 / 列表序号）
+-    DEC_RE = re.compile(r'(?<![\w.])([-+]?\d+\.\d{2,})(?![\.\d])')
++    fact_nums = extract_numbers_from_facts(facts) | extract_derived_numbers(facts)
++    # 仅抓有 2 位以上小数的浮点（避免误抓章节号 / 列表序号）；允许句末英文句号
++    DEC_RE = re.compile(r'(?<![\w.])([-+]?\d+\.\d{2,})(?!\.\d)')
+     miss = []
+     for m in DEC_RE.finditer(text):
+         try:
+             v = round(float(m.group(1)), 4)
+-            if v not in fact_nums and v not in WHITELIST:
++            if v not in fact_nums and v not in WHITELIST and v not in MATH_CONSTANTS:
+                 # 模糊匹配：容忍 1e-3 量级误差（应对四舍五入）
+                 if not any(abs(v - fv) < 1e-3 for fv in fact_nums):
+                     miss.append(v)
+@@ -305,7 +349,11 @@ def audit_modeling_report(facts: dict, report_path='MODELING_REPORT.md') -> list
+             continue
+     if miss:
+         miss_unique = sorted(set(miss))[:15]
+-        fails.append(f'⛔ MODELING_REPORT.md 含 {len(set(miss))} 个无法在 facts 中找到的数字（疑似建模凭印象）: {miss_unique}')
++        # 建模报告里合法存在题面没有的数（假设值 / 预期范围 / 步长 / 收敛阈值），
++        # 因此少量未溯源只给 ⚠；数量很多（≥10）才说明在整体"凭印象"写参数 → ⛔
++        level = '⛔' if len(set(miss)) >= 10 else '⚠'
++        fails.append(f'{level} MODELING_REPORT.md 含 {len(set(miss))} 个无法在 facts 中找到的数字'
++                     f'（题面参数请从 PROBLEM_FACTS.json 取；假设值请在假设列表中声明来源）: {miss_unique}')
+ 
+     # ② rules 覆盖：每条 rule 的 natural_language 关键词必须出现在 modeling report 里
+     for r in facts.get('rules', []):
+@@ -342,9 +390,15 @@ def audit_modeling_vs_code(facts: dict, report_path='MODELING_REPORT.md', code_d
+     symbols = set()
+     for m in SYMBOL_RE.finditer(report):
+         sym = m.group(1)
+-        # 排除明显非公式符号
++        # 排除明显非公式符号：文件名 / manifest / 引擎凭证 / 图表 id
+         if sym in {'README_md', 'RESULTS_md', 'PROBLEM_FACTS_json', 'AUDIT_OK',
+-                   'MODELING_OK', 'JSON', 'OCR', 'PROBLEM_ANALYSIS', 'MODELING_REPORT'}:
++                   'MODELING_OK', 'JSON', 'OCR', 'PROBLEM_ANALYSIS', 'MODELING_REPORT',
++                   'PROBLEM_FACTS', 'MODEL_MANIFEST', 'QUANTITY_MANIFEST', 'FIGURE_MANIFEST',
++                   'HARD_CONSTRAINTS', 'AUDIT_REPORT', 'PARAMS_RAW', 'CUSTOM_REQUIREMENTS',
++                   'FORMAT_REQUIREMENTS', 'TOPIC_PLAN', 'PAPER_PLAN', 'VIBE_FAST_MODE',
++                   'MIN_MODELS', 'MIN_FIGURES', 'MIN_TABLES', 'FAST_MODE'}:
++            continue
++        if sym.upper().startswith(('TABLE_', 'FIG_', 'TIKZ_', 'DRAWIO_', 'ALLOW_', 'ENABLE_', 'USE_')):
+             continue
+         symbols.add(sym)
+ 
+@@ -370,7 +424,10 @@ def audit_modeling_vs_code(facts: dict, report_path='MODELING_REPORT.md', code_d
+             missing_syms.append(sym)
+ 
+     if missing_syms:
+-        fails.append(f'⛔ MODELING_REPORT.md 含 {len(missing_syms)} 个公式符号在 code/ 中找不到实现: {missing_syms[:15]}')
++        # 正则抽符号是启发式（会把 LaTeX 下标写法、文件名等一并抓进来），
++        # 只做 ⚠ 提示，避免把一个误抓的 token 变成阻断整个步骤的 ⛔
++        fails.append(f'⚠ MODELING_REPORT.md 含 {len(missing_syms)} 个公式符号在 code/ 中找不到对应实现'
++                     f'（请确认是否漏实现，或在代码中用同名变量）: {missing_syms[:15]}')
+ 
+     return fails
+ 
+@@ -437,7 +494,7 @@ def audit_paper_numbers_traceability(facts: dict, paper_path=None,
+ 
+     # 抽正文里的浮点数（保留 2 位以上小数，避免抓到章节号 1.2.3 / 页码）
+     # 同时记录每个数字的上下文（前后 20 字符），用于百分号容差判断
+-    NUM = re.compile(r'(?<![\w.])([-+]?\d+\.\d{2,})(?![\.\d])')
++    NUM = re.compile(r'(?<![\w.])([-+]?\d+\.\d{2,})(?!\.\d)')
+     nums = []  # [(value, ctx_str), ...]
+     for m in NUM.finditer(text):
+         try:
+diff --git a/skills/shared-scripts/stats_utils.py b/skills/shared-scripts/stats_utils.py
+index 99b087e..18722f9 100644
+--- a/skills/shared-scripts/stats_utils.py
++++ b/skills/shared-scripts/stats_utils.py
+@@ -18,10 +18,16 @@
+ """
+ import os
+ import numpy as np
++import pandas as pd
+ 
+ 
+ def _stars(p):
+-    if p is None or (isinstance(p, float) and np.isnan(p)):
++    if p is None:
++        return ''
++    try:
++        if np.isnan(p):
++            return ''
++    except TypeError:
+         return ''
+     if p < 0.01: return '***'
+     if p < 0.05: return '**'
+@@ -30,7 +36,12 @@ def _stars(p):
+ 
+ 
+ def _fmt(x, d=3):
+-    if x is None or (isinstance(x, float) and np.isnan(x)):
++    if x is None:
++        return ''
++    try:
++        if np.isnan(x):
++            return ''
++    except TypeError:
+         return ''
+     if abs(x) >= 1000: return f'{x:,.0f}'
+     return f'{x:.{d}f}'
+@@ -123,7 +134,8 @@ def regression_table(models, col_labels=None, output='figures/TABLE_regression.t
+         else:
+             results.append({
+                 'params': dict(m.params), 'bse': dict(m.bse), 'pvalues': dict(m.pvalues),
+-                'rsquared': getattr(m, 'rsquared', None),
++                # Logit/Probit/Poisson 等没有 rsquared，用 McFadden 伪 R²（prsquared）兜底
++                'rsquared': getattr(m, 'rsquared', None) if hasattr(m, 'rsquared') else getattr(m, 'prsquared', None),
+                 'rsquared_adj': getattr(m, 'rsquared_adj', None),
+                 'nobs': int(m.nobs),
+             })
+@@ -279,19 +291,26 @@ def correlation_table(df, variables=None, output='figures/TABLE_correlation.tex'
+     """相关系数矩阵三线表（下三角+显著性星号）。"""
+     if variables is None:
+         variables = df.select_dtypes(include='number').columns.tolist()
+-    sub = df[variables]
+-    corr = sub.corr()
++    sub = df[variables].apply(lambda c: pd.to_numeric(c, errors='coerce'))
++    corr = sub.corr()  # pandas 默认 pairwise-complete，与下面 p 值口径保持一致
+     n = len(variables)
++    pvals = np.full((n, n), np.nan)
+     try:
+         from scipy import stats as sp
+-        pvals = np.zeros((n, n))
+         for i in range(n):
+-            for j in range(n):
+-                if i != j:
+-                    _, p = sp.pearsonr(sub.iloc[:, i].dropna(), sub.iloc[:, j].dropna())
+-                    pvals[i, j] = p
++            for j in range(i):
++                # ⛔ 修复：旧版对两列分别 dropna() 会造成行错位（甚至长度不等直接抛错），
++                # p 值与 corr 完全对不上。必须按"成对完整"删除缺失。
++                pair = sub.iloc[:, [i, j]].dropna()
++                if len(pair) < 3 or pair.iloc[:, 0].nunique() < 2 or pair.iloc[:, 1].nunique() < 2:
++                    continue
++                try:
++                    _, pv = sp.pearsonr(pair.iloc[:, 0].to_numpy(), pair.iloc[:, 1].to_numpy())
++                except Exception:
++                    continue
++                pvals[i, j] = pvals[j, i] = pv
+     except ImportError:
+-        pvals = np.ones((n, n))
++        pass
+ 
+     is_md = _is_markdown_output(output)
+     note = '*、**、*** 分别表示在 10%、5%、1% 水平上显著。'

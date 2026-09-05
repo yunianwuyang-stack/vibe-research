@@ -31,11 +31,28 @@ from pathlib import Path
 
 # ----- 通用工具 -----
 
-# 数字 regex：数字后允许跟字母（单位 km/s/min/kn 等），但禁止跟点或数字（避免抓章节号 1.2.3）
-NUM_RE = re.compile(r'(?<![\w.])([-+]?\d+\.\d+|\d+)(?![\.\d])')
+# 数字 regex：数字后允许跟字母（单位 km/s/min/kn 等）或句末英文句号，
+# 但禁止跟 ".数字"（避免抓章节号 1.2.3）。
+# 修复：旧版 (?![\.\d]) 会把句末带英文句号的 "0.95." 整个丢掉，导致 facts 里的 0.95
+# 被误判为"虚构"；同时支持千分位 "1,852" 与科学计数法 "1e-3"。
+NUM_RE = re.compile(
+    r'(?<![\w.])([-+]?(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?(?:[eE][-+]?\d+)?)(?!\.\d)'
+)
 
 # 数字白名单：常用辅助常数，不参与"虚构"判定
 WHITELIST = {0, 1, 2, 3, 4, 5, 10, 100, 1000, 60, 24, 0.5, 1.5, -1}
+
+# 数学/物理常数白名单：建模报告里合法出现但题面不会给的数
+MATH_CONSTANTS = {
+    3.14, 3.1416, 3.14159, 2.718, 2.7183, 9.8, 9.81, 0.05, 0.01, 0.001, 0.1,
+    0.25, 0.75, 0.9, 0.95, 0.99, 1.96, 2.58, 1.645, 0.5, 1e-3, 1e-4, 1e-6, 1e-8,
+    1852.0, 3.6, 273.15, 6371.0, 6378.0, 299792458.0,
+}
+
+
+def _to_float(token: str) -> float:
+    """把带千分位/科学计数法的字符串转成 float。"""
+    return float(token.replace(',', ''))
 
 
 def compute_source_hash(file_path) -> str:
@@ -51,9 +68,29 @@ def extract_numbers_from_text(text: str) -> set:
     nums = set()
     for m in NUM_RE.finditer(text):
         try:
-            nums.add(round(float(m.group(1)), 4))
+            nums.add(round(_to_float(m.group(1)), 4))
         except ValueError:
             continue
+    return nums
+
+
+def extract_derived_numbers(facts: dict) -> set:
+    """facts 中"合法派生"的数值：unit_conversions[].si_value 等。
+
+    这些值是由题面原值 × 换算因子得到的，OCR 原文里当然找不到，
+    不应被 audit_facts_against_ocr 判成"虚构"（旧版会误报）。
+    """
+    nums = set()
+    for conv in facts.get('unit_conversions', []) or []:
+        for k in ('si_value', 'value_si', 'derived'):
+            v = conv.get(k)
+            if isinstance(v, (int, float)):
+                nums.add(round(float(v), 4))
+    for item in facts.get('derived', []) or []:
+        if isinstance(item, dict):
+            v = item.get('value')
+            if isinstance(v, (int, float)):
+                nums.add(round(float(v), 4))
     return nums
 
 
@@ -129,12 +166,14 @@ def validate_derivations(facts: dict) -> list:
         factor = conv.get('factor', '')
         if not (raw and si_value is not None and factor):
             continue
-        m_raw = re.search(r'([-+]?\d+\.?\d*)', raw)
-        m_fac = re.search(r'=\s*([-+]?\d+\.?\d*)', factor)
+        m_raw = re.search(r'([-+]?\d[\d,]*\.?\d*(?:[eE][-+]?\d+)?)', str(raw))
+        m_fac = re.search(r'=\s*([-+]?\d[\d,]*\.?\d*(?:[eE][-+]?\d+)?)', str(factor))
         if m_raw and m_fac:
             try:
-                expected = float(m_raw.group(1)) * float(m_fac.group(1))
-                if abs(expected - float(si_value)) > 1e-3:
+                expected = _to_float(m_raw.group(1)) * _to_float(m_fac.group(1))
+                # 相对+绝对容差：旧版纯绝对 1e-3 对 1e5 量级的量太严、对 1e-6 量级的量太松
+                tol = max(1e-6, 1e-4 * abs(expected))
+                if abs(expected - float(si_value)) > tol:
                     fails.append(f'⛔ unit_conversion 验算失败: {raw} × ({factor}) → 预期 {expected:.4f}, 但 si_value={si_value}')
             except ValueError:
                 pass
@@ -183,9 +222,14 @@ def audit_facts_against_ocr(facts: dict) -> list:
             fails.append(f'⚠ 读取 {fp} 失败: {e}')
 
     facts_nums = extract_numbers_from_facts(facts)
+    derived_nums = extract_derived_numbers(facts)
 
-    facts_only = facts_nums - ocr_nums - WHITELIST
+    # 派生值（单位换算结果）合法地不出现在 OCR 原文里，不算虚构
+    facts_only = facts_nums - ocr_nums - WHITELIST - derived_nums
     ocr_only = ocr_nums - facts_nums - WHITELIST
+    # 百分比容差：题面写 95%（OCR 抽到 95），facts 登记 0.95 也算命中
+    facts_only = {v for v in facts_only
+                  if round(v * 100, 4) not in ocr_nums and round(v / 100, 4) not in ocr_nums}
 
     if facts_only:
         fails.append(f'⛔ PROBLEM_FACTS.json 含 {len(facts_only)} 个 OCR 原文中找不到的数字（疑似 AI 虚构）: '
@@ -211,10 +255,10 @@ def audit_code_against_facts(facts: dict, code_dir='code') -> list:
                     continue
                 for m in NUM_RE.finditer(line):
                     try:
-                        v = float(m.group(1))
+                        v = _to_float(m.group(1))
                     except ValueError:
                         continue
-                    if v in WHITELIST or round(v, 4) in fact_nums:
+                    if v in WHITELIST or v in MATH_CONSTANTS or round(v, 4) in fact_nums:
                         continue
                     susp.append(f'⚠ {f.relative_to(p.parent)}:{i} 值={v} {s[:80]}')
                     if len(susp) >= 20:
@@ -290,14 +334,14 @@ def audit_modeling_report(facts: dict, report_path='MODELING_REPORT.md') -> list
     text = p.read_text(encoding='utf-8')
 
     # ① 数字溯源
-    fact_nums = extract_numbers_from_facts(facts)
-    # 仅抓有 2 位以上小数的浮点（避免误抓章节号 / 列表序号）
-    DEC_RE = re.compile(r'(?<![\w.])([-+]?\d+\.\d{2,})(?![\.\d])')
+    fact_nums = extract_numbers_from_facts(facts) | extract_derived_numbers(facts)
+    # 仅抓有 2 位以上小数的浮点（避免误抓章节号 / 列表序号）；允许句末英文句号
+    DEC_RE = re.compile(r'(?<![\w.])([-+]?\d+\.\d{2,})(?!\.\d)')
     miss = []
     for m in DEC_RE.finditer(text):
         try:
             v = round(float(m.group(1)), 4)
-            if v not in fact_nums and v not in WHITELIST:
+            if v not in fact_nums and v not in WHITELIST and v not in MATH_CONSTANTS:
                 # 模糊匹配：容忍 1e-3 量级误差（应对四舍五入）
                 if not any(abs(v - fv) < 1e-3 for fv in fact_nums):
                     miss.append(v)
@@ -305,7 +349,11 @@ def audit_modeling_report(facts: dict, report_path='MODELING_REPORT.md') -> list
             continue
     if miss:
         miss_unique = sorted(set(miss))[:15]
-        fails.append(f'⛔ MODELING_REPORT.md 含 {len(set(miss))} 个无法在 facts 中找到的数字（疑似建模凭印象）: {miss_unique}')
+        # 建模报告里合法存在题面没有的数（假设值 / 预期范围 / 步长 / 收敛阈值），
+        # 因此少量未溯源只给 ⚠；数量很多（≥10）才说明在整体"凭印象"写参数 → ⛔
+        level = '⛔' if len(set(miss)) >= 10 else '⚠'
+        fails.append(f'{level} MODELING_REPORT.md 含 {len(set(miss))} 个无法在 facts 中找到的数字'
+                     f'（题面参数请从 PROBLEM_FACTS.json 取；假设值请在假设列表中声明来源）: {miss_unique}')
 
     # ② rules 覆盖：每条 rule 的 natural_language 关键词必须出现在 modeling report 里
     for r in facts.get('rules', []):
@@ -342,9 +390,15 @@ def audit_modeling_vs_code(facts: dict, report_path='MODELING_REPORT.md', code_d
     symbols = set()
     for m in SYMBOL_RE.finditer(report):
         sym = m.group(1)
-        # 排除明显非公式符号
+        # 排除明显非公式符号：文件名 / manifest / 引擎凭证 / 图表 id
         if sym in {'README_md', 'RESULTS_md', 'PROBLEM_FACTS_json', 'AUDIT_OK',
-                   'MODELING_OK', 'JSON', 'OCR', 'PROBLEM_ANALYSIS', 'MODELING_REPORT'}:
+                   'MODELING_OK', 'JSON', 'OCR', 'PROBLEM_ANALYSIS', 'MODELING_REPORT',
+                   'PROBLEM_FACTS', 'MODEL_MANIFEST', 'QUANTITY_MANIFEST', 'FIGURE_MANIFEST',
+                   'HARD_CONSTRAINTS', 'AUDIT_REPORT', 'PARAMS_RAW', 'CUSTOM_REQUIREMENTS',
+                   'FORMAT_REQUIREMENTS', 'TOPIC_PLAN', 'PAPER_PLAN', 'VIBE_FAST_MODE',
+                   'MIN_MODELS', 'MIN_FIGURES', 'MIN_TABLES', 'FAST_MODE'}:
+            continue
+        if sym.upper().startswith(('TABLE_', 'FIG_', 'TIKZ_', 'DRAWIO_', 'ALLOW_', 'ENABLE_', 'USE_')):
             continue
         symbols.add(sym)
 
@@ -370,7 +424,10 @@ def audit_modeling_vs_code(facts: dict, report_path='MODELING_REPORT.md', code_d
             missing_syms.append(sym)
 
     if missing_syms:
-        fails.append(f'⛔ MODELING_REPORT.md 含 {len(missing_syms)} 个公式符号在 code/ 中找不到实现: {missing_syms[:15]}')
+        # 正则抽符号是启发式（会把 LaTeX 下标写法、文件名等一并抓进来），
+        # 只做 ⚠ 提示，避免把一个误抓的 token 变成阻断整个步骤的 ⛔
+        fails.append(f'⚠ MODELING_REPORT.md 含 {len(missing_syms)} 个公式符号在 code/ 中找不到对应实现'
+                     f'（请确认是否漏实现，或在代码中用同名变量）: {missing_syms[:15]}')
 
     return fails
 
@@ -437,7 +494,7 @@ def audit_paper_numbers_traceability(facts: dict, paper_path=None,
 
     # 抽正文里的浮点数（保留 2 位以上小数，避免抓到章节号 1.2.3 / 页码）
     # 同时记录每个数字的上下文（前后 20 字符），用于百分号容差判断
-    NUM = re.compile(r'(?<![\w.])([-+]?\d+\.\d{2,})(?![\.\d])')
+    NUM = re.compile(r'(?<![\w.])([-+]?\d+\.\d{2,})(?!\.\d)')
     nums = []  # [(value, ctx_str), ...]
     for m in NUM.finditer(text):
         try:
